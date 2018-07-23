@@ -1,7 +1,32 @@
+// prepare indexedDB 
+var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
+var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+
+// prefixes of window.IDB objects
+window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
+ 
+var openedDB = indexedDB.open("TFD_Incidents", 1);
+
+// key definition
+openedDB.onupgradeneeded = function() {
+    var db    = openedDB.result;
+    var store = db.createObjectStore("IncidentStore", {keyPath: "id", autoIncrement: true});
+}
+
+// add location info to indexedDB
+function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, latitude, longitude) {
+    var db      = openedDB.result;
+    var tx      = db.transaction(["IncidentStore"], "readwrite");
+    var store   = tx.objectStore("IncidentStore", {keyPath: "id", autoIncrement: true});
+    store.put({incidentNumber: incidentNumber, problem: problem, address: address, responseDate: responseDate, latlng: {lat: latitude, longitude}})
+}
+
+
 // default map settings
-const CONST_MAP_DEFAULT_LONGITUDEX = -98.35
-const CONST_MAP_DEFAULT_LATITUDEY  =  39.5
-const CONST_MAP_DEFAULT_ZOOM       =   12
+const CONST_MAP_DEFAULT_LONGITUDEX = -95.992775
+const CONST_MAP_DEFAULT_LATITUDEY  =  36.1539816
+const CONST_MAP_DEFAULT_ZOOM       =   11
 
 // defintion of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
