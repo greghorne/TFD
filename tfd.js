@@ -15,15 +15,14 @@ openedDB.onupgradeneeded = function() {
 }
 
 // add location info to indexedDB
-function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, latitude, longitude) {
+function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, latitude, longitude, vehicles) {
 
-    var db      = openedDB
+    var db = openedDB
     db.onsuccess = function(event) {
-        console.log("tx...")
         db = event.target.result;
-        var tx      = db.transaction(["IncidentsStore"], "readwrite");
-        var store   = tx.objectStore("IncidentsStore", {keyPath: "id", autoIncrement: true});
-        store.put({incidentNumber: incidentNumber, problem: problem, address: address, responseDate: responseDate, latitude: latitude, longitude: longitude})
+        var tx    = db.transaction(["IncidentsStore"], "readwrite");
+        var store = tx.objectStore("IncidentsStore", {keyPath: "id", autoIncrement: true});
+        store.put({incidentNumber: incidentNumber, problem: problem, address: address, responseDate: responseDate, latitude: latitude, longitude: longitude, vehicles: vehicles })
     };
 }
 
@@ -90,33 +89,34 @@ $(document).ready(function() {
     function getTfdData() {
         $.ajax({ type: "GET", url: url }).done(function(response){
             
-            incident = response.Incidents.Incident[0]
+            var incident = response.Incidents.Incident[0]
 
-            if (currentIncidentNumber == incident.incidentNumber) {
-                console.log("nothing...")
+            console.log(currentIncidentNumber + " / "+ incident.IncidentNumber)
+
+            if (currentIncidentNumber == incident.IncidentNumber) {
+                console.log("polled no update...")
                 return;
             } else {
                 console.log(incident)
-                currentIncidentNumber = incident.incidentNumber;
+                currentIncidentNumber = incident.IncidentNumber;
             }
-// console.log(incident.IncidentNumber)
-// console.log(incident.Problem)
-// console.log(incident.Address)
-// console.log(incident.ResponseDate)
-// console.log(incident.Latitude)
-// console.log(incident.Longitude)
             
-            
+            var vehiclesArr = [];
+
             //////////////////////////////////////////////////////////////////////
             vehicles  = incident.Vehicles.Vehicle
             vehiclesString = "<table></br>Respondig Vehicles:</br>"
 
             // if there are more than one vehicles respongind then it is in an array
+        console.log(typeof vehicles.Division)
             if (vehicles.Division) {
                 vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
+                vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
             } else {
+                console.log("trace...")
                 for (n = 0; n < vehicles.length; n++) {
                     vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
+                    vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
                 }
             }
             vehiclesString += "</table>"
@@ -129,7 +129,7 @@ $(document).ready(function() {
             marker.bindPopup(popupString).openPopup();
             map.flyTo([incident.Latitude, incident.Longitude], 15)
 
-            addIncidentToindexedDB(incident.IncidentNumber, incident.Problem, incident.Address, incident.ResponseDate, incident.Latitude, incident.Longitude) 
+            addIncidentToindexedDB(incident.IncidentNumber, incident.Problem, incident.Address, incident.ResponseDate, incident.Latitude, incident.Longitude, vehiclesArr) 
 
         })
 
