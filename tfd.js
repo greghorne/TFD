@@ -31,26 +31,19 @@ const CONST_MAP_DEFAULT_ZOOM       =   11
 // defintion of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
-        name: "Grayscale",
-        url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoom:  5,
-        maxZoom: 17
-    },
-    {
-        name: "Esri",
-        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true',
-        attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
-        minZoom:  5,
-        maxZoom: 17
-    },
-    {
         name: "OSM",
         url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attirbution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         minZoom:  5,
         maxZoom: 17
     },
+    {
+        name: "Grayscale",
+        url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        minZoom:  5,
+        maxZoom: 17
+    }
 ];
 
 // build map layers (dynamically) from CONST_MAP_LAYERS
@@ -93,15 +86,16 @@ $(document).ready(function() {
             console.log(response.Incidents.Incident[0]);
             incident = response.Incidents.Incident[0]
             vehicles  = incident.Vehicles.Vehicle
-            vehiclesString = ""
+            vehiclesString = "<table></br>Respondig Vehicles:</br>"
             for (n = 0; n < vehicles.length; n++) {
-                vehiclesString += "</br>" + vehicles[n].Division + "  " + vehicles[n].Station + "  " + vehicles[n].VehicleID
+                vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
             }
+            vehiclesString += "</table>"
             marker.setLatLng([incident.Latitude, incident.Longitude])
 
-            popupString = "<center>Problem: " + incident.Problem + "</br>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+            popupString = "<center>Problem: " + incident.Problem + "</br></br>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
-            map.flyTo([incident.Latitude, incident.Longitude], 14)
+            map.flyTo([incident.Latitude, incident.Longitude], 15)
 
 
         })
