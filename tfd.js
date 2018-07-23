@@ -93,15 +93,13 @@ $(document).ready(function() {
             console.log(response.Incidents.Incident[0]);
             incident = response.Incidents.Incident[0]
             vehicles  = incident.Vehicles.Vehicle
-console.log(vehicles)
             vehiclesString = ""
             for (n = 0; n < vehicles.length; n++) {
-                vehiclesString += "</br></br>Division: " + vehicles[n].Division + "</br>Stations: " + vehicles[n].Station + "</br>Vehicle ID: " + vehicles[n].VehicleID
+                vehiclesString += "</br>" + vehicles[n].Division + "  " + vehicles[n].Station + "  " + vehicles[n].VehicleID
             }
-console.log(vehiclesString);            
             marker.setLatLng([incident.Latitude, incident.Longitude])
 
-            popupString = "<center>Problem: " + incident.Problem + "</br>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</center>"
+            popupString = "<center>Problem: " + incident.Problem + "</br>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
             map.flyTo([incident.Latitude, incident.Longitude], 14)
 
