@@ -68,6 +68,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 
 var map;
 
+
 $(document).ready(function() {
 
     // define map position, zoom and layer
@@ -83,14 +84,23 @@ $(document).ready(function() {
     // add scalebar
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
+    var marker = new L.marker([0,0]).addTo(map);
     var url = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
 
     function getTfdData() {
         $.ajax({ type: "GET", url: url }).done(function(response){
-            console.log(response);
+            console.log(response.Incidents.Incident[0]);
+            incident = response.Incidents.Incident[0]
+            marker.setLatLng([incident.Latitude, incident.Longitude])
+
+            popupString = "<center>Problem: " + incident.Problem + "</br>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br>Incident Number: " + incident.IncidentNumber + "</center>"
+            marker.bindPopup(popupString).openPopup();
+            map.flyTo([incident.Latitude, incident.Longitude], 14)
+
+
         })
 
-        // setTimeout(getTfdData, 5000);
+        setTimeout(getTfdData, 180000);
     }
     getTfdData();
 
