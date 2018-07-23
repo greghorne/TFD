@@ -97,23 +97,22 @@ $(document).ready(function() {
                 console.log("polled no update...")
                 return;
             } else {
-                console.log(incident)
                 currentIncidentNumber = incident.IncidentNumber;
             }
             
             var vehiclesArr = [];
 
             //////////////////////////////////////////////////////////////////////
-            vehicles  = incident.Vehicles.Vehicle
-            vehiclesString = "<table></br>Respondig Vehicles:</br>"
+            var vehicles  = incident.Vehicles.Vehicle
+            var vehiclesString = "<table></br>Respondig Vehicles:</br>"
 
-            // if there are more than one vehicles respongind then it is in an array
-        console.log(typeof vehicles.Division)
+            // if there are more than one vehicle responding then it is in an array
             if (vehicles.Division) {
+                console.log("single vehicle dispatched")
                 vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
                 vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
             } else {
-                console.log("trace...")
+                console.log("multiple vehicles dispatched")
                 for (n = 0; n < vehicles.length; n++) {
                     vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
                     vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
