@@ -84,6 +84,7 @@ $(document).ready(function() {
     // add scalebar
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
+    // var myIcon = L.icon({ iconUrl: './map-marker-red-24.png'})
     var marker = new L.marker([0,0]).addTo(map);
     var url = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
 
@@ -91,16 +92,23 @@ $(document).ready(function() {
         $.ajax({ type: "GET", url: url }).done(function(response){
             console.log(response.Incidents.Incident[0]);
             incident = response.Incidents.Incident[0]
+            vehicles  = incident.Vehicles.Vehicle
+console.log(vehicles)
+            vehiclesString = ""
+            for (n = 0; n < vehicles.length; n++) {
+                vehiclesString += "</br></br>Division: " + vehicles[n].Division + "</br>Stations: " + vehicles[n].Station + "</br>Vehicle ID: " + vehicles[n].VehicleID
+            }
+console.log(vehiclesString);            
             marker.setLatLng([incident.Latitude, incident.Longitude])
 
-            popupString = "<center>Problem: " + incident.Problem + "</br>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br>Incident Number: " + incident.IncidentNumber + "</center>"
+            popupString = "<center>Problem: " + incident.Problem + "</br>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</center>"
             marker.bindPopup(popupString).openPopup();
             map.flyTo([incident.Latitude, incident.Longitude], 14)
 
 
         })
 
-        setTimeout(getTfdData, 180000);
+        setTimeout(getTfdData, 60000);
     }
     getTfdData();
 
