@@ -1,2 +1,9 @@
 html, body { height: 100%; width: 100%; margin: 0px }
-#map {height: 100%; width: 100%}
+
+#map { height: 100%; width: 100% }
+
+@keyframes fade { 
+    from { opacity: 0.5; } 
+}
+
+  .blinking { animation: fade .5s infinite alternate; }

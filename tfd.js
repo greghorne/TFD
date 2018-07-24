@@ -69,7 +69,8 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
 
-
+var iconBlinking = L.icon ({ iconUrl: 'https://unpkg.com/leaflet@1.3.3/dist/images/marker-icon.png', className: 'blinking' });
+var iconNormal   = L.icon ({ iconUrl: 'https://unpkg.com/leaflet@1.3.3/dist/images/marker-icon.png'});
 
 $(document).ready(function() {
 
@@ -88,7 +89,7 @@ $(document).ready(function() {
     // add scalebar
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
-    // var myIcon = L.icon({ iconUrl: './map-marker-red-24.png'})
+    var myIcon = L.icon({ className: 'blinnking'})
     // var marker = new L.marker([0,0]).addTo(map);
     var marker;
     var url = CONST_MAP_JSON_URL;
@@ -123,8 +124,11 @@ $(document).ready(function() {
             //////////////////////////////////////////////////////////////////////
 
             // marker.setLatLng([incident.Latitude, incident.Longitude])
-            if (marker) marker.closePopup();
-            marker = new L.marker([incident.Latitude, incident.Longitude]).addTo(map);
+            if (marker) { 
+                marker.closePopup();
+                marker.setIcon({icon: iconNormal})
+                //  'https://unpkg.com/leaflet@1.3.3/dist/images/marker-icon.png'
+            }
 
             if ($(window).focus) {
                 map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)
@@ -133,10 +137,21 @@ $(document).ready(function() {
                 map.panTo([incident.Latitude, incident.Longitude]);
             }
 
+            // marker = L.marker([incident.Latitude, incident.Longitude], { icon: iconBlinking }).addTo(map);
+            marker = L.marker([incident.Latitude, incident.Longitude]).addTo(map);
+
             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
             
             addIncidentToindexedDB(incident.IncidentNumber, incident.Problem, incident.Address, incident.ResponseDate, incident.Latitude, incident.Longitude, vehiclesArr) 
+
+            // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
+            function blink() {
+                L.DomUtil.addClass(marker._icon, "blinking");
+            }
+            blink();
+
+
         })
 
         setTimeout(getTfdData, 60000);
