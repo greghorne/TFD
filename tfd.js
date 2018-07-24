@@ -41,16 +41,16 @@ const CONST_MAP_INCIDENT_ZOOM      = 15
 // defintion of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
-        name: "OSM",
-        url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        attirbution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        name: "Grayscale",
+        url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         minZoom:  5,
         maxZoom: 17
     },
     {
-        name: "Grayscale",
-        url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        name: "OSM",
+        url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        attirbution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         minZoom:  5,
         maxZoom: 17
     }
@@ -128,11 +128,10 @@ $(document).ready(function() {
             //////////////////////////////////////////////////////////////////////
 
             if (marker) {
-                console.log("set icon...") 
                 marker.closePopup();
                 L.DomUtil.removeClass(marker._icon, "blinking");
-                // marker.onmouseover = function() { marker.openPopup();}
-                // marker.onmouseout  = function() { marker.closePopup();}
+                marker.onmouseover = function() { marker.openPopup();}
+                marker.onmouseout  = function() { marker.closePopup();}
             }
 
             if ($(window).focus) {

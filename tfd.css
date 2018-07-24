@@ -2,12 +2,17 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 #map { height: 100%; width: 100% }
 
+
+/* blinking map marker */
 @keyframes fade { 
     from { opacity: 0.5; } 
 }
 
-  .blinking { animation: fade .5s infinite alternate; }
+.blinking { animation: fade .5s infinite alternate; }
 
+
+
+  /* leaflet css overrides */
   .leaflet-popup-content-wrapper {
     background: #dbe7ea !important
   }
