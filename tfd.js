@@ -22,7 +22,7 @@ function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, 
     db.onsuccess = function() {
         console.log("in add...")
         // db = event.target.result;
-        database = db.result
+        var database = db.result
         var tx    = database.transaction(["IncidentsStore"], "readwrite");
         var store = tx.objectStore("IncidentsStore");
         store.put({incidentNumber: incidentNumber, problem: problem, address: address, responseDate: responseDate, latitude: latitude, longitude: longitude, vehicles: vehicles })

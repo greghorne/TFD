@@ -4,4 +4,8 @@ Display the latest Tulsa Fire Department incidents on a map.
 
 Leaflet, HTML, JS, CSS
 
-Dump all files into the same directory then open index.html
+Place index.html, tfd.js and tfd.css into the same folder and open index.html in a browser.
+
+I have added code for using indexedDB that is currently merely adding the latest incident after each poll of the json file.
+
+I will have to think of a reason to use the data.
