@@ -34,6 +34,8 @@ const CONST_MAP_DEFAULT_LONGITUDEX = -95.992775
 const CONST_MAP_DEFAULT_LATITUDEY  =  36.1539816
 const CONST_MAP_DEFAULT_ZOOM       =  11
 
+const CONST_MAP_JSON_URL = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
+
 const CONST_MAP_INCIDENT_ZOOM      = 15
 
 // defintion of map layers; first layer is the default layer displayed
@@ -87,8 +89,9 @@ $(document).ready(function() {
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
     // var myIcon = L.icon({ iconUrl: './map-marker-red-24.png'})
-    var marker = new L.marker([0,0]).addTo(map);
-    var url = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
+    // var marker = new L.marker([0,0]).addTo(map);
+    var marker;
+    var url = CONST_MAP_JSON_URL;
     var currentIncidentNumber = "";
 
     function getTfdData() {
@@ -119,7 +122,9 @@ $(document).ready(function() {
             vehiclesString += "</table>"
             //////////////////////////////////////////////////////////////////////
 
-            marker.setLatLng([incident.Latitude, incident.Longitude])
+            // marker.setLatLng([incident.Latitude, incident.Longitude])
+            if (marker) marker.closePopup();
+            marker = new L.marker([incident.Latitude, incident.Longitude]).addTo(map);
 
             if ($(window).focus) {
                 map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)
