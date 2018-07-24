@@ -69,8 +69,11 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
 
-var iconBlinking = L.icon ({ iconUrl: 'https://unpkg.com/leaflet@1.3.3/dist/images/marker-icon.png', className: 'blinking' });
-var iconNormal   = L.icon ({ iconUrl: 'https://unpkg.com/leaflet@1.3.3/dist/images/marker-icon.png'});
+var iconRed = L.icon ({ iconUrl: 'images/marker-icon-red.png' });
+var iconBlue  = L.icon ({ iconUrl: 'images/marker-icon-blue.png'});
+var iconGreen  = L.icon ({ iconUrl: 'images/marker-icon-green.png'});
+var iconYellow  = L.icon ({ iconUrl: 'images/marker-icon-yellow.png'});
+
 
 $(document).ready(function() {
 
@@ -127,9 +130,9 @@ $(document).ready(function() {
             if (marker) {
                 console.log("set icon...") 
                 marker.closePopup();
-                marker.setIcon(L.Icon.Default());
+                L.DomUtil.removeClass(marker._icon, "blinking");
                 // marker.onmouseover = function() { marker.openPopup();}
-                // marker.onmouseout = function() { marker.closePopup();}
+                // marker.onmouseout  = function() { marker.closePopup();}
             }
 
             if ($(window).focus) {
