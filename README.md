@@ -4,7 +4,7 @@ Display the latest Tulsa Fire Department incident on a map.
 
 * Tech Stack: Leaflet & Javascript
 
-* Test on Chrome, Brave, Safari, 
+* Tested on Chrome, Brave, Safari
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
 
