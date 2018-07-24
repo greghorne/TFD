@@ -132,7 +132,7 @@ $(document).ready(function() {
             marker.setLatLng([incident.Latitude, incident.Longitude])
             map.flyTo([incident.Latitude, incident.Longitude], 15)
 
-            popupString = "<center>Problem: " + incident.Problem + "</br></br>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+            popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
             
 
