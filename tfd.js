@@ -140,7 +140,7 @@ $(document).ready(function() {
 
         })
 
-        setTimeout(getTfdData, 60000);
+        setTimeout(getTfdData, 600000);
     }
 
     getTfdData();
