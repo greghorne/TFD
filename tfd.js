@@ -103,6 +103,7 @@ $(document).ready(function() {
                 return;
             } else {
                 currentIncidentNumber = incident.IncidentNumber;
+                console.log("json updated...")
             }
             
             //////////////////////////////////////////////////////////////////////
@@ -123,11 +124,12 @@ $(document).ready(function() {
             vehiclesString += "</table>"
             //////////////////////////////////////////////////////////////////////
 
-            // marker.setLatLng([incident.Latitude, incident.Longitude])
-            if (marker) { 
+            if (marker) {
+                console.log("set icon...") 
                 marker.closePopup();
-                marker.setIcon({icon: iconNormal})
-                //  'https://unpkg.com/leaflet@1.3.3/dist/images/marker-icon.png'
+                marker.setIcon(L.Icon.Default());
+                // marker.onmouseover = function() { marker.openPopup();}
+                // marker.onmouseout = function() { marker.closePopup();}
             }
 
             if ($(window).focus) {
@@ -137,9 +139,9 @@ $(document).ready(function() {
                 map.panTo([incident.Latitude, incident.Longitude]);
             }
 
-            // marker = L.marker([incident.Latitude, incident.Longitude], { icon: iconBlinking }).addTo(map);
-            marker = L.marker([incident.Latitude, incident.Longitude]).addTo(map);
-
+            console.log("at marker...")
+            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+            console.log("exit marker...")
             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
             
