@@ -2,7 +2,7 @@
 
 Display the latest Tulsa Fire Department incident on a map.
 
-* Tech Stack: Leaflet, HTML, JS, CSS
+* Tech Stack: Leaflet & Javascript
 
 * Place index.html, tfd.js and tfd.css into the same folder and open index.html in a browser.
 

@@ -6,28 +6,30 @@ var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIn
 window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
  
-var openedDB = indexedDB.open("TFDIncidents", 1);
-
-// key definition
-openedDB.onupgradeneeded = function() {
-    var db    = openedDB.result;
-    var store = db.createObjectStore("IncidentsStore", {keyPath: "id", autoIncrement: true});
-}
 
 // add location info to indexedDB
 function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, latitude, longitude, vehicles) {
 
     console.log("Adding...  " + incidentNumber + " / " + problem + " / " + address)
-    var db = openedDB
-    db.onsuccess = function() {
+    // var db = openedDB
+    var openedDB = indexedDB.open("TFDIncidents", 1);
+
+    openedDB.onupgradeneeded = function() {
+        console.log("in onupgradeneeded...")
+        var db    = openedDB.result;
+        var store = db.createObjectStore("IncidentsStore", {keyPath: "id", autoIncrement: true});
+    }
+
+    openedDB.onsuccess = function() {
         console.log("in add...")
         // db = event.target.result;
-        var database = db.result
+        var database = openedDB.result
         var tx    = database.transaction(["IncidentsStore"], "readwrite");
         var store = tx.objectStore("IncidentsStore");
         store.put({incidentNumber: incidentNumber, problem: problem, address: address, responseDate: responseDate, latitude: latitude, longitude: longitude, vehicles: vehicles })
 
         tx.oncomplete = function() {
+            console.log("db closed...")
             database.close;
         }
     };
@@ -101,7 +103,6 @@ $(document).ready(function() {
             console.log(currentIncidentNumber + " / "+ incident.IncidentNumber)
 
             if (currentIncidentNumber == incident.IncidentNumber) {
-                console.log("polled no update...")
                 return;
             } else {
                 currentIncidentNumber = incident.IncidentNumber;
@@ -130,7 +131,14 @@ $(document).ready(function() {
 
 
             marker.setLatLng([incident.Latitude, incident.Longitude])
-            map.flyTo([incident.Latitude, incident.Longitude], 15)
+            
+            if ($(window).focus) {
+                map.flyTo([incident.Latitude, incident.Longitude], 15)
+            } else {
+                map.setZoom(15);
+                map.panTo([incident.Latitude, incident.Longitude]);
+            }
+            
 
             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
@@ -140,7 +148,7 @@ $(document).ready(function() {
 
         })
 
-        setTimeout(getTfdData, 600000);
+        setTimeout(getTfdData, 60000);
     }
 
     getTfdData();
