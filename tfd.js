@@ -17,12 +17,19 @@ openedDB.onupgradeneeded = function() {
 // add location info to indexedDB
 function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, latitude, longitude, vehicles) {
 
+    console.log("Adding...  " + incidentNumber + " / " + problem + " / " + address)
     var db = openedDB
-    db.onsuccess = function(event) {
-        db = event.target.result;
-        var tx    = db.transaction(["IncidentsStore"], "readwrite");
-        var store = tx.objectStore("IncidentsStore", {keyPath: "id", autoIncrement: true});
+    db.onsuccess = function() {
+        console.log("in add...")
+        // db = event.target.result;
+        database = db.result
+        var tx    = database.transaction(["IncidentsStore"], "readwrite");
+        var store = tx.objectStore("IncidentsStore");
         store.put({incidentNumber: incidentNumber, problem: problem, address: address, responseDate: responseDate, latitude: latitude, longitude: longitude, vehicles: vehicles })
+
+        tx.oncomplete = function() {
+            database.close;
+        }
     };
 }
 
@@ -104,7 +111,7 @@ $(document).ready(function() {
 
             //////////////////////////////////////////////////////////////////////
             var vehicles  = incident.Vehicles.Vehicle
-            var vehiclesString = "<table></br>Respondig Vehicles:</br>"
+            var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
 
             // if there are more than one vehicle responding then it is in an array
             if (vehicles.Division) {
@@ -123,10 +130,11 @@ $(document).ready(function() {
 
 
             marker.setLatLng([incident.Latitude, incident.Longitude])
+            map.flyTo([incident.Latitude, incident.Longitude], 15)
 
             popupString = "<center>Problem: " + incident.Problem + "</br></br>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
-            map.flyTo([incident.Latitude, incident.Longitude], 15)
+            
 
             addIncidentToindexedDB(incident.IncidentNumber, incident.Problem, incident.Address, incident.ResponseDate, incident.Latitude, incident.Longitude, vehiclesArr) 
 
