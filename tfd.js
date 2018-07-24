@@ -10,36 +10,31 @@ window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window
 // add location info to indexedDB
 function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, latitude, longitude, vehicles) {
 
-    console.log("Adding...  " + incidentNumber + " / " + problem + " / " + address)
-    // var db = openedDB
     var openedDB = indexedDB.open("TFDIncidents", 1);
 
     openedDB.onupgradeneeded = function() {
-        console.log("in onupgradeneeded...")
         var db    = openedDB.result;
         var store = db.createObjectStore("IncidentsStore", {keyPath: "id", autoIncrement: true});
     }
 
     openedDB.onsuccess = function() {
-        console.log("in add...")
-        // db = event.target.result;
         var database = openedDB.result
         var tx    = database.transaction(["IncidentsStore"], "readwrite");
         var store = tx.objectStore("IncidentsStore");
         store.put({incidentNumber: incidentNumber, problem: problem, address: address, responseDate: responseDate, latitude: latitude, longitude: longitude, vehicles: vehicles })
 
         tx.oncomplete = function() {
-            console.log("db closed...")
             database.close;
         }
     };
 }
 
-
 // default map settings
 const CONST_MAP_DEFAULT_LONGITUDEX = -95.992775
 const CONST_MAP_DEFAULT_LATITUDEY  =  36.1539816
 const CONST_MAP_DEFAULT_ZOOM       =  11
+
+const CONST_MAP_INCIDENT_ZOOM      = 15
 
 // defintion of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -72,10 +67,11 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
 
-var map;
 
 
 $(document).ready(function() {
+
+    var map;
 
     // define map position, zoom and layer
     map = L.map('map', {
@@ -99,28 +95,22 @@ $(document).ready(function() {
         $.ajax({ type: "GET", url: url }).done(function(response){
             
             var incident = response.Incidents.Incident[0]
-
-            console.log(currentIncidentNumber + " / "+ incident.IncidentNumber)
-
             if (currentIncidentNumber == incident.IncidentNumber) {
                 return;
             } else {
                 currentIncidentNumber = incident.IncidentNumber;
             }
             
-            var vehiclesArr = [];
-
             //////////////////////////////////////////////////////////////////////
+            var vehiclesArr = [];
             var vehicles  = incident.Vehicles.Vehicle
             var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
 
             // if there are more than one vehicle responding then it is in an array
             if (vehicles.Division) {
-                console.log("single vehicle dispatched")
                 vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
                 vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
             } else {
-                console.log("multiple vehicles dispatched")
                 for (n = 0; n < vehicles.length; n++) {
                     vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
                     vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
@@ -129,28 +119,23 @@ $(document).ready(function() {
             vehiclesString += "</table>"
             //////////////////////////////////////////////////////////////////////
 
-
             marker.setLatLng([incident.Latitude, incident.Longitude])
-            
+
             if ($(window).focus) {
-                map.flyTo([incident.Latitude, incident.Longitude], 15)
+                map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)
             } else {
-                map.setZoom(15);
+                map.setZoom(CONST_MAP_INCIDENT_ZOOM);
                 map.panTo([incident.Latitude, incident.Longitude]);
             }
-            
 
             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
             
-
             addIncidentToindexedDB(incident.IncidentNumber, incident.Problem, incident.Address, incident.ResponseDate, incident.Latitude, incident.Longitude, vehiclesArr) 
-
         })
 
         setTimeout(getTfdData, 60000);
     }
 
     getTfdData();
-
 })

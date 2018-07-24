@@ -6,6 +6,8 @@ Display the latest Tulsa Fire Department incident on a map.
 
 * Place index.html, tfd.js and tfd.css into the same folder and open index.html in a browser.
 
+* Deployment: https://rawgit.com/greghorne/TFD/master/index.html
+
 * I have added code for using indexedDB that is currently merely adding the latest incident after each poll of the json file.  Currrently the DB is not being used.
 
 
