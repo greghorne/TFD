@@ -56,14 +56,14 @@ function updateIndexedDB(json) {
 
     db.onupgradeneeded = function() {
         var database    = db.result;
-        var store = database.createObjectStore("IncidentsStore", {keyPath: "incidentNumber"});
+        var store = database.createObjectStore("IncidentsStore", {keyPath: "incidentNumber", unique: true});
     }
 
     db.onsuccess = function() {
 
         var database = db.result
-        var tx    = database.transaction(["IncidentsStore"], "readwrite");
-        var store = tx.objectStore("IncidentsStore");
+        var tx       = database.transaction(["IncidentsStore"], "readwrite");
+        var store    = tx.objectStore("IncidentsStore");
 
         var incidentsCount = json.Incidents.Incident.length;
 
@@ -71,34 +71,30 @@ function updateIndexedDB(json) {
 
         // iterate through json
         for (var n = 0; n < incidentsCount; n++) {
-
-            // console.log(incidentIndex)
-            // if (json.Incidents.Incident.hasOwnProperty(incidentIndex)) {
             
-                var incident = json.Incidents.Incident[n];
-                // console.log(incident)
-                // console.log("incident num: " + incident.IncidentNumber)
+            // individual incident
+            var incident = json.Incidents.Incident[n];
 
-                var vehiclesArr = [];
-                var vehicles    = incident.Vehicles
+            // for storing vehicle(s)
+            var vehiclesArr = [];
+            
+            var vehicles    = incident.Vehicles
 
-                if (vehicles.Division) {
-                    vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
-                } else {
-                    vehiclesArr = incident.Vehicles.Vehicle
-                }    
+            if (vehicles.Division) {
+                vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
+            } else {
+                vehiclesArr = incident.Vehicles.Vehicle
+            }    
 
-                store.add({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
-                store.onerror = function(event) {
-                    console.log(event);
-                }
-                // n++
-            // }
+            store.add({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
+            store.onerror = function(event) {
+                console.log("store.add error...")
+                console.log(event);
+            }
         }
 
         tx.oncomplete = function() {
-            console.log("tx complete")
-            // database.close;
+            database.close;
         }
     };
 }
@@ -209,9 +205,7 @@ $(document).ready(function() {
                 map.panTo([incident.Latitude, incident.Longitude]);
             }
 
-            console.log("at marker...")
             marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
-            console.log("exit marker...")
             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
             
