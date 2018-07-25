@@ -6,29 +6,6 @@ var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIn
 window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
  
-
-// add location info to indexedDB
-// function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, latitude, longitude, vehicles) {
-
-//     var openedDB = indexedDB.open("TFDIncidents", 1);
-
-//     openedDB.onupgradeneeded = function() {
-//         var db    = openedDB.result;
-//         var store = db.createObjectStore("IncidentsStore", {keyPath: "id", autoIncrement: true});
-//     }
-
-//     openedDB.onsuccess = function() {
-//         var database = openedDB.result
-//         var tx    = database.transaction(["IncidentsStore"], "readwrite");
-//         var store = tx.objectStore("IncidentsStore");
-//         store.put({incident: incidentNumber, problem: problem, address: address, date: responseDate, lat: latitude, lng: longitude, vehicles: vehicles })
-
-//         tx.oncomplete = function() {
-//             database.close;
-//         }
-//     };
-// }
-
 function getVehicles(vehicles) {
 
     var vehiclesArr = [];
@@ -50,7 +27,6 @@ function getVehicles(vehicles) {
 
 function updateIndexedDB(json) {
     
-    
     var db = indexedDB.open("TFDIncidents", 1);
     var json = JSON.parse(json)
 
@@ -71,20 +47,16 @@ function updateIndexedDB(json) {
 
         // iterate through json
         for (var n = 0; n < incidentsCount; n++) {
-            
+
             // individual incident
             var incident = json.Incidents.Incident[n];
 
+            console.log(incident.IncidentNumber)
+
             // for storing vehicle(s)
             var vehiclesArr = [];
-
             var vehicles    = incident.Vehicles
-
-            if (vehicles.Division) {
-                vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
-            } else {
-                vehiclesArr = incident.Vehicles.Vehicle
-            }    
+            vehiclesArr     = getVehicles(vehicles);
 
             store.add({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
             store.onerror = function(event) {
@@ -210,8 +182,6 @@ $(document).ready(function() {
             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
             
-            // addIncidentToindexedDB(incident.IncidentNumber, incident.Problem, incident.Address, incident.ResponseDate, incident.Latitude, incident.Longitude, vehiclesArr) 
-
             // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
             function blink() {
                 L.DomUtil.addClass(marker._icon, "blinking");
