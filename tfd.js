@@ -48,15 +48,15 @@ function getVehicles(vehicles) {
 }
 
 
-function updateIndexedDB(response) {
+function updateIndexedDB(json) {
+    
     
     var db = indexedDB.open("TFDIncidents", 1);
-
-    var incidents = response.Incidents.Incident
+    var json = JSON.parse(json)
 
     db.onupgradeneeded = function() {
         var database    = db.result;
-        var store = database.createObjectStore("IncidentsStore", {keyPath: "incidentNumber", unique: true, multiEntry: false});
+        var store = database.createObjectStore("IncidentsStore", {keyPath: "incidentNumber"});
     }
 
     db.onsuccess = function() {
@@ -65,34 +65,32 @@ function updateIndexedDB(response) {
         var tx    = database.transaction(["IncidentsStore"], "readwrite");
         var store = tx.objectStore("IncidentsStore");
 
-        for (var incidentNumber in incidents) {
-            if (incidents.hasOwnProperty(incidentNumber)) {
-                incident = incidents[incidentNumber];
+        var n = 0;
+
+        for (var incidentNumber in json.Incidents.Incident) {
+
+            if (json.Incidents.Incident.hasOwnProperty(incidentNumber)) {
+                incident = json.Incidents.Incident[incidentNumber];
 
                 var vehiclesArr = [];
-                
+                var vehicles    = incident.Vehicles
+
                 if (vehicles.Division) {
                     vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
                 } else {
                     vehiclesArr = incident.Vehicles.Vehicle
                 }    
 
-                // var vehicles = getVehicles(incident.Vehicles.Vehicle)
-                console.log(vehiclesArr)
-
-
-
+                store.add({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
+                n++
             }
         }
-        
-        // store.put({incident: incidentNumber, problem: problem, address: address, date: responseDate, lat: latitude, lng: longitude, vehicles: vehicles })
 
         tx.oncomplete = function() {
-
-            database.close;
+            console.log("tx complete")
+            // database.close;
         }
     };
-    
 }
 
 // default map settings
@@ -166,9 +164,8 @@ $(document).ready(function() {
                 return;
             } else {
                 currentIncidentNumber = incident.IncidentNumber;
-                console.log("json updated...")
-                updateIndexedDB(response);
-            }
+                updateIndexedDB(JSON.stringify(response));
+            } 
             
             //////////////////////////////////////////////////////////////////////
             var vehiclesArr = [];
