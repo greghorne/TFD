@@ -19,7 +19,7 @@ function getVehicles(vehicles) {
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
         return vehiclesArr
     } else {
-        return vehicles;
+        return;
     }
 
 }
@@ -51,7 +51,10 @@ function updateIndexedDB(json) {
             // individual incident
             var incident = json.Incidents.Incident[n];
 
-            console.log(incident.IncidentNumber)
+            // console.log(incident.IncidentNumber)
+            // console.log(incident.Problem)
+            // console.log(incident.Address)
+            // console.log(incident.Vehicles)
 
             // for storing vehicle(s)
             var vehiclesArr = [];
@@ -137,8 +140,11 @@ $(document).ready(function() {
     function getTfdData() {
         $.ajax({ type: "GET", url: url }).done(function(response){
             
+            console.log(response)
+
             // determine if the latest incident we have is the same as the latest json incident
             var incident = response.Incidents.Incident[0]
+            console.log("Incidents: " + incident)
             if (currentIncidentNumber == incident.IncidentNumber) {
                 return;
             } else {
