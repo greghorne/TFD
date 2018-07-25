@@ -65,12 +65,19 @@ function updateIndexedDB(json) {
         var tx    = database.transaction(["IncidentsStore"], "readwrite");
         var store = tx.objectStore("IncidentsStore");
 
-        var n = 0;
+        var incidentsCount = json.Incidents.Incident.length;
 
-        for (var incidentNumber in json.Incidents.Incident) {
+        console.log("json length: " + json.Incidents.Incident.length)
 
-            if (json.Incidents.Incident.hasOwnProperty(incidentNumber)) {
-                incident = json.Incidents.Incident[incidentNumber];
+        // iterate through json
+        for (var n = 0; n < incidentsCount; n++) {
+
+            // console.log(incidentIndex)
+            // if (json.Incidents.Incident.hasOwnProperty(incidentIndex)) {
+            
+                var incident = json.Incidents.Incident[n];
+                // console.log(incident)
+                // console.log("incident num: " + incident.IncidentNumber)
 
                 var vehiclesArr = [];
                 var vehicles    = incident.Vehicles
@@ -82,8 +89,11 @@ function updateIndexedDB(json) {
                 }    
 
                 store.add({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
-                n++
-            }
+                store.onerror = function(event) {
+                    console.log(event);
+                }
+                // n++
+            // }
         }
 
         tx.oncomplete = function() {
