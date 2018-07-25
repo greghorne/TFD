@@ -77,7 +77,7 @@ function updateIndexedDB(json) {
 
             // for storing vehicle(s)
             var vehiclesArr = [];
-            
+
             var vehicles    = incident.Vehicles
 
             if (vehicles.Division) {
@@ -165,6 +165,7 @@ $(document).ready(function() {
     function getTfdData() {
         $.ajax({ type: "GET", url: url }).done(function(response){
             
+            // determine if the latest incident we have is the same as the latest json incident
             var incident = response.Incidents.Incident[0]
             if (currentIncidentNumber == incident.IncidentNumber) {
                 return;
@@ -178,7 +179,7 @@ $(document).ready(function() {
             var vehicles  = incident.Vehicles.Vehicle
             var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
 
-            // if there are more than one vehicle responding then it is in an array
+            // if there is more than one vehicle responding then it is in an array
             if (vehicles.Division) {
                 vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
                 vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
@@ -216,10 +217,7 @@ $(document).ready(function() {
                 L.DomUtil.addClass(marker._icon, "blinking");
             }
             blink();
-
-
         })
-
         setTimeout(getTfdData, 60000);
     }
 
