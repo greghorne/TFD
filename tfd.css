@@ -5,7 +5,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 /* blinking map marker */
 @keyframes fade { 
-    from { opacity: 0.5; } 
+    from { opacity: 0.25; } 
 }
 
 .blinking { animation: fade .5s infinite alternate; }

@@ -8,25 +8,91 @@ window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window
  
 
 // add location info to indexedDB
-function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, latitude, longitude, vehicles) {
+// function addIncidentToindexedDB(incidentNumber, problem, address, responseDate, latitude, longitude, vehicles) {
 
-    var openedDB = indexedDB.open("TFDIncidents", 1);
+//     var openedDB = indexedDB.open("TFDIncidents", 1);
 
-    openedDB.onupgradeneeded = function() {
-        var db    = openedDB.result;
-        var store = db.createObjectStore("IncidentsStore", {keyPath: "id", autoIncrement: true});
+//     openedDB.onupgradeneeded = function() {
+//         var db    = openedDB.result;
+//         var store = db.createObjectStore("IncidentsStore", {keyPath: "id", autoIncrement: true});
+//     }
+
+//     openedDB.onsuccess = function() {
+//         var database = openedDB.result
+//         var tx    = database.transaction(["IncidentsStore"], "readwrite");
+//         var store = tx.objectStore("IncidentsStore");
+//         store.put({incident: incidentNumber, problem: problem, address: address, date: responseDate, lat: latitude, lng: longitude, vehicles: vehicles })
+
+//         tx.oncomplete = function() {
+//             database.close;
+//         }
+//     };
+// }
+
+function getVehicles(vehicles) {
+
+    var vehiclesArr = [];
+
+    // for a given incident, there may be one or more responding vehicles
+    // if vehicles = 1; then it is a key, value pair
+    // if vehicles > 1; then it is in any array of key, value pairs
+    // this function returns an array of key, value pairs regardless
+
+    if (vehicles.Division) {
+        vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
+        return vehiclesArr
+    } else {
+        return vehicles;
     }
 
-    openedDB.onsuccess = function() {
-        var database = openedDB.result
+}
+
+
+function updateIndexedDB(response) {
+    
+    var db = indexedDB.open("TFDIncidents", 1);
+
+    var incidents = response.Incidents.Incident
+
+    db.onupgradeneeded = function() {
+        var database    = db.result;
+        var store = database.createObjectStore("IncidentsStore", {keyPath: "incidentNumber", unique: true, multiEntry: false});
+    }
+
+    db.onsuccess = function() {
+
+        var database = db.result
         var tx    = database.transaction(["IncidentsStore"], "readwrite");
         var store = tx.objectStore("IncidentsStore");
-        store.put({incident: incidentNumber, problem: problem, address: address, date: responseDate, lat: latitude, lng: longitude, vehicles: vehicles })
+
+        for (var incidentNumber in incidents) {
+            if (incidents.hasOwnProperty(incidentNumber)) {
+                incident = incidents[incidentNumber];
+
+                var vehiclesArr = [];
+                
+                if (vehicles.Division) {
+                    vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
+                } else {
+                    vehiclesArr = incident.Vehicles.Vehicle
+                }    
+
+                // var vehicles = getVehicles(incident.Vehicles.Vehicle)
+                console.log(vehiclesArr)
+
+
+
+            }
+        }
+        
+        // store.put({incident: incidentNumber, problem: problem, address: address, date: responseDate, lat: latitude, lng: longitude, vehicles: vehicles })
 
         tx.oncomplete = function() {
+
             database.close;
         }
     };
+    
 }
 
 // default map settings
@@ -69,12 +135,6 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
 
-var iconRed = L.icon ({ iconUrl: 'images/marker-icon-red.png' });
-var iconBlue  = L.icon ({ iconUrl: 'images/marker-icon-blue.png'});
-var iconGreen  = L.icon ({ iconUrl: 'images/marker-icon-green.png'});
-var iconYellow  = L.icon ({ iconUrl: 'images/marker-icon-yellow.png'});
-
-
 $(document).ready(function() {
 
     var map;
@@ -107,6 +167,7 @@ $(document).ready(function() {
             } else {
                 currentIncidentNumber = incident.IncidentNumber;
                 console.log("json updated...")
+                updateIndexedDB(response);
             }
             
             //////////////////////////////////////////////////////////////////////
@@ -147,7 +208,7 @@ $(document).ready(function() {
             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
             marker.bindPopup(popupString).openPopup();
             
-            addIncidentToindexedDB(incident.IncidentNumber, incident.Problem, incident.Address, incident.ResponseDate, incident.Latitude, incident.Longitude, vehiclesArr) 
+            // addIncidentToindexedDB(incident.IncidentNumber, incident.Problem, incident.Address, incident.ResponseDate, incident.Latitude, incident.Longitude, vehiclesArr) 
 
             // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
             function blink() {
