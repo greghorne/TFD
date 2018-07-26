@@ -27,6 +27,7 @@ Notes/Comments:
 
 * I have added code for using IndexedDB that is currently keeping all incidents and is updated when a new json files is retrieved.  Currrently the DB is not being used for any purpose.  Maybe an additional feature later when I think of something.  JsStore might be a good library to use for interacting with IndexedDB.
 
+This webapp is for demonstration purposes.
 
 
 
