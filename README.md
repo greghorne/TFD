@@ -19,6 +19,8 @@ Display Tulsa Fire Department incidents on a map.
 
 Notes/Comments:
 
+* The webapp was written to minimize necessary files to execute and it not setup to run as/on a server.  Everything is executed client-side and CDN's were used.
+
 * I do not have information on how/when the json file is updated on the server.  The webpage is polling the server every minute and is displaying the latest incident as a flashing icon and all other prior incidents onto the map.  It seems like a given json file from the server has incidents up to 24 hours prior.
 
 * I have added code for using IndexedDB that is currently keeping all incidents and is updated when a new json files is retrieved.  Currrently the DB is not being used for any purpose.  Maybe an additional feature later when I think of something.  JsStore might be a good library to use for interacting with IndexedDB.
