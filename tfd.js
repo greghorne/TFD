@@ -8,27 +8,28 @@ window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window
  
 function getVehicles(vehicles) {
 
+    // console.log(vehicles)
     var vehiclesArr = [];
 
-    // for a given incident, there may be one or more responding vehicles
     // if vehicles = 1; then it is a key, value pair
     // if vehicles > 1; then it is in any array of key, value pairs
-    // this function returns an array of key, value pairs regardless
 
     if (vehicles.Division) {
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
-        return vehiclesArr
     } else {
-        return;
+        return vehicles;
+        // for (var n = 0; n < vehicles.length; n++) {
+        //     vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
+        // }
     }
+    return vehiclesArr;
 
 }
 
 
-function updateIndexedDB(json2) {
+function updateIndexedDB(json) {
     
     var db = indexedDB.open("TFDIncidents", 1);
-    var json = json2
 
     db.onupgradeneeded = function() {
         var database    = db.result;
@@ -41,28 +42,27 @@ function updateIndexedDB(json2) {
         var tx       = database.transaction(["IncidentsStore"], "readwrite");
         var store    = tx.objectStore("IncidentsStore");
 
+        console.log("at json sub")
+        console.log(json)
         var incidentsCount = json.Incidents.Incident.length;
-
-        console.log("json length: " + json.Incidents.Incident.length)
 
         // iterate through json
         for (var n = 0; n < incidentsCount; n++) {
 
-            // individual incident
             var incident = json.Incidents.Incident[n];
-
-            // console.log(incident.IncidentNumber)
-            // console.log(incident.Problem)
-            // console.log(incident.Address)
-            // console.log(incident.Vehicles)
 
             // for storing vehicle(s)
             var vehiclesArr = [];
             var vehicles    = incident.Vehicles
             vehiclesArr     = getVehicles(vehicles);
 
-            store.add({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
-            store.onerror = function(event) {
+            var put = store.put({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
+
+            put.onsuccess = function(event) {
+                console.log("added: " + n)
+            }
+
+            put.onerror = function(event) {
                 console.log("store.add error...")
                 console.log(event);
             }
@@ -72,6 +72,7 @@ function updateIndexedDB(json2) {
             database.close;
         }
     };
+
 }
 
 // default map settings
@@ -139,23 +140,13 @@ $(document).ready(function() {
 
     function getTfdData() {
         $.ajax({ type: "GET", url: url }).done(function(response){
-            
-            console.log("in...")
+
+            console.log("at json main")
             console.log(response)
-            console.log("out...")
-            console.log("")
 
-            // determine if the latest incident we have is the same as the latest json incident
-            console.log("in...")
             var incident = response.Incidents.Incident[0]
-            console.log(incident)
-            console.log("out...")
-            console.log("")
 
-
-
-
-            console.log(incident)
+            // console.log(incident)
             if (currentIncidentNumber == incident.IncidentNumber) {
                 return;
             } else {
