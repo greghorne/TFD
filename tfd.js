@@ -8,7 +8,6 @@ window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window
  
 function getVehicles(vehicles) {
 
-    // console.log(vehicles)
     var vehiclesArr = [];
 
     // if vehicles = 1; then it is a key, value pair
@@ -18,9 +17,6 @@ function getVehicles(vehicles) {
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
     } else {
         return vehicles;
-        // for (var n = 0; n < vehicles.length; n++) {
-        //     vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
-        // }
     }
     return vehiclesArr;
 
@@ -42,8 +38,6 @@ function updateIndexedDB(json) {
         var tx       = database.transaction(["IncidentsStore"], "readwrite");
         var store    = tx.objectStore("IncidentsStore");
 
-        console.log("at json sub")
-        console.log(json)
         var incidentsCount = json.Incidents.Incident.length;
 
         // iterate through json
@@ -56,16 +50,12 @@ function updateIndexedDB(json) {
             var vehicles    = incident.Vehicles
             vehiclesArr     = getVehicles(vehicles);
 
+            // The put() method of the IDBObjectStore interface updates a given record in a database, 
+            // or inserts a new record if the given item does not already exist.
+            //
+            // This area may need attention in that working with IndexedDB is asynchronous in nature
+            // and I am currently not taking that into account.
             var put = store.put({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
-
-            put.onsuccess = function(event) {
-                console.log("added: " + n)
-            }
-
-            put.onerror = function(event) {
-                console.log("store.add error...")
-                console.log(event);
-            }
         }
 
         tx.oncomplete = function() {
@@ -135,69 +125,118 @@ $(document).ready(function() {
     var myIcon = L.icon({ className: 'blinnking'})
     // var marker = new L.marker([0,0]).addTo(map);
     var marker;
+    var markers = [];
     var url = CONST_MAP_JSON_URL;
     var currentIncidentNumber = "";
 
+
+    // /////////////////////////////////////
     function getTfdData() {
         $.ajax({ type: "GET", url: url }).done(function(response){
 
-            console.log("at json main")
-            console.log(response)
+            // always update
+            updateIndexedDB(response);
 
-            var incident = response.Incidents.Incident[0]
+            var incidents       = response.Incidents
+            var incidentsCount  = incidents.Incident.length;
+            console.log(incidentsCount)
 
-            // console.log(incident)
-            if (currentIncidentNumber == incident.IncidentNumber) {
-                return;
-            } else {
-                currentIncidentNumber = incident.IncidentNumber;
-                updateIndexedDB(response);
-            } 
-            
-            //////////////////////////////////////////////////////////////////////
-            var vehiclesArr = [];
-            var vehicles  = incident.Vehicles.Vehicle
-            var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
+            var lastIncident = incidents.Incident[0].IncidentNumber
+            console.log(lastIncident)
 
-            // if there is more than one vehicle responding then it is in an array
-            if (vehicles.Division) {
-                vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
-                vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
-            } else {
-                for (n = 0; n < vehicles.length; n++) {
-                    vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
-                    vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
+            if (currentIncidentNumber !== lastIncident) {
+                // json was updated
+
+                if (marker) {
+                    marker.closePopup();
+                    L.DomUtil.removeClass(marker._icon, "blinking");
                 }
-            }
-            vehiclesString += "</table>"
-            //////////////////////////////////////////////////////////////////////
 
-            if (marker) {
-                marker.closePopup();
-                L.DomUtil.removeClass(marker._icon, "blinking");
-                marker.onmouseover = function() { marker.openPopup();}
-                marker.onmouseout  = function() { marker.closePopup();}
-            }
+                for (var counter = 0; counter < incidentsCount; counter++) {
 
-            if ($(window).focus) {
-                map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)
-            } else {
-                map.setZoom(CONST_MAP_INCIDENT_ZOOM);
-                map.panTo([incident.Latitude, incident.Longitude]);
-            }
+                    var incident = incidents.Incident[counter]
+                    // console.log(incident)
 
-            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
-            popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-            marker.bindPopup(popupString).openPopup();
-            
-            // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-            function blink() {
-                L.DomUtil.addClass(marker._icon, "blinking");
+                    // see if the marker alreadey exists
+                    // console.log(incident.IncidentNumber)
+                    
+                    if (markers.indexOf(incident.IncidentNumber) == -1) {
+
+                        //////////////////////////////////////////////////////////////////////
+                        var vehiclesArr = [];
+                        var vehicles  = incident.Vehicles.Vehicle
+                        var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
+
+                        // if there is more than one vehicle responding then it is in an array
+                        if (vehicles.Division) {
+                            vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
+                            vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
+                        } else {
+                            for (var n = 0; n < vehicles.length; n++) {
+                                vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
+                                vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
+                            }
+                        }
+                        vehiclesString += "</table>"
+                        //////////////////////////////////////////////////////////////////////
+
+                        marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+                        popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+                        
+
+                        markers.push(incident.IncidentNumber)
+
+                        if (counter === 0) {
+                            marker.bindPopup(popupString).openPopup();
+                            map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)
+                            // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
+                            console.log("here...")
+                            function blink() {
+                                L.DomUtil.addClass(marker._icon, "blinking");
+                            }
+                            blink();
+                        }
+
+                    }
+                
+                }
+
             }
-            blink();
         })
-        setTimeout(getTfdData, 60000);
+        setTimeout(getTfdData, 300000);
     }
-
     getTfdData();
 })
+
+
+            // console.log(incidents.Incident.length)
+
+            // for (var index = 0 ; index < incidents.Incident.length; index++) {
+                
+            //     console.log("index: " + index)
+            //     var incident  = incidents.Incident[index]
+            //     console.log(incident)
+
+                // var incident  = response.Incidents.Incident[n]
+                // if (currentIncidentNumber == incident.IncidentNumber) {
+                //     return;
+                // } else {
+                //     currentIncidentNumber = incident.IncidentNumber;
+                //     // updateIndexedDB(response);
+                // } 
+
+                // if (marker) {
+                //     marker.closePopup();
+                //     L.DomUtil.removeClass(marker._icon, "blinking");
+                //     marker.onmouseover = function() { marker.openPopup();}
+                //     marker.onmouseout  = function() { marker.closePopup();}
+                // }
+
+                // if ($(window).focus) {
+                //     map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)
+                // } else {
+                //     map.setZoom(CONST_MAP_INCIDENT_ZOOM);
+                //     map.panTo([incident.Latitude, incident.Longitude]);
+                // }
+
+            // }
