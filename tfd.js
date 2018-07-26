@@ -25,10 +25,10 @@ function getVehicles(vehicles) {
 }
 
 
-function updateIndexedDB(json) {
+function updateIndexedDB(json2) {
     
     var db = indexedDB.open("TFDIncidents", 1);
-    var json = JSON.parse(json)
+    var json = json2
 
     db.onupgradeneeded = function() {
         var database    = db.result;
@@ -140,16 +140,27 @@ $(document).ready(function() {
     function getTfdData() {
         $.ajax({ type: "GET", url: url }).done(function(response){
             
+            console.log("in...")
             console.log(response)
+            console.log("out...")
+            console.log("")
 
             // determine if the latest incident we have is the same as the latest json incident
+            console.log("in...")
             var incident = response.Incidents.Incident[0]
-            console.log("Incidents: " + incident)
+            console.log(incident)
+            console.log("out...")
+            console.log("")
+
+
+
+
+            console.log(incident)
             if (currentIncidentNumber == incident.IncidentNumber) {
                 return;
             } else {
                 currentIncidentNumber = incident.IncidentNumber;
-                updateIndexedDB(JSON.stringify(response));
+                updateIndexedDB(response);
             } 
             
             //////////////////////////////////////////////////////////////////////
