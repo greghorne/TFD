@@ -25,7 +25,7 @@ Notes/Comments:
 
 * I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme when it didn't update for over and hour.  Please keep this in mind when viewing incidents on the map.
 
-* I have added code for using IndexedDB that is currently keeping all incidents and is updated when a new json files is retrieved.  Currrently the DB is not being used for any purpose.  Maybe an additional feature later when I think of something.  JsStore might be a good library to use for interacting with IndexedDB.
+* I have added code for using IndexedDB that is currently keeping all incidents and is updated when a new JSON file is retrieved.  Currrently the DB is not being used for any purpose.  Maybe an additional feature later when I think of something.  JsStore might be a good library to use for interacting with IndexedDB.
 
 This webapp is for demonstration purposes.
 
