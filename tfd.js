@@ -12,19 +12,20 @@ function getVehicles(vehicles) {
 
     // if vehicles = 1; then it is a key, value pair
     // if vehicles > 1; then it is in any array of key, value pairs
-
     if (vehicles.Division) {
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
+        return vehiclesArr;
     } else {
         return vehicles;
     }
-    return vehiclesArr;
-
 }
 
 
 function updateIndexedDB(json) {
-    
+
+    //
+    // currently the data in indexedDB is not being used
+    //
     var db = indexedDB.open("TFDIncidents", 1);
 
     db.onupgradeneeded = function() {
@@ -105,9 +106,16 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
 
+
+// here we go
 $(document).ready(function() {
 
     var map;
+    var myIcon = L.icon({ className: 'blinnking'})
+    var marker;
+    var markers = [];
+    var url = CONST_MAP_JSON_URL;
+    var currentIncidentNumber = "";
 
     // define map position, zoom and layer
     map = L.map('map', {
@@ -122,30 +130,17 @@ $(document).ready(function() {
     // add scalebar
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
-    var myIcon = L.icon({ className: 'blinnking'})
-    // var marker = new L.marker([0,0]).addTo(map);
-    var marker;
-    var markers = [];
-    var url = CONST_MAP_JSON_URL;
-    var currentIncidentNumber = "";
-
-
     // /////////////////////////////////////
     function getTfdData() {
         $.ajax({ type: "GET", url: url }).done(function(response){
 
-            // always update
             updateIndexedDB(response);
 
             var incidents       = response.Incidents
             var incidentsCount  = incidents.Incident.length;
-            console.log(incidentsCount)
-
-            var lastIncident = incidents.Incident[0].IncidentNumber
-            console.log(lastIncident)
+            var lastIncident    = incidents.Incident[0].IncidentNumber
 
             if (currentIncidentNumber !== lastIncident) {
-                // json was updated
 
                 if (marker) {
                     marker.closePopup();
@@ -155,13 +150,11 @@ $(document).ready(function() {
                 for (var counter = 0; counter < incidentsCount; counter++) {
 
                     var incident = incidents.Incident[counter]
-                    // console.log(incident)
 
-                    // see if the marker alreadey exists
-                    // console.log(incident.IncidentNumber)
-                    
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
 
+                        //////////////////////////////////////////////////////////////////////
+                        // build vehicle(s) html string
                         //////////////////////////////////////////////////////////////////////
                         var vehiclesArr = [];
                         var vehicles  = incident.Vehicles.Vehicle
@@ -180,30 +173,25 @@ $(document).ready(function() {
                         vehiclesString += "</table>"
                         //////////////////////////////////////////////////////////////////////
 
+                        // create new map marker
                         marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
                         popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-                        
-
                         markers.push(incident.IncidentNumber)
 
                         if (counter === 0) {
                             marker.bindPopup(popupString).openPopup();
                             map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)
                             // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-                            console.log("here...")
                             function blink() {
                                 L.DomUtil.addClass(marker._icon, "blinking");
                             }
                             blink();
                         }
-
                     }
-                
                 }
-
             }
         })
-        setTimeout(getTfdData, 300000);
+        setTimeout(getTfdData, 60000);
     }
     getTfdData();
 })
