@@ -199,35 +199,3 @@ $(document).ready(function() {
     getTfdData();
 })
 
-
-            // console.log(incidents.Incident.length)
-
-            // for (var index = 0 ; index < incidents.Incident.length; index++) {
-                
-            //     console.log("index: " + index)
-            //     var incident  = incidents.Incident[index]
-            //     console.log(incident)
-
-                // var incident  = response.Incidents.Incident[n]
-                // if (currentIncidentNumber == incident.IncidentNumber) {
-                //     return;
-                // } else {
-                //     currentIncidentNumber = incident.IncidentNumber;
-                //     // updateIndexedDB(response);
-                // } 
-
-                // if (marker) {
-                //     marker.closePopup();
-                //     L.DomUtil.removeClass(marker._icon, "blinking");
-                //     marker.onmouseover = function() { marker.openPopup();}
-                //     marker.onmouseout  = function() { marker.closePopup();}
-                // }
-
-                // if ($(window).focus) {
-                //     map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)
-                // } else {
-                //     map.setZoom(CONST_MAP_INCIDENT_ZOOM);
-                //     map.panTo([incident.Latitude, incident.Longitude]);
-                // }
-
-            // }
