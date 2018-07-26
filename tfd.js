@@ -180,13 +180,16 @@ $(document).ready(function() {
 
                         if (counter === 0) {
                             marker.bindPopup(popupString).openPopup();
-                            map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)
+                            map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM)    
                             // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
                             function blink() {
                                 L.DomUtil.addClass(marker._icon, "blinking");
                             }
                             blink();
+                        } else {
+                            marker.bindPopup(popupString);
                         }
+                        
                     }
                 }
             }
