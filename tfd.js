@@ -1,5 +1,5 @@
 // prepare indexedDB 
-var deleteIndexedDB = window.indexedDB.deleteDatabase("TFDIncidents")
+var deleteIndexedDB = window.indexedDB.deleteDatabase("TFD")
 var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 
 // prefixes of window.IDB objects
@@ -23,21 +23,18 @@ function getVehicles(vehicles) {
 
 function updateIndexedDB(json) {
 
-    //
-    // currently the data in indexedDB is not being used
-    //
-    var db = indexedDB.open("TFDIncidents", 1);
+    var db = indexedDB.open("TFD", 1);
 
     db.onupgradeneeded = function() {
         var database    = db.result;
-        var store = database.createObjectStore("IncidentsStore", {keyPath: "incidentNumber", unique: true});
+        var store = database.createObjectStore("Incidents", {keyPath: "incidentNumber", unique: true});
     }
 
     db.onsuccess = function() {
 
         var database = db.result
-        var tx       = database.transaction(["IncidentsStore"], "readwrite");
-        var store    = tx.objectStore("IncidentsStore");
+        var tx       = database.transaction(["Incidents"], "readwrite");
+        var store    = tx.objectStore("Incidents");
 
         var incidentsCount = json.Incidents.Incident.length;
 
@@ -45,18 +42,9 @@ function updateIndexedDB(json) {
         for (var n = 0; n < incidentsCount; n++) {
 
             var incident = json.Incidents.Incident[n];
+            var vehiclesArr = getVehicles(incident.Vehicles);
 
-            // for storing vehicle(s)
-            var vehiclesArr = [];
-            var vehicles    = incident.Vehicles
-            vehiclesArr     = getVehicles(vehicles);
-
-            // The put() method of the IDBObjectStore interface updates a given record in a database, 
-            // or inserts a new record if the given item does not already exist.
-            //
-            // This area may need attention in that working with IndexedDB is asynchronous in nature
-            // and I am currently not taking that into account.
-            var put = store.put({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
+            store.put({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
         }
 
         tx.oncomplete = function() {
@@ -148,7 +136,8 @@ $(document).ready(function() {
 
             if (currentIncidentNumber !== latestIncidentNumber) {
 
-                // currentMarker = the currently blinking marker
+                // if true, then the currentMarker is the the blinking marker on the map
+                // which needs to quit blinking in that we are processing a newer marker
                 if (currentMarker) {
                     currentMarker.closePopup();
                     L.DomUtil.removeClass(currentMarker._icon, "blinking");
@@ -157,13 +146,15 @@ $(document).ready(function() {
                 // iterate through all of the JSON incidents
                 for (var counter = 0; counter < incidentsCount; counter++) {
 
+                    // fetch incident
                     var incident = incidents.Incident[counter]
 
                     // see if the incidentNumber is in an array
+                    // in not in array then we need to add a marker to the map
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
 
                         //////////////////////////////////////////////////////////////////////
-                        // build vehicle(s) html string
+                        // build vehicle(s) html string for popup
                         //////////////////////////////////////////////////////////////////////
                         var vehiclesArr = [];
                         var vehicles  = incident.Vehicles.Vehicle
@@ -185,6 +176,8 @@ $(document).ready(function() {
                         // create new map marker
                         marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
                         popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+
+                        // add incident number to array; array contains incident number for all markers that have been created
                         markers.push(incident.IncidentNumber)
 
                         if (counter === 0) {
