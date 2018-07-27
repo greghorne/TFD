@@ -6,9 +6,9 @@ Display Tulsa Fire Department incidents on a map.
 
 * Data Source: 
 
-    https://www.cityoftulsa.org/government/departments/information-technology/open-tulsa/open-tulsa-dataset-list/
+    * https://www.cityoftulsa.org/government/departments/information-technology/open-tulsa/open-tulsa-dataset-list/
 
-    https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
+    * https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
 
 * Tested on Chrome & Brave
 
@@ -25,9 +25,9 @@ Notes/Comments:
 
 * I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme when it didn't update for over and hour.  Please keep this in mind when viewing incidents on the map.
 
-* I have added code for using IndexedDB that is currently keeping all incidents and is updated when a new JSON file is retrieved.  Currrently the DB is not being used.  Maybe an additional feature later when I think of something.  JsStore might be a good library to use for interacting with IndexedDB.
+* I have added code for using IndexedDB that is currently keeping all incidents and is updated when a new JSON file is retrieved.  Currrently the DB is not being used.  Maybe an additional feature later when I think of something. 
 
-This webpage is for demonstration purposes.
+**This webpage is for demonstration purposes.**
 
 
 
