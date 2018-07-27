@@ -8,7 +8,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
     from { opacity: 0.25; } 
 }
 
-.blinking { animation: fade .5s infinite alternate; }
+.blinking  { animation: fade 0.25s infinite alternate; }
+.blinking2 { animation: fade 0.5s infinite alternate; }
 
 
 

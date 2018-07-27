@@ -61,7 +61,9 @@ const CONST_MAP_DEFAULT_ZOOM       =  11
 
 const CONST_MAP_JSON_URL = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
 
-const CONST_MAP_INCIDENT_ZOOM      = 15
+const CONST_MAP_INCIDENT_ZOOM         = 15
+
+const CONST_RECENT_MARKERS_TO_DISPLAY = 3
 
 // defintion of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -103,6 +105,7 @@ $(document).ready(function() {
     var marker;
     var markers = [];
     var currentMarker;
+    var recentMarkers = [];
     var url = CONST_MAP_JSON_URL;
     var currentIncidentNumber = "";
 
@@ -141,6 +144,13 @@ $(document).ready(function() {
                 if (currentMarker) {
                     currentMarker.closePopup();
                     L.DomUtil.removeClass(currentMarker._icon, "blinking");
+                }
+
+                if (recentMarkers.length > 0) {
+                    for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
+                        L.DomUtil.removeClass(recentMarkers(n)._icon, "blinking2");
+                    }
+                    recentMarkers = []
                 }
 
                 // iterate through all of the JSON incidents
@@ -203,6 +213,19 @@ $(document).ready(function() {
                                 L.DomUtil.addClass(marker._icon, "blinking");
                             }
                             blink();
+                        } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
+                            
+                            // this is not the latest incident so just bind the popup to the marker
+                            marker.bindPopup(popupString);
+
+                            recentMarkers.push(marker);
+                           
+                            // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
+                            function blink() {
+                                L.DomUtil.addClass(marker._icon, "blinking2");
+                            }
+                            blink();
+
                         } else {
                             // this is not the latest incident so just bind the popup to the marker
                             marker.bindPopup(popupString);
