@@ -111,7 +111,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 $(document).ready(function() {
 
     var map;
-    var myIcon = L.icon({ className: 'blinnking'})
+    // var myIcon = L.icon({ className: 'blinnking'})
     var marker;
     var markers = [];
     var currentMarker;
@@ -137,25 +137,29 @@ $(document).ready(function() {
 
             updateIndexedDB(response);
 
+            // all json incidents
             var incidents       = response.Incidents
+
+            // number of json incidents
             var incidentsCount  = incidents.Incident.length;
 
-            // the last (most recent) incident from the json object
-            var lastIncident    = incidents.Incident[0].IncidentNumber
+            // most recent incident from the json object
+            var latestIncidentNumber    = incidents.Incident[0].IncidentNumber
 
-            console.log("currentIncidentNumber: " + currentIncidentNumber)
-            console.log("lastIncident: " + lastIncident)
-            if (currentIncidentNumber !== lastIncident) {
+            if (currentIncidentNumber !== latestIncidentNumber) {
 
+                // currentMarker = the currently blinking marker
                 if (currentMarker) {
                     currentMarker.closePopup();
                     L.DomUtil.removeClass(currentMarker._icon, "blinking");
                 }
 
+                // iterate through all of the JSON incidents
                 for (var counter = 0; counter < incidentsCount; counter++) {
 
                     var incident = incidents.Incident[counter]
 
+                    // see if the incidentNumber is in an array
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
 
                         //////////////////////////////////////////////////////////////////////
@@ -184,14 +188,19 @@ $(document).ready(function() {
                         markers.push(incident.IncidentNumber)
 
                         if (counter === 0) {
+
+                            // special handling for the latest JSON incident (the newest incident)
                             
                             currentIncidentNumber = incident.IncidentNumber;
 
                             currentMarker = marker
                             marker.bindPopup(popupString).openPopup();
+
+                            // flyTo seems to hang when the window is no in focus
                             if ($(window).focus) {
                                 map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM);
                             } else {
+                                // pan and zoom to incident
                                 map.panTo([incident.Latitude, incident.Longitude]);
                                 map.setZoom(CONST_MAP_INCIDENT_ZOOM)
                             }
@@ -202,6 +211,7 @@ $(document).ready(function() {
                             }
                             blink();
                         } else {
+                            // this is not the latest incident so just bind the popup to the marker
                             marker.bindPopup(popupString);
                         }
                         
@@ -209,6 +219,8 @@ $(document).ready(function() {
                 }
             }
         })
+
+        // poll json data
         setTimeout(getTfdData, 60000);
     }
     getTfdData();
