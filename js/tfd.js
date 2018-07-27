@@ -186,7 +186,7 @@ $(document).ready(function() {
                             // special handling for the latest JSON incident (the newest incident)
                             var markerPos   = new L.LatLng(incident.Latitude, incident.Longitude);
                             var pinAnchor   = new L.Point(25/2, 41);
-                            var pin         = new L.Icon({ iconUrl: ".images/marker-icon-red.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
+                            var pin         = new L.Icon({ iconUrl: "./images/marker-icon-red.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
                             marker          = new L.marker(markerPos, { icon: pin, title: incident.Problem, riseOnHover: true }).addTo(map);
                             
                             currentIncidentNumber = incident.IncidentNumber;

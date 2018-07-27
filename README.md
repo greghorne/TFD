@@ -5,10 +5,9 @@ Display Tulsa Fire Department incidents on a map.
 * The Webapp:
 
     * Polls City of Tulsa Fire Department incident data every 1 minute.
-    * The map will center and zoom to the most recent incident with a blinking blue map marker and a popup with information.
-    * The previous prior 3 incidents are also noticable as blue markers that blink at a slower rate.
-    * In certain cases, it is possible for a marker to "hide" on top of a different marker when incident addresses are the same.  For example, a marker is placed at a location.  Subsequently another marker is placed at the same location and is blinking.  The blinking effect will not be noticeable.
-    * The data is updated on the map as it becomes available from the City of Tulsa web server.
+    * The map will center and zoom to the most recent incident with a blinking red map marker and a popup with information.
+    * The immediate 5 previous incidents prior to the current (blinkin) incident are displayed as yellow map markers.
+    * All other incidents are represented as blue map markers.
 
 * Tech Stack: Leaflet & Javascript
 
