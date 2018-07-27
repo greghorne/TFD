@@ -1,0 +1,23 @@
+html, body { height: 100%; width: 100%; margin: 0px }
+
+#map { height: 100%; width: 100% }
+
+
+/* blinking map marker */
+@keyframes fade { 
+    from { opacity: 0.25; } 
+}
+
+.blinking  { animation: fade 0.75s infinite alternate; }
+.blinking2 { animation: fade 1.25s infinite alternate; }
+
+
+
+  /* leaflet css overrides */
+  .leaflet-popup-content-wrapper {
+    background: #dbe7ea !important
+  }
+
+  .leaflet-popup-tip {
+    background: #dbe7ea !important
+  }

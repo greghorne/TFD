@@ -27,8 +27,6 @@ Display Tulsa Fire Department incidents on a map.
 
 Notes/Comments:
 
-* I attempted to use different colored markers on the map but ran into some technical issue thus they are all the same blue markers.  I will revisit this issue.
-
 * The webpage was written to minimize necessary files to execute and is not setup to run as a server.  Everything is executed client-side and CDN's are used.
 
 * The webpage is polling the server every minute and is displaying the latest incident as a flashing icon and all other prior incidents onto the map.
@@ -37,7 +35,7 @@ Notes/Comments:
 
 * I have added code for using IndexedDB that is currently keeping all incidents and is updated when a new JSON file is retrieved.  Currrently the DB is not being used.  Maybe an additional feature later when I think of something. 
 
-**This webpage is for demonstration purposes.**
+<center>**This webpage is for demonstration purposes.**</center>
 
 
 
