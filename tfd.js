@@ -114,6 +114,7 @@ $(document).ready(function() {
     var myIcon = L.icon({ className: 'blinnking'})
     var marker;
     var markers = [];
+    var currentMarker;
     var url = CONST_MAP_JSON_URL;
     var currentIncidentNumber = "";
 
@@ -138,13 +139,17 @@ $(document).ready(function() {
 
             var incidents       = response.Incidents
             var incidentsCount  = incidents.Incident.length;
+
+            // the last (most recent) incident from the json object
             var lastIncident    = incidents.Incident[0].IncidentNumber
 
+            console.log("currentIncidentNumber: " + currentIncidentNumber)
+            console.log("lastIncident: " + lastIncident)
             if (currentIncidentNumber !== lastIncident) {
 
-                if (marker) {
-                    marker.closePopup();
-                    L.DomUtil.removeClass(marker._icon, "blinking");
+                if (currentMarker) {
+                    currentMarker.closePopup();
+                    L.DomUtil.removeClass(currentMarker._icon, "blinking");
                 }
 
                 for (var counter = 0; counter < incidentsCount; counter++) {
@@ -179,6 +184,10 @@ $(document).ready(function() {
                         markers.push(incident.IncidentNumber)
 
                         if (counter === 0) {
+                            
+                            currentIncidentNumber = incident.IncidentNumber;
+
+                            currentMarker = marker
                             marker.bindPopup(popupString).openPopup();
                             if ($(window).focus) {
                                 map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM);
