@@ -149,14 +149,14 @@ $(document).ready(function() {
                 if (recentMarkers.length > 0) {
                     for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
                         var aMarker = recentMarkers[n]
-            console.log(aMarker)
-                        L.DomUtil.removeClass(aMarker._icon, "blinking2");
+                        L.DomUtil.removeClass(recentMarkers[n]._icon, "blinking2");
                     }
                     recentMarkers = []
                 }
 
                 // iterate through all of the JSON incidents
-                for (var counter = 0; counter < incidentsCount; counter++) {
+                // for (var counter = 0; counter < incidentsCount; counter++) {
+                for (var counter = incidentsCount - 1; counter >= 0; counter--) {
 
                     // fetch incident
                     var incident = incidents.Incident[counter]
@@ -186,7 +186,15 @@ $(document).ready(function() {
                         //////////////////////////////////////////////////////////////////////
 
                         // create new map marker
-                        marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+
+                        var markerPos = new L.LatLng(incident.Latitude, incident.Longitude);
+                        var pinAnchor = new L.Point(25/2, 41);
+                        var pin = new L.Icon({ iconUrl: "marker-icon-red.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41], title: incident.Problem, riseOnHover: true });
+                        marker = new L.marker(markerPos, { icon: pin }).addTo(map);
+
+                        // var icon = L.icon({iconUrl: "marker-icon-red.png"})
+                        // marker = new L.marker([incident.Latitude, incident.Longitude], {icon: icon, title: incident.Problem, riseOnHover: true}).addTo(map);
+
                         popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
 
                         // add incident number to array; array contains incident number for all markers that have been created
