@@ -132,7 +132,8 @@ $(document).ready(function() {
                     console.log("currentMarker...")
                     currentMarker.closePopup();
                     L.DomUtil.removeClass(currentMarker._icon, "blinking");
-                    currentMarker.setIcon({ icon: L.icon({}) });
+                    // currentMarker.setIcon({ icon: L.icon({}) }); ===> error
+                    currentMarker.setIcon({ icon: {} });
                     console.log("exit currentMarker...")
                 }
 
