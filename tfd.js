@@ -148,7 +148,9 @@ $(document).ready(function() {
 
                 if (recentMarkers.length > 0) {
                     for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
-                        L.DomUtil.removeClass(recentMarkers(n)._icon, "blinking2");
+                        var aMarker = recentMarkers[n]
+            console.log(aMarker)
+                        L.DomUtil.removeClass(aMarker._icon, "blinking2");
                     }
                     recentMarkers = []
                 }
