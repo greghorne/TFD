@@ -60,7 +60,14 @@ const CONST_MAP_JSON_URL = "https://www.cityoftulsa.org/apps/opendata/tfd_dispat
 
 const CONST_MAP_INCIDENT_ZOOM         = 15
 
-const CONST_RECENT_MARKERS_TO_DISPLAY = 3
+const CONST_RECENT_MARKERS_TO_DISPLAY = 5
+
+const CONST_PIN_ANCHOR      = new L.Point(25/2, 41);
+const CONST_MARKER_RED      = "./images/marker-icon-red.png";
+const CONST_MARKER_YELLOW   = "./images/marker-icon-yellow.png"
+
+const CONST_PIN_RED         = new L.Icon({ iconUrl: CONST_MARKER_RED, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
+const CONST_PIN_YELLOW      = new L.Icon({ iconUrl: CONST_MARKER_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
 // defintion of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -90,6 +97,27 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
         maxZoom: CONST_MAP_LAYERS[n].maxZoom 
     })
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
+}
+
+function getVehicleHTMLString(vehicles, fn) {
+
+    // build vehicle(s) html string for popup
+    var vehiclesArr = [];
+    var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
+
+    if (vehicles.Division) {
+        // only 1 vehicle responding
+        vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
+        vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
+    } else {
+        // more than 1 vehicle responding then it is in an array
+        for (var n = 0; n < vehicles.length; n++) {
+            vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
+            vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
+        }
+    }
+    vehiclesString += "</table>"
+    fn(vehiclesString);
 }
 
 
@@ -133,7 +161,8 @@ $(document).ready(function() {
                     currentMarker.closePopup();
                     L.DomUtil.removeClass(currentMarker._icon, "blinking");
                     // currentMarker.setIcon({ icon: L.icon({}) }); ===> error
-                    currentMarker.setIcon({ icon: {} });
+                    // currentMarkers[n].setIcon({icon: {}});        ===> error
+                    currentMarker.setIcon({ icon: L.Icon.Default() });
                     console.log("exit currentMarker...")
                 }
 
@@ -142,7 +171,7 @@ $(document).ready(function() {
                     for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
                         var aMarker = recentMarkers[n]
                         // L.DomUtil.removeClass(recentMarkers[n]._icon, "blinking2");
-                        recentMarkers[n].setIcon({icon: {}});
+                        recentMarker[n].setIcon({ icon: L.Icon.Default() });
                     }
                     recentMarkers = []
                 }
@@ -152,84 +181,48 @@ $(document).ready(function() {
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
 
                     var incident = incidents.Incident[counter]  // fetch incident
-
-                    // see if the incidentNumber is in an array
-                    // in not in array then we need to add a marker to the map
+                    // see if the incidentNumber is in an array, if not then add it to the array and proceed to add a marker to the map
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
 
-                        //////////////////////////////////////////////////////////////////////
-                        // build vehicle(s) html string for popup
-                        //////////////////////////////////////////////////////////////////////
-                        var vehiclesArr = [];
                         var vehicles  = incident.Vehicles.Vehicle
-                        var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
+                        var vehiclesString;
+                        getVehicleHTMLString(vehicles, function(vehiclesString) {
 
-                        // if there is more than one vehicle responding then it is in an array
-                        if (vehicles.Division) {
-                            vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
-                            vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
-                        } else {
-                            for (var n = 0; n < vehicles.length; n++) {
-                                vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
-                                vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
-                            }
-                        }
-                        vehiclesString += "</table>"
-                        //////////////////////////////////////////////////////////////////////
+                            popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
+                                        incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+                            markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
 
-                        popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
-                                      incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+                            if (counter === 0) {
+                                // special handling for the latest JSON incident (the newest incident)
+                                var markerLocation = new L.LatLng(incident.Latitude, incident.Longitude);
+                                marker             = new L.marker(markerLocation, { icon: CONST_PIN_RED, title: incident.Problem, riseOnHover: true }).addTo(map);
+                                
+                                currentIncidentNumber = incident.IncidentNumber;
+                                currentMarker = marker
+                                marker.bindPopup(popupString).openPopup();
 
-                        markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
-
-                        if (counter === 0) {
-
-                            // special handling for the latest JSON incident (the newest incident)
-                            var markerPos   = new L.LatLng(incident.Latitude, incident.Longitude);
-                            var pinAnchor   = new L.Point(25/2, 41);
-                            var pin         = new L.Icon({ iconUrl: "./images/marker-icon-red.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
-                            marker          = new L.marker(markerPos, { icon: pin, title: incident.Problem, riseOnHover: true }).addTo(map);
+                                if ($(window).focus) {
+                                    map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM);
+                                } else {
+                                    map.panTo([incident.Latitude, incident.Longitude]);
+                                    map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+                                }
                             
-                            currentIncidentNumber = incident.IncidentNumber;
-
-                            currentMarker = marker
-                            marker.bindPopup(popupString).openPopup();
-
-                            // flyTo seems to hang when the window is no in focus
-                            if ($(window).focus) {
-                                map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM);
+                                // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
+                                function blink() {
+                                    L.DomUtil.addClass(marker._icon, "blinking");
+                                }
+                                blink();
+                            } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
+                                var markerLocation = new L.LatLng(incident.Latitude, incident.Longitude);
+                                marker             = new L.marker(markerLocation, { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
+                                marker.bindPopup(popupString);
+                                recentMarkers.push(marker);
                             } else {
-                                map.panTo([incident.Latitude, incident.Longitude]);
-                                map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+                                marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+                                marker.bindPopup(popupString);
                             }
-                           
-                            // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-                            function blink() {
-                                L.DomUtil.addClass(marker._icon, "blinking");
-                            }
-                            blink();
-                        } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
-
-                            var markerPos   = new L.LatLng(incident.Latitude, incident.Longitude);
-                            var pinAnchor   = new L.Point(25/2, 41);
-                            var pin         = new L.Icon({ iconUrl: "./images/marker-icon-yellow.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
-                            marker          = new L.marker(markerPos, { icon: pin, title: incident.Problem, riseOnHover: true }).addTo(map);
-                            
-                            // this is not the latest incident so just bind the popup to the marker
-                            marker.bindPopup(popupString);
-                            recentMarkers.push(marker);
-                           
-                            // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-                            // function blink() {
-                            //     L.DomUtil.addClass(marker._icon, "blinking2");
-                            // }
-                            // blink();
-
-                        } else {
-                            // this is not the latest incident so just bind the popup to the marker
-                            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
-                            marker.bindPopup(popupString);
-                        }
+                        })
                         
                     }
                 }
