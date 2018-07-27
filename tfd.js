@@ -142,14 +142,19 @@ $(document).ready(function() {
                 // if true, then the currentMarker is the the blinking marker on the map
                 // which needs to quit blinking in that we are processing a newer marker
                 if (currentMarker) {
+                    console.log("currentMarker...")
                     currentMarker.closePopup();
                     L.DomUtil.removeClass(currentMarker._icon, "blinking");
+                    currentMarker.setIcon({icon: L.Icon.Default});
+
                 }
 
                 if (recentMarkers.length > 0) {
+                    console.log("recentMarkers")
                     for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
                         var aMarker = recentMarkers[n]
-                        L.DomUtil.removeClass(recentMarkers[n]._icon, "blinking2");
+                        // L.DomUtil.removeClass(recentMarkers[n]._icon, "blinking2");
+                        recentMarkers[n].setIcon({icon: L.IconDefault});
                     }
                     recentMarkers = []
                 }
@@ -187,13 +192,10 @@ $(document).ready(function() {
 
                         // create new map marker
 
-                        var markerPos = new L.LatLng(incident.Latitude, incident.Longitude);
-                        var pinAnchor = new L.Point(25/2, 41);
-                        var pin = new L.Icon({ iconUrl: "marker-icon-red.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41], title: incident.Problem, riseOnHover: true });
-                        marker = new L.marker(markerPos, { icon: pin }).addTo(map);
+
 
                         // var icon = L.icon({iconUrl: "marker-icon-red.png"})
-                        // marker = new L.marker([incident.Latitude, incident.Longitude], {icon: icon, title: incident.Problem, riseOnHover: true}).addTo(map);
+                        // marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
 
                         popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
 
@@ -203,6 +205,11 @@ $(document).ready(function() {
                         if (counter === 0) {
 
                             // special handling for the latest JSON incident (the newest incident)
+
+                            var markerPos = new L.LatLng(incident.Latitude, incident.Longitude);
+                            var pinAnchor = new L.Point(25/2, 41);
+                            var pin = new L.Icon({ iconUrl: "marker-icon-red.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
+                            marker = new L.marker(markerPos, { icon: pin, title: incident.Problem, riseOnHover: true }).addTo(map);
                             
                             currentIncidentNumber = incident.IncidentNumber;
 
@@ -224,6 +231,11 @@ $(document).ready(function() {
                             }
                             blink();
                         } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
+
+                            var markerPos = new L.LatLng(incident.Latitude, incident.Longitude);
+                            var pinAnchor = new L.Point(25/2, 41);
+                            var pin = new L.Icon({ iconUrl: "marker-icon-yellow.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
+                            marker = new L.marker(markerPos, { icon: pin, title: incident.Problem, riseOnHover: true }).addTo(map);
                             
                             // this is not the latest incident so just bind the popup to the marker
                             marker.bindPopup(popupString);
@@ -231,13 +243,15 @@ $(document).ready(function() {
                             recentMarkers.push(marker);
                            
                             // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-                            function blink() {
-                                L.DomUtil.addClass(marker._icon, "blinking2");
-                            }
-                            blink();
+                            // function blink() {
+                            //     L.DomUtil.addClass(marker._icon, "blinking2");
+                            // }
+                            // blink();
 
                         } else {
                             // this is not the latest incident so just bind the popup to the marker
+                            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+
                             marker.bindPopup(popupString);
                         }
                         
