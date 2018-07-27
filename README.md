@@ -14,7 +14,7 @@ Display Tulsa Fire Department incidents on a map.
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
 
-* Alternatively download and place index.html, tfd.js and tfd.css into the same folder and open index.html in a browser.
+* Alternatively download and place **index.html**, **tfd.js** and **tfd.css** into the same folder and open index.html in a browser.
 
 
 Notes/Comments:
