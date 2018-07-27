@@ -176,8 +176,7 @@ $(document).ready(function() {
                     recentMarkers = []
                 }
 
-                // iterate through all of the JSON incidents
-                // for (var counter = 0; counter < incidentsCount; counter++) {
+                // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
 
                     var incident = incidents.Incident[counter]  // fetch incident
@@ -198,7 +197,7 @@ $(document).ready(function() {
                                 marker             = new L.marker(markerLocation, { icon: CONST_PIN_RED, title: incident.Problem, riseOnHover: true }).addTo(map);
                                 
                                 currentIncidentNumber = incident.IncidentNumber;
-                                currentMarker = marker
+                                currentMarker         = marker
                                 marker.bindPopup(popupString).openPopup();
 
                                 if ($(window).focus) {
