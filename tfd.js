@@ -20,7 +20,6 @@ function getVehicles(vehicles) {
     }
 }
 
-
 function updateIndexedDB(json) {
 
     var db = indexedDB.open("TFD", 1);
@@ -38,9 +37,7 @@ function updateIndexedDB(json) {
 
         var incidentsCount = json.Incidents.Incident.length;
 
-        // iterate through json
-        for (var n = 0; n < incidentsCount; n++) {
-
+        for (var n = 0; n < incidentsCount; n++) {  // iterate through json
             var incident = json.Incidents.Incident[n];
             var vehiclesArr = getVehicles(incident.Vehicles);
 
@@ -86,7 +83,6 @@ const CONST_MAP_LAYERS = [
 // build map layers (dynamically) from CONST_MAP_LAYERS
 var mapLayers = [];
 var baseMaps  = {};
-
 for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     mapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
         attribution: CONST_MAP_LAYERS[n].attribution, 
@@ -116,11 +112,8 @@ $(document).ready(function() {
         layers: [mapLayers[0]]
     });
 
-    // add all map layers to layer control
-    L.control.layers(baseMaps).addTo(map)
-
-    // add scalebar
-    L.control.scale({imperial: true, metric: false}).addTo(map)
+    L.control.layers(baseMaps).addTo(map)   // add all map layers to layer control
+    L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
 
     // /////////////////////////////////////
     function getTfdData() {
@@ -128,25 +121,19 @@ $(document).ready(function() {
 
             updateIndexedDB(response);
 
-            // all json incidents
-            var incidents       = response.Incidents
-
-            // number of json incidents
-            var incidentsCount  = incidents.Incident.length;
-
-            // most recent incident from the json object
-            var latestIncidentNumber    = incidents.Incident[0].IncidentNumber
+            var incidents       = response.Incidents                            // all json incidents
+            var incidentsCount  = incidents.Incident.length;                    // number of json incidents
+            var latestIncidentNumber    = incidents.Incident[0].IncidentNumber  // most recent incident from the json object
 
             if (currentIncidentNumber !== latestIncidentNumber) {
 
-                // if true, then the currentMarker is the the blinking marker on the map
-                // which needs to quit blinking in that we are processing a newer marker
+                // if true, then the currentMarker is the the blinking marker on the map which needs to quit blinking in that we are processing a newer marker
                 if (currentMarker) {
                     console.log("currentMarker...")
                     currentMarker.closePopup();
                     L.DomUtil.removeClass(currentMarker._icon, "blinking");
-                    currentMarker.setIcon({icon: L.Icon.Default});
-
+                    currentMarker.setIcon({ icon: L.icon({}) });
+                    console.log("exit currentMarker...")
                 }
 
                 if (recentMarkers.length > 0) {
@@ -154,7 +141,7 @@ $(document).ready(function() {
                     for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
                         var aMarker = recentMarkers[n]
                         // L.DomUtil.removeClass(recentMarkers[n]._icon, "blinking2");
-                        recentMarkers[n].setIcon({icon: L.IconDefault});
+                        recentMarkers[n].setIcon({icon: {}});
                     }
                     recentMarkers = []
                 }
@@ -163,8 +150,7 @@ $(document).ready(function() {
                 // for (var counter = 0; counter < incidentsCount; counter++) {
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
 
-                    // fetch incident
-                    var incident = incidents.Incident[counter]
+                    var incident = incidents.Incident[counter]  // fetch incident
 
                     // see if the incidentNumber is in an array
                     // in not in array then we need to add a marker to the map
@@ -190,26 +176,18 @@ $(document).ready(function() {
                         vehiclesString += "</table>"
                         //////////////////////////////////////////////////////////////////////
 
-                        // create new map marker
+                        popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
+                                      incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
 
-
-
-                        // var icon = L.icon({iconUrl: "marker-icon-red.png"})
-                        // marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
-
-                        popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " + incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-
-                        // add incident number to array; array contains incident number for all markers that have been created
-                        markers.push(incident.IncidentNumber)
+                        markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
 
                         if (counter === 0) {
 
                             // special handling for the latest JSON incident (the newest incident)
-
-                            var markerPos = new L.LatLng(incident.Latitude, incident.Longitude);
-                            var pinAnchor = new L.Point(25/2, 41);
-                            var pin = new L.Icon({ iconUrl: "marker-icon-red.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
-                            marker = new L.marker(markerPos, { icon: pin, title: incident.Problem, riseOnHover: true }).addTo(map);
+                            var markerPos   = new L.LatLng(incident.Latitude, incident.Longitude);
+                            var pinAnchor   = new L.Point(25/2, 41);
+                            var pin         = new L.Icon({ iconUrl: "marker-icon-red.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
+                            marker          = new L.marker(markerPos, { icon: pin, title: incident.Problem, riseOnHover: true }).addTo(map);
                             
                             currentIncidentNumber = incident.IncidentNumber;
 
@@ -220,7 +198,6 @@ $(document).ready(function() {
                             if ($(window).focus) {
                                 map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM);
                             } else {
-                                // pan and zoom to incident
                                 map.panTo([incident.Latitude, incident.Longitude]);
                                 map.setZoom(CONST_MAP_INCIDENT_ZOOM)
                             }
@@ -232,14 +209,13 @@ $(document).ready(function() {
                             blink();
                         } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
 
-                            var markerPos = new L.LatLng(incident.Latitude, incident.Longitude);
-                            var pinAnchor = new L.Point(25/2, 41);
-                            var pin = new L.Icon({ iconUrl: "marker-icon-yellow.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
-                            marker = new L.marker(markerPos, { icon: pin, title: incident.Problem, riseOnHover: true }).addTo(map);
+                            var markerPos   = new L.LatLng(incident.Latitude, incident.Longitude);
+                            var pinAnchor   = new L.Point(25/2, 41);
+                            var pin         = new L.Icon({ iconUrl: "marker-icon-yellow.png", iconsize: [25, 41], iconAnchor: pinAnchor, popupAnchor: [0,-41] });
+                            marker          = new L.marker(markerPos, { icon: pin, title: incident.Problem, riseOnHover: true }).addTo(map);
                             
                             // this is not the latest incident so just bind the popup to the marker
                             marker.bindPopup(popupString);
-
                             recentMarkers.push(marker);
                            
                             // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
@@ -251,7 +227,6 @@ $(document).ready(function() {
                         } else {
                             // this is not the latest incident so just bind the popup to the marker
                             marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
-
                             marker.bindPopup(popupString);
                         }
                         
