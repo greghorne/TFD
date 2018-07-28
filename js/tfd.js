@@ -155,6 +155,11 @@ $(document).ready(function() {
 
             if (currentIncidentNumber !== latestIncidentNumber) {
 
+
+
+
+
+
                 // if true, then the currentMarker is the the blinking marker on the map which needs to quit blinking in that we are processing a newer marker
                 if (currentMarker) {
                     console.log("currentMarker...")
@@ -162,20 +167,28 @@ $(document).ready(function() {
                     L.DomUtil.removeClass(currentMarker._icon, "blinking");
                     // currentMarker.setIcon({ icon: L.icon({}) }); ===> error
                     // currentMarkers[n].setIcon({icon: {}});        ===> error
-                    currentMarker.setIcon({ icon: L.Icon.Default() });
+                    // currentMarker.setIcon({ icon: L.Icon.Default() }); ==> error
+                    currentMarker.setIcon(L.Icon.Default());
                     console.log("exit currentMarker...")
                 }
+
 
                 if (recentMarkers.length > 0) {
                     console.log("recentMarkers")
                     for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
                         var aMarker = recentMarkers[n]
                         // L.DomUtil.removeClass(recentMarkers[n]._icon, "blinking2");
-                        recentMarker[n].setIcon({ icon: L.Icon.Default() });
+                        recentMarker[n].setIcon(L.Icon.Default());
                     }
                     recentMarkers = []
                 }
 
+
+
+
+
+
+                
                 // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
 
