@@ -5,11 +5,11 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 /* blinking map marker */
 @keyframes fade { 
-    from { opacity: 0.25; } 
+    from { opacity: 0; } 
 }
 
-.blinking  { animation: fade 0.75s infinite alternate; }
-.blinking2 { animation: fade 1.25s infinite alternate; }
+.blinking  { animation: fade 1.00s infinite alternate; }
+.blinking2 { animation: fade 3.00s infinite alternate; }
 
 
 

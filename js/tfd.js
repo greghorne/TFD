@@ -99,7 +99,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
 
-function getVehicleHTMLString(vehicles, fn) {
+function getVehicleHTMLString(vehicles, fnCallback) {
 
     // build vehicle(s) html string for popup
     var vehiclesArr = [];
@@ -110,14 +110,14 @@ function getVehicleHTMLString(vehicles, fn) {
         vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
     } else {
-        // more than 1 vehicle responding then it is in an array
+        // more than 1 vehicle responding then it is read in an array
         for (var n = 0; n < vehicles.length; n++) {
             vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
             vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
         }
     }
     vehiclesString += "</table>"
-    fn(vehiclesString);
+    fnCallback(vehiclesString);
 }
 
 
@@ -149,8 +149,8 @@ $(document).ready(function() {
 
             updateIndexedDB(response);
 
-            var incidents       = response.Incidents                            // all json incidents
-            var incidentsCount  = incidents.Incident.length;                    // number of json incidents
+            var incidents               = response.Incidents                    // all json incidents
+            var incidentsCount          = incidents.Incident.length;            // number of json incidents
             var latestIncidentNumber    = incidents.Incident[0].IncidentNumber  // most recent incident from the json object
 
             if (currentIncidentNumber !== latestIncidentNumber) {
@@ -168,7 +168,10 @@ $(document).ready(function() {
                     // currentMarker.setIcon({ icon: L.icon({}) }); ===> error
                     // currentMarkers[n].setIcon({icon: {}});        ===> error
                     // currentMarker.setIcon({ icon: L.Icon.Default() }); ==> error
-                    currentMarker.setIcon(L.Icon.Default());
+                    // currentMarker.setIcon(L.Icon.Default)
+                    // currentMarker.setIcon(L.Icon.Default())
+
+                    currentMarker.setIcon(new L.Icon.Default());
                     console.log("exit currentMarker...")
                 }
 
@@ -197,7 +200,6 @@ $(document).ready(function() {
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
 
                         var vehicles  = incident.Vehicles.Vehicle
-                        var vehiclesString;
                         getVehicleHTMLString(vehicles, function(vehiclesString) {
 
                             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
@@ -205,29 +207,23 @@ $(document).ready(function() {
                             markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
 
                             if (counter === 0) {
-                                // special handling for the latest JSON incident (the newest incident)
-                                var markerLocation = new L.LatLng(incident.Latitude, incident.Longitude);
-                                marker             = new L.marker(markerLocation, { icon: CONST_PIN_RED, title: incident.Problem, riseOnHover: true }).addTo(map);
+                                marker  = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_RED, title: incident.Problem, riseOnHover: true }).addTo(map);
                                 
                                 currentIncidentNumber = incident.IncidentNumber;
                                 currentMarker         = marker
                                 marker.bindPopup(popupString).openPopup();
 
-                                if ($(window).focus) {
-                                    map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM);
-                                } else {
+                                if ($(window).focus) { map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); } 
+                                else {
                                     map.panTo([incident.Latitude, incident.Longitude]);
                                     map.setZoom(CONST_MAP_INCIDENT_ZOOM)
                                 }
                             
                                 // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-                                function blink() {
-                                    L.DomUtil.addClass(marker._icon, "blinking");
-                                }
+                                function blink() { L.DomUtil.addClass(marker._icon, "blinking"); }
                                 blink();
                             } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
-                                var markerLocation = new L.LatLng(incident.Latitude, incident.Longitude);
-                                marker             = new L.marker(markerLocation, { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
+                                marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
                                 marker.bindPopup(popupString);
                                 recentMarkers.push(marker);
                             } else {
@@ -235,13 +231,12 @@ $(document).ready(function() {
                                 marker.bindPopup(popupString);
                             }
                         })
-                        
                     }
                 }
             }
         })
 
-        // poll json data
+        // retrieve json data
         setTimeout(getTfdData, 60000);
     }
     getTfdData();
