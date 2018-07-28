@@ -24,11 +24,11 @@ Display Tulsa Fire Department incidents on a map.
 
 Notes/Comments:
 
-* Everything is executed client-side and CDN's are used thus there is no server in this webapp.
+* Everything is executed client-side thus there is no web server used.
 
-* I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme when it didn't update for over and hour.  Please keep this in mind when viewing incidents on the map.
+* I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme where it didn't update for over an hour.  Please keep this in mind when viewing incidents on the map.
 
-* I have added code for using IndexedDB that is currently keeping all incidents and is updated when a change in the retrieved JSON file is detected.  Currrently the DB is not being used.  Maybe an additional feature later when I think of something. 
+* I have added code for using IndexedDB that is currently keeping all incidents.  Currrently the DB is not being used.  Maybe an additional feature later when I think of something. 
 
 **This webpage is for demonstration purposes.**
 
