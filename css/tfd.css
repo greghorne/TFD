@@ -9,7 +9,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
 }
 
 .blinking  { animation: fade 1.00s infinite alternate; }
-.blinking2 { animation: fade 3.00s infinite alternate; }
+.blinking2 { animation: fade 1.50s infinite alternate; }
 
 
 

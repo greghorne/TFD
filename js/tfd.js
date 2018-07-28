@@ -99,7 +99,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
 
-function getVehicleHTMLString(vehicles, fnCallback) {
+function buildVehicleHTMLString(vehicles, fnCallback) {
 
     // build vehicle(s) html string for popup
     var vehiclesArr = [];
@@ -119,8 +119,10 @@ function getVehicleHTMLString(vehicles, fnCallback) {
     vehiclesString += "</table>"
     fnCallback(vehiclesString);
 }
+
 function clearCurrentMarker(currentMarker) {
     console.log("currentMarker...")
+    // set it back to default icon (blue)
     currentMarker.closePopup();
     L.DomUtil.removeClass(currentMarker._icon, "blinking");
     currentMarker.setIcon(L.Icon.Default());
@@ -129,9 +131,10 @@ function clearCurrentMarker(currentMarker) {
 
 function clearRecentMarkers() {
     console.log("recentMarkers")
+    // set it back to default icon (blue)
     for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
         var aMarker = recentMarkers[n]
-        // L.DomUtil.removeClass(recentMarkers[n]._icon, "blinking2");
+        L.DomUtil.removeClass(recentMarkers[n]._icon, "blinking2");
         recentMarker[n].setIcon(L.Icon.Default());
     }
     return [];
@@ -177,20 +180,19 @@ $(document).ready(function() {
 
             if (currentIncidentNumber !== latestIncidentNumber) {
 
-                // if true, then the currentMarker is the the blinking marker on the map which needs to quit blinking in that we are processing a newer marker
+                // clear current marker (blinking red) and recent markers (yellow icon)
                 if (currentMarker) { clearCurrentMarker(currentMarker) }
                 if (recentMarkers.length > 0) { recentMarkers = clearRecentMarkers(recentMarkers) }
-
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
 
                     var incident = incidents.Incident[counter]  // fetch incident
-                    // see if the incidentNumber is in an array, if not then add it to the array and proceed to add a marker to the map
+                    // see if the incidentNumber is in an array, if not it is a new incident
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
 
                         var vehicles  = incident.Vehicles.Vehicle
-                        getVehicleHTMLString(vehicles, function(vehiclesString) {
+                        buildVehicleHTMLString(vehicles, function(vehiclesString) {
 
                             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
                                         incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
@@ -216,6 +218,8 @@ $(document).ready(function() {
                                 marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
                                 marker.bindPopup(popupString);
                                 recentMarkers.push(marker);
+                                function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
+                                blink2();
                             } else {
                                 marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
                                 marker.bindPopup(popupString);
