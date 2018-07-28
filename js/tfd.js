@@ -69,6 +69,8 @@ const CONST_MARKER_YELLOW   = "./images/marker-icon-yellow.png"
 const CONST_PIN_RED         = new L.Icon({ iconUrl: CONST_MARKER_RED, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 const CONST_PIN_YELLOW      = new L.Icon({ iconUrl: CONST_MARKER_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
+// L.Icon.Default.prototype.options.iconUrl = './vendor/images/marker-icon.png';
+
 // defintion of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
@@ -129,7 +131,7 @@ function clearCurrentMarker(currentMarker) {
     console.log("exit currentMarker...")
 }
 
-function clearRecentMarkers() {
+function clearRecentMarkers(recentMarkers) {
     console.log("recentMarkers")
     // set it back to default icon (blue)
     for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
