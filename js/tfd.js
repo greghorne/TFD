@@ -125,7 +125,7 @@ function clearCurrentMarker(currentMarker) {
     // set it back to default icon (blue)
     currentMarker.closePopup();
     L.DomUtil.removeClass(currentMarker._icon, "blinking");
-    currentMarker.setIcon(L.Icon.Default());
+    currentMarker.setIcon(new L.Icon.Default());
     console.log("exit currentMarker...")
 }
 
@@ -135,7 +135,7 @@ function clearRecentMarkers() {
     for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
         var aMarker = recentMarkers[n]
         L.DomUtil.removeClass(recentMarkers[n]._icon, "blinking2");
-        recentMarker[n].setIcon(L.Icon.Default());
+        recentMarker[n].setIcon(new L.Icon.Default());
     }
     return [];
 }
@@ -188,6 +188,7 @@ $(document).ready(function() {
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
 
                     var incident = incidents.Incident[counter]  // fetch incident
+
                     // see if the incidentNumber is in an array, if not it is a new incident
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
 
@@ -195,7 +196,7 @@ $(document).ready(function() {
                         buildVehicleHTMLString(vehicles, function(vehiclesString) {
 
                             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
-                                        incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+                                          incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
                             markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
 
                             if (counter === 0) {
