@@ -247,6 +247,7 @@ $(document).ready(function() {
                         markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
                     
                         var vehicles  = incident.Vehicles.Vehicle
+                        alert(nRecentMarkersToDisplay)
                         buildVehicleHTMLString(vehicles, function(vehiclesString) {
 
                             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
