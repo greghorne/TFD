@@ -59,6 +59,7 @@ const CONST_MAP_DEFAULT_ZOOM       =  11
 const CONST_MAP_JSON_URL = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
 
 const CONST_MAP_INCIDENT_ZOOM         = 15
+const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
 
 const CONST_NUM_RECENT_MARKERS_TO_DISPLAY = 5
 
@@ -277,20 +278,21 @@ $(document).ready(function() {
                                 marker.bindPopup(popupString);
                             }
                         })    
-                    } else if (counter > 0 && counter <= nRecentMarkersToDisplay) {
-                        console.log("1yellow marker...")
-                        // marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
-                        // marker.bindPopup(popupString);
-                        // recentMarkers.push(marker);
-                        marker.setIcon(new L.icon({icon: CONST_PIN_YELLOW}))
-                        function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
-                        blink2();
-                    } else {
-                        console.log("1blue marker...")
-                        // marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
-                        marker.setIcon(new L.Icon.Default())
-                        // marker.bindPopup(popupString);
                     }
+                    // } else if (counter > 0 && counter <= nRecentMarkersToDisplay) {
+                    //     console.log("1yellow marker...")
+                    //     // marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
+                    //     // marker.bindPopup(popupString);
+                    //     // recentMarkers.push(marker);
+                    //     marker.setIcon(new L.icon({icon: CONST_PIN_YELLOW}))
+                    //     function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
+                    //     blink2();
+                    // } else {
+                    //     console.log("1blue marker...")
+                    //     // marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+                    //     marker.setIcon(new L.Icon.Default())
+                    //     // marker.bindPopup(popupString);
+                    // }
                     
                 }
             }
