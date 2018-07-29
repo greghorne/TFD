@@ -170,6 +170,9 @@ $(document).ready(function() {
 
 
     nRecentMarkersToDisplay = setRecentCount(window.location.search.slice(1));
+    console.log(nRecentMarkersToDisplay)
+    nRecentMarkersToDisplay = 5
+    console.log(nRecentMarkersToDisplay)
 
     var map;
     // var myIcon = L.icon({ className: 'blinnking'})
@@ -273,6 +276,7 @@ $(document).ready(function() {
                                 recentMarkers.push(marker);
                                 function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
                                 blink2();
+                                console.log("yellow marker out...")
                             } else {
                                 console.log("blue marker...")
                                 marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
