@@ -24,7 +24,7 @@ Display Tulsa Fire Department incidents on a map.
 
 Notes/Comments:
 
-* Everything is executed client-side thus there is no web server used.
+* Everything is executed client-side thus there is no web server.  Currently, I am intentionally trying to keep all functionality client-side.
 
 * I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme where it didn't update for over an hour.  Please keep this in mind when viewing incidents on the map.
 
