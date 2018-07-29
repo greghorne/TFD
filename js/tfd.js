@@ -60,7 +60,7 @@ const CONST_MAP_JSON_URL = "https://www.cityoftulsa.org/apps/opendata/tfd_dispat
 
 const CONST_MAP_INCIDENT_ZOOM         = 15
 
-const CONST_RECENT_MARKERS_TO_DISPLAY = 5
+const CONST_NUM_RECENT_MARKERS_TO_DISPLAY = 5
 
 const CONST_PIN_ANCHOR      = new L.Point(25/2, 41);
 const CONST_MARKER_RED      = "./images/marker-icon-red.png";
@@ -134,7 +134,7 @@ function clearCurrentMarker(currentMarker) {
 function clearRecentMarkers(recentMarkers) {
     console.log("recentMarkers")
     // set it back to default icon (blue)
-    for (var n = 0; n < CONST_RECENT_MARKERS_TO_DISPLAY; n++) {
+    for (var n = 0; n < nRecentMarketsToDisplay; n++) {
         var aMarker = recentMarkers[n]
         L.DomUtil.removeClass(aMarker._icon, "blinking2");
         recentMarkers[n].setIcon(new L.Icon.Default());
@@ -142,8 +142,32 @@ function clearRecentMarkers(recentMarkers) {
     return [];
 }
 
+function setRecentCount(url) {
+
+    try {
+        var params       = url.split("=")
+        var myKey        = params[0]
+        var myValue      = params[1]
+        var myObject     = {}
+
+        myObject[myKey]  = parseInt(myValue);
+
+        if (myKey == "recent" && myObject[myKey] > 0 && myObject[myKey] <= 10) { return myObject[myKey] } 
+        else { return CONST_NUM_RECENT_MARKERS_TO_DISPLAY; }
+    } catch (error) {
+        return CONST_NUM_RECENT_MARKERS_TO_DISPLAY;
+    }
+};
+
+var nRecentMarkersToDisplay
+
 // here we go
 $(document).ready(function() {
+
+    // check if the number of "recent" incidents to be colored yellow was overridden with the url string
+
+
+    nRecentMarkersToDisplay = setRecentCount(window.location.search.slice(1));
 
     var map;
     // var myIcon = L.icon({ className: 'blinnking'})
@@ -185,6 +209,10 @@ $(document).ready(function() {
 
     L.control.layers(baseMaps).addTo(map)   // add all map layers to layer control
     L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
+
+
+
+
 
     // /////////////////////////////////////
     function getTfdData() {
@@ -236,7 +264,7 @@ $(document).ready(function() {
                                 // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
                                 function blink() { L.DomUtil.addClass(marker._icon, "blinking"); }
                                 blink();
-                            } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
+                            } else if (counter > 0 && counter <= nRecentMarkersToDisplay) {
                                 console.log("yellow marker...")
                                 marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
                                 marker.bindPopup(popupString);
@@ -249,7 +277,7 @@ $(document).ready(function() {
                                 marker.bindPopup(popupString);
                             }
                         })    
-                    } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
+                    } else if (counter > 0 && counter <= nRecentMarkersToDisplay) {
                         console.log("1yellow marker...")
                         // marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
                         // marker.bindPopup(popupString);
