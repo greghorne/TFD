@@ -140,6 +140,7 @@ function clearRecentMarkers(recentMarkers) {
         L.DomUtil.removeClass(aMarker._icon, "blinking2");
         recentMarkers[n].setIcon(new L.Icon.Default());
     }
+    console.log("exit recentMarkers...")
     return [];
 }
 
