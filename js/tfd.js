@@ -167,7 +167,7 @@ $(document).ready(function() {
             document.title = title
             tempTitle = title
         } else {
-            document.title = "Tulsa - Map Updated"
+            document.title = "Tulsa FD - Updated"
             tempTitle = " "
         };
         window.setTimeout(flashTitle, 2000)
@@ -211,45 +211,59 @@ $(document).ready(function() {
                     // see if the incidentNumber is in an array, if not it is a new incident
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
 
+                        markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
+                    
                         var vehicles  = incident.Vehicles.Vehicle
                         buildVehicleHTMLString(vehicles, function(vehiclesString) {
 
                             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
-                                          incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-                            markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
-                        })    
-
-                        if (counter === 0) {
-                            console.log("red marker...")
-                            marker  = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_RED, title: incident.Problem, riseOnHover: true }).addTo(map);
+                                            incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
                             
-                            currentIncidentNumber = incident.IncidentNumber;
-                            currentMarker         = marker
-                            marker.bindPopup(popupString).openPopup();
+                            if (counter === 0) {
+                                console.log("red marker...")
+                                marker  = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_RED, title: incident.Problem, riseOnHover: true }).addTo(map);
+                                
+                                currentIncidentNumber = incident.IncidentNumber;
+                                currentMarker         = marker
+                                marker.bindPopup(popupString).openPopup();
 
-                            if ($(window).focus) { map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); } 
-                            else {
-                                map.panTo([incident.Latitude, incident.Longitude]);
-                                map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+                                if ($(window).focus) { map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); } 
+                                else {
+                                    map.panTo([incident.Latitude, incident.Longitude]);
+                                    map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+                                }
+                            
+                                // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
+                                function blink() { L.DomUtil.addClass(marker._icon, "blinking"); }
+                                blink();
+                            } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
+                                console.log("yellow marker...")
+                                marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
+                                marker.bindPopup(popupString);
+                                recentMarkers.push(marker);
+                                function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
+                                blink2();
+                            } else {
+                                console.log("blue marker...")
+                                marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+                                marker.bindPopup(popupString);
                             }
-                        
-                            // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-                            function blink() { L.DomUtil.addClass(marker._icon, "blinking"); }
-                            blink();
-                        } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
-                            console.log("yellow marker...")
-                            marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
-                            marker.bindPopup(popupString);
-                            recentMarkers.push(marker);
-                            function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
-                            blink2();
-                        } else {
-                            console.log("blue marker...")
-                            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
-                            marker.bindPopup(popupString);
-                        }
-                        
+                        })    
+                    } else if (counter > 0 && counter <= CONST_RECENT_MARKERS_TO_DISPLAY) {
+                        console.log("1yellow marker...")
+                        // marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
+                        // marker.bindPopup(popupString);
+                        // recentMarkers.push(marker);
+                        marker.setIcon(new L.icon({icon: CONST_PIN_YELLOW}))
+                        function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
+                        blink2();
+                    } else {
+                        console.log("1blue marker...")
+                        // marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+                        marker.setIcon(new L.Icon.Default())
+                        // marker.bindPopup(popupString);
                     }
+                    
                 }
             }
         })
