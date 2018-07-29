@@ -134,7 +134,7 @@ function clearCurrentMarker(currentMarker) {
 function clearRecentMarkers(recentMarkers) {
     console.log("recentMarkers")
     // set it back to default icon (blue)
-    for (var n = 0; n < nRecentMarketsToDisplay; n++) {
+    for (var n = 0; n < nRecentMarkersToDisplay; n++) {
         var aMarker = recentMarkers[n]
         L.DomUtil.removeClass(aMarker._icon, "blinking2");
         recentMarkers[n].setIcon(new L.Icon.Default());
