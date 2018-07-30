@@ -145,14 +145,23 @@ function clearCurrentMarker(currentMarker) {    // make the red marker blue
 
 
 //////////////////////////////////////////////////////////////////////
-function clearRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
+function popRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
     // set it back to default icon (blue)
-    for (var n = 0; n < gnRecentMarkersToDisplay; n++) {
-        var aMarker = recentMarkers[n]
-        L.DomUtil.removeClass(aMarker._icon, "blinking2");
-        recentMarkers[n].setIcon(new L.Icon.Default());
+
+    var myMarker;
+    if (recentMarkers.length > 0) {
+        var myMarker = recentMarkers[0]
+        L.DomUtil.removeClass(myMarker._icon, "blinking2");
+        myMarker.setIcon(new L.Icon.Default());
     }
+
+    myMarker = recentMarkers[recentMarkers.length - 1];
+    myMarker.setIcon(CONST_MARKER_YELLOW)
+    function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
+    blink2();
+ 
     return [];
+
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -201,6 +210,7 @@ function handleCurrentIncident(map, currentMarker, incident) {
 //////////////////////////////////////////////////////////////////////
 // make the markers yellow and flashing
 function handleRecentIncidents(recentMarkers) {
+    console.log("recentMarkers: " + recentMarkers.length)
     for (var counter = 0; counter < recentMarkers.length; counter++) {
         var myMarker = recentMarkers[counter];
         myMarker.setIcon(CONST_MARKER_YELLOW)
@@ -220,7 +230,6 @@ $(document).ready(function() {
 
     // /////////////////////////////////////
     // read in and set url parameters
-    
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
 
         if (params['recent']) { gnRecentMarkersToDisplay = params['recent'] } 
@@ -263,7 +272,7 @@ $(document).ready(function() {
 
                 // turn any red or yellow icons back to blue
                 if (currentMarker)            { clearCurrentMarker(currentMarker) }
-                if (recentMarkers.length > 0) { recentMarkers = clearRecentMarkers(recentMarkers) }
+                // if (recentMarkers.length > 0) { recentMarkers = clearRecentMarkers(recentMarkers) }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
@@ -279,7 +288,11 @@ $(document).ready(function() {
                             marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
                             marker.bindPopup(popupString);
                         });
-                    }
+
+                        if (counter > 0 && counter <= gnRecentMarkersToDisplay) {
+                            recentMarkers.push(marker)
+                        }
+                    } 
                 
                     //////////////////////////////////////////////////////////////////////
                     // store the newest incident and recent incidents
@@ -287,12 +300,14 @@ $(document).ready(function() {
                         currentIncidentNumber = incident.IncidentNumber;        // store the newest incident (to make into a red marker)
                         currentMarker = marker
                     } else if (counter > 0 && counter <= gnRecentMarkersToDisplay) {
-                        recentMarkers.push(marker)                              // store inicdent(to make into a yellow marker)
+                        console.log("recentMarkers.push: " + counter)
+                        recentMarkers.push(marker) 
+                        recentMarkers = popRecentMarkers(recentMarkers)                              // store inicdent(to make into a yellow marker)
                     }
                     //////////////////////////////////////////////////////////////////////
                 }
                 handleCurrentIncident(map, currentMarker, incident)
-                handleRecentIncidents(recentMarkers)
+                // handleRecentIncidents(recentMarkers)
             }
         })
 
