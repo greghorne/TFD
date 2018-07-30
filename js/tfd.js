@@ -272,7 +272,11 @@ $(document).ready(function() {
             if (currentIncidentNumber !== latestIncidentNumber) {
 
                 // turn any red or yellow icons back to blue
-                if (currentMarker)            { clearCurrentMarker(currentMarker) }
+                if (currentMarker) { 
+                    clearCurrentMarker(currentMarker) 
+                    recentMarkers.push(currentMarker)
+                    popRecentMarkers(currentMarker)
+                }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
@@ -299,17 +303,17 @@ $(document).ready(function() {
                     //////////////////////////////////////////////////////////////////////
                     // store the newest incident and recent incidents
                     if (counter == 0) {
-                        if (currentMarker) { clearCurrentMarker(currentMarker) }    // turn the current red marker into blue
-
-                        // currentIncidentNumber = incident.IncidentNumber;        
+                        if (currentMarker) 
+                        currentIncidentNumber = incident.IncidentNumber;        
                         currentMarker = marker
-                        recentMarkers.push(marker)
-                        popRecentMarkers(recentMarkers)
+                        // recentMarkers.push(marker)
+                        // popRecentMarkers(recentMarkers)
                         
                       
                         
                     } 
                 }
+                // make current marker red and blinking and pan/zoom to incident
                 handleCurrentIncident(map, currentMarker, incident)
             }
         })
