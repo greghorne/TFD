@@ -139,6 +139,7 @@ function clearCurrentMarker(currentMarker) {    // make the red marker blue
     currentMarker.closePopup();
     L.DomUtil.removeClass(currentMarker._icon, "blinking");
     currentMarker.setIcon(new L.Icon.Default());
+    popRecentMarkers(recentMarkers.push(currentMarker))
     return "";
 }
 //////////////////////////////////////////////////////////////////////
@@ -146,13 +147,14 @@ function clearCurrentMarker(currentMarker) {    // make the red marker blue
 
 //////////////////////////////////////////////////////////////////////
 function popRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
-    // set it back to default icon (blue)
 
     var myMarker;
-    if (recentMarkers.length > 0) {
+    console.log("recentMarkers.length: " + recentMarkers.length)
+    if (recentMarkers.length > gnRecentMarkersToDisplay ) {
         var myMarker = recentMarkers[0]
         L.DomUtil.removeClass(myMarker._icon, "blinking2");
         myMarker.setIcon(new L.Icon.Default());
+        recentMarkers = recentMarkers.splice(0, 1);
     }
 
     myMarker = recentMarkers[recentMarkers.length - 1];
@@ -160,7 +162,7 @@ function popRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
     function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
     blink2();
  
-    return [];
+    return recentMarkers;
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -291,6 +293,7 @@ $(document).ready(function() {
 
                         if (counter > 0 && counter <= gnRecentMarkersToDisplay) {
                             recentMarkers.push(marker)
+                            recentMarkers = popRecentMarkers(recentMarkers)         // store inicdent(to make into a yellow marker)
                         }
                     } 
                 
@@ -299,15 +302,15 @@ $(document).ready(function() {
                     if (counter == 0) {
                         currentIncidentNumber = incident.IncidentNumber;        // store the newest incident (to make into a red marker)
                         currentMarker = marker
-                    } else if (counter > 0 && counter <= gnRecentMarkersToDisplay) {
-                        console.log("recentMarkers.push: " + counter)
-                        recentMarkers.push(marker) 
-                        recentMarkers = popRecentMarkers(recentMarkers)                              // store inicdent(to make into a yellow marker)
-                    }
+                    } 
+                    // else if (counter > 0 && counter <= gnRecentMarkersToDisplay) {
+                    //     // console.log("recentMarkers.push: " + counter)
+                    //     recentMarkers.push(marker) 
+                    //     recentMarkers = popRecentMarkers(recentMarkers)         // store inicdent(to make into a yellow marker)
+                    // }
                     //////////////////////////////////////////////////////////////////////
                 }
                 handleCurrentIncident(map, currentMarker, incident)
-                // handleRecentIncidents(recentMarkers)
             }
         })
 
