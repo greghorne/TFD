@@ -135,11 +135,10 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
 
 
 //////////////////////////////////////////////////////////////////////
-function clearCurrentMarker(currentMarker) {    // make the red marker blue
-    currentMarker.closePopup();
-    L.DomUtil.removeClass(currentMarker._icon, "blinking");
-    currentMarker.setIcon(new L.Icon.Default());
-    popRecentMarkers(recentMarkers.push(currentMarker))
+function clearCurrentMarker(marker) {    // make the red marker blue
+    marker.closePopup();
+    L.DomUtil.removeClass(marker._icon, "blinking");
+    marker.setIcon(new L.Icon.Default());
     return "";
 }
 //////////////////////////////////////////////////////////////////////
@@ -274,7 +273,6 @@ $(document).ready(function() {
 
                 // turn any red or yellow icons back to blue
                 if (currentMarker)            { clearCurrentMarker(currentMarker) }
-                // if (recentMarkers.length > 0) { recentMarkers = clearRecentMarkers(recentMarkers) }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
@@ -300,15 +298,13 @@ $(document).ready(function() {
                     //////////////////////////////////////////////////////////////////////
                     // store the newest incident and recent incidents
                     if (counter == 0) {
+                        clearCurrentMarker(marker)
                         currentIncidentNumber = incident.IncidentNumber;        // store the newest incident (to make into a red marker)
                         currentMarker = marker
+                        
+                        recentMarkers.push(marker)
+                        
                     } 
-                    // else if (counter > 0 && counter <= gnRecentMarkersToDisplay) {
-                    //     // console.log("recentMarkers.push: " + counter)
-                    //     recentMarkers.push(marker) 
-                    //     recentMarkers = popRecentMarkers(recentMarkers)         // store inicdent(to make into a yellow marker)
-                    // }
-                    //////////////////////////////////////////////////////////////////////
                 }
                 handleCurrentIncident(map, currentMarker, incident)
             }
