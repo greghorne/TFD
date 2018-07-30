@@ -233,7 +233,7 @@ $(document).ready(function() {
             if (currentIncidentNumber !== latestIncidentNumber) {
 
                 // clear current marker (red) and recent markers (yellow)
-                if (currentMarker) { clearCurrentMarker(currentMarker) }
+                if (currentMarker)            { clearCurrentMarker(currentMarker) }
                 if (recentMarkers.length > 0) { recentMarkers = clearRecentMarkers(recentMarkers) }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
@@ -242,12 +242,11 @@ $(document).ready(function() {
                     var incident = incidents.Incident[counter]  // fetch incident
 
                     // see if the incidentNumber is in an array, if not it is a new incident
-                    if (markers.indexOf(incident.IncidentNumber) == -1) {
+                    if ((markers.indexOf(incident.IncidentNumber) == -1) || (counter <= nRecentMarkersToDisplay)) {
 
                         markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
                     
                         var vehicles  = incident.Vehicles.Vehicle
-                        alert(nRecentMarkersToDisplay)
                         buildVehicleHTMLString(vehicles, function(vehiclesString) {
 
                             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
@@ -270,9 +269,10 @@ $(document).ready(function() {
                                 // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
                                 function blink() { L.DomUtil.addClass(marker._icon, "blinking"); }
                                 blink();
+                                console.log("red marker out...")
                             } else if (counter > 0 && counter <= nRecentMarkersToDisplay) {
                                 console.log("yellow marker...")
-                                marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
+                                marker = L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
                                 marker.bindPopup(popupString);
                                 recentMarkers.push(marker);
                                 function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
@@ -285,21 +285,6 @@ $(document).ready(function() {
                             }
                         })    
                     }
-                    // } else if (counter > 0 && counter <= nRecentMarkersToDisplay) {
-                    //     console.log("1yellow marker...")
-                    //     // marker = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
-                    //     // marker.bindPopup(popupString);
-                    //     // recentMarkers.push(marker);
-                    //     marker.setIcon(new L.icon({icon: CONST_PIN_YELLOW}))
-                    //     function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
-                    //     blink2();
-                    // } else {
-                    //     console.log("1blue marker...")
-                    //     // marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
-                    //     marker.setIcon(new L.Icon.Default())
-                    //     // marker.bindPopup(popupString);
-                    // }
-                    
                 }
             }
         })
