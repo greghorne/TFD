@@ -149,17 +149,19 @@ function popRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
 
     var myMarker;
     console.log("recentMarkers.length: " + recentMarkers.length)
-    if (recentMarkers.length > gnRecentMarkersToDisplay ) {
-        var myMarker = recentMarkers[0]
-        L.DomUtil.removeClass(myMarker._icon, "blinking2");
-        myMarker.setIcon(new L.Icon.Default());
-        recentMarkers = recentMarkers.splice(0, 1);
-    }
 
-    myMarker = recentMarkers[recentMarkers.length - 1];
+    var myMarker = recentMarkers[recentMarkers.length - 1]
+    L.DomUtil.removeClass(myMarker._icon, "blinking2");
+    myMarker.setIcon(new L.Icon.Default());
+
     myMarker.setIcon(CONST_MARKER_YELLOW)
     function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
     blink2();
+
+    // pop off the oldest marker (the first one in the array)
+    if (recentMarkers.length > gnRecentMarkersToDisplay) {
+        recentMarkers = recentMarkers.splice(0, 1);
+    }
  
     return recentMarkers;
 
@@ -268,14 +270,13 @@ $(document).ready(function() {
             var incidentsCount          = incidents.Incident.length;            // number of json incidents
             var latestIncidentNumber    = incidents.Incident[0].IncidentNumber  // most recent incident from the json object
 
-            // if the following is true, a new incident has occurred that also means the json file has changed (updated)
+            // if the following is true, a new incident has occurred (json file has updated)
             if (currentIncidentNumber !== latestIncidentNumber) {
 
-                // turn any red or yellow icons back to blue
                 if (currentMarker) { 
-                    clearCurrentMarker(currentMarker) 
-                    recentMarkers.push(currentMarker)
-                    popRecentMarkers(currentMarker)
+                    clearCurrentMarker(currentMarker)   // turn red marker into blue marker
+                    recentMarkers.push(currentMarker)   // push the marker onto the recentMarkers array
+                    popRecentMarkers(recentMarkers)     // see if the oldest "recent" marker needs to be removed
                 }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
@@ -299,22 +300,16 @@ $(document).ready(function() {
                             recentMarkers = popRecentMarkers(recentMarkers) 
                         }
                     } 
-                
-                    //////////////////////////////////////////////////////////////////////
-                    // store the newest incident and recent incidents
-                    if (counter == 0) {
-                        if (currentMarker) 
-                        currentIncidentNumber = incident.IncidentNumber;        
-                        currentMarker = marker
-                        // recentMarkers.push(marker)
-                        // popRecentMarkers(recentMarkers)
-                        
-                      
-                        
-                    } 
                 }
-                // make current marker red and blinking and pan/zoom to incident
-                handleCurrentIncident(map, currentMarker, incident)
+
+                //////////////////////////////////////////////////////////////////////
+                // store the newest incident 
+                currentIncidentNumber = incident.IncidentNumber;        
+                currentMarker = marker
+                handleCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blinking and pan/zoom to incident
+                //////////////////////////////////////////////////////////////////////
+                
+                console.log(recentMarkers)
             }
         })
 
