@@ -304,7 +304,7 @@ $(document).ready(function() {
                         // currentIncidentNumber = incident.IncidentNumber;        
                         currentMarker = marker
                         recentMarkers.push(marker)
-                        handleRecentIncidents(recentMarkers)
+                        popRecentMarkers(recentMarkers)
                         
                       
                         
