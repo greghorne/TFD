@@ -18,7 +18,7 @@ Display Tulsa Fire Department incidents on a map.
 
     * https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
 
-* Tested on Chrome & Brave
+* Tested on macOS: Chrome & Brave
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
     - There are 2 options that may be added to the URL as parameters to override default settings
