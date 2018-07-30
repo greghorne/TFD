@@ -290,19 +290,23 @@ $(document).ready(function() {
                         });
 
                         if (counter > 0 && counter <= gnRecentMarkersToDisplay) {
+                            // new recent marker
                             recentMarkers.push(marker)
-                            recentMarkers = popRecentMarkers(recentMarkers)         // store inicdent(to make into a yellow marker)
+                            recentMarkers = popRecentMarkers(recentMarkers) 
                         }
                     } 
                 
                     //////////////////////////////////////////////////////////////////////
                     // store the newest incident and recent incidents
                     if (counter == 0) {
-                        clearCurrentMarker(marker)
-                        currentIncidentNumber = incident.IncidentNumber;        // store the newest incident (to make into a red marker)
+                        if (currentMarker) { clearCurrentMarker(currentMarker) }    // turn the current red marker into blue
+
+                        // currentIncidentNumber = incident.IncidentNumber;        
                         currentMarker = marker
-                        
                         recentMarkers.push(marker)
+                        handleRecentIncidents(recentMarkers)
+                        
+                      
                         
                     } 
                 }
