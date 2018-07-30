@@ -1,3 +1,45 @@
+//////////////////////////////////////////////////////////////////////
+// default map settings
+const CONST_MAP_DEFAULT_LONGITUDEX = -95.992775
+const CONST_MAP_DEFAULT_LATITUDEY  =  36.1539816
+const CONST_MAP_DEFAULT_ZOOM       =  11
+
+const CONST_MAP_JSON_URL = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
+
+const CONST_MAP_INCIDENT_ZOOM         = 15
+const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
+
+const CONST_NUM_RECENT_MARKERS_TO_DISPLAY = 3
+
+const CONST_PIN_ANCHOR      = new L.Point(25/2, 41);
+const CONST_MARKER_RED      = "./images/marker-icon-red.png";
+const CONST_MARKER_YELLOW   = "./images/marker-icon-yellow.png"
+
+const CONST_PIN_RED         = new L.Icon({ iconUrl: CONST_MARKER_RED,    iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
+const CONST_PIN_YELLOW      = new L.Icon({ iconUrl: CONST_MARKER_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
+
+
+// defintion of map layers; first layer is the default layer displayed
+const CONST_MAP_LAYERS = [
+    {
+        name: "Grayscale",
+        url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        minZoom:  5,
+        maxZoom: 17
+    },
+    {
+        name: "OSM",
+        url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        attirbution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        minZoom:  5,
+        maxZoom: 17
+    }
+];
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
 // prepare indexedDB 
 var deleteIndexedDB = window.indexedDB.deleteDatabase("TFD")
 var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
@@ -30,7 +72,6 @@ function updateIndexedDB(json) {
     }
 
     db.onsuccess = function() {
-
         var database = db.result
         var tx       = database.transaction(["Incidents"], "readwrite");
         var store    = tx.objectStore("Incidents");
@@ -40,7 +81,6 @@ function updateIndexedDB(json) {
         for (var n = 0; n < incidentsCount; n++) {  // iterate through json
             var incident = json.Incidents.Incident[n];
             var vehiclesArr = getVehicles(incident.Vehicles);
-
             store.put({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
         }
 
@@ -48,48 +88,11 @@ function updateIndexedDB(json) {
             database.close;
         }
     };
-
 }
+//////////////////////////////////////////////////////////////////////
 
-// default map settings
-const CONST_MAP_DEFAULT_LONGITUDEX = -95.992775
-const CONST_MAP_DEFAULT_LATITUDEY  =  36.1539816
-const CONST_MAP_DEFAULT_ZOOM       =  11
 
-const CONST_MAP_JSON_URL = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
-
-const CONST_MAP_INCIDENT_ZOOM         = 15
-const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
-
-const CONST_NUM_RECENT_MARKERS_TO_DISPLAY = 5
-
-const CONST_PIN_ANCHOR      = new L.Point(25/2, 41);
-const CONST_MARKER_RED      = "./images/marker-icon-red.png";
-const CONST_MARKER_YELLOW   = "./images/marker-icon-yellow.png"
-
-const CONST_PIN_RED         = new L.Icon({ iconUrl: CONST_MARKER_RED, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
-const CONST_PIN_YELLOW      = new L.Icon({ iconUrl: CONST_MARKER_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
-
-// L.Icon.Default.prototype.options.iconUrl = './vendor/images/marker-icon.png';
-
-// defintion of map layers; first layer is the default layer displayed
-const CONST_MAP_LAYERS = [
-    {
-        name: "Grayscale",
-        url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoom:  5,
-        maxZoom: 17
-    },
-    {
-        name: "OSM",
-        url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        attirbution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoom:  5,
-        maxZoom: 17
-    }
-];
-
+//////////////////////////////////////////////////////////////////////
 // build map layers (dynamically) from CONST_MAP_LAYERS
 var mapLayers = [];
 var baseMaps  = {};
@@ -101,7 +104,10 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     })
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
+//////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////////////////////////////////////////
 function buildVehicleHTMLString(vehicles, fnCallback) {
 
     // build vehicle(s) html string for popup
@@ -122,93 +128,83 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
     vehiclesString += "</table>"
     fnCallback(vehiclesString);
 }
+//////////////////////////////////////////////////////////////////////
 
-function clearCurrentMarker(currentMarker) {
-    console.log("currentMarker...")
+
+//////////////////////////////////////////////////////////////////////
+function clearCurrentMarker(currentMarker) {    // make the red marker blue
     currentMarker.closePopup();
     L.DomUtil.removeClass(currentMarker._icon, "blinking");
     currentMarker.setIcon(new L.Icon.Default());
-    console.log("exit currentMarker...")
     return "";
 }
+//////////////////////////////////////////////////////////////////////
 
-function clearRecentMarkers(recentMarkers) {
-    console.log("recentMarkers")
+
+//////////////////////////////////////////////////////////////////////
+function clearRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
     // set it back to default icon (blue)
-    for (var n = 0; n < nRecentMarkersToDisplay; n++) {
+    for (var n = 0; n < gnRecentMarkersToDisplay; n++) {
         var aMarker = recentMarkers[n]
-
-        map.removeLayer(recentMarkers[n])
         L.DomUtil.removeClass(aMarker._icon, "blinking2");
         recentMarkers[n].setIcon(new L.Icon.Default());
     }
-    console.log("exit recentMarkers...")
     return [];
 }
+//////////////////////////////////////////////////////////////////////
 
-function setRecentCount(url) {
 
+//////////////////////////////////////////////////////////////////////
+function getUrlParameterOptions(url) {
+
+    // read in url parameters (recent and zoo)
     try {
-        var params       = url.split("=")
-        var myKey        = params[0]
-        var myValue      = params[1]
-        var myObject     = {}
+        var paramsArr = url.split("&")
+        var myObject = {}
 
-        myObject[myKey]  = parseInt(myValue);
+        for (var counter = 0; counter < paramsArr.length; counter++) {
+            var params  = paramsArr[counter].split("=");
+            var myKey   = params[0]
+            var myValue = params[1];
 
-        if (myKey == "recent" && myObject[myKey] > 0 && myObject[myKey] <= 10) { return myObject[myKey] } 
-        else { return CONST_NUM_RECENT_MARKERS_TO_DISPLAY; }
+            myObject[myKey]  = myValue;
+        }
+        console.log(myObject)
+        return myObject;
     } catch (error) {
-        return CONST_NUM_RECENT_MARKERS_TO_DISPLAY;
+        return {}
     }
 };
+//////////////////////////////////////////////////////////////////////
 
-var nRecentMarkersToDisplay
 
+var gnRecentMarkersToDisplay
+var gbZoomTo
+
+
+//////////////////////////////////////////////////////////////////////
 // here we go
 $(document).ready(function() {
 
-    // check if the number of "recent" incidents to be colored yellow was overridden with the url string
+    // read in and set url parameters
+    var params = getUrlParameterOptions(window.location.search.slice(1));
+    if (params['recent']) { gnRecentMarkersToDisplay = params['recent'] } 
+    else { gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY }
 
-
-    nRecentMarkersToDisplay = setRecentCount(window.location.search.slice(1));
-    console.log(nRecentMarkersToDisplay)
-    nRecentMarkersToDisplay = 5
-    console.log(nRecentMarkersToDisplay)
-
-    var map;
-    // var myIcon = L.icon({ className: 'blinnking'})
+    if (params['zoomTo']) { gbZoomTo = Boolean(params['zoomTo']) } 
+    else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
+    console.log("gnRecentMarkersToDisplay: " + gnRecentMarkersToDisplay)
+    console.log("gbZoomTo: " + gbZoomTo)
+    
+    // var map;
     var marker;
     var markers = [];
     var currentMarker;
     var recentMarkers = [];
-    var url = CONST_MAP_JSON_URL;
     var currentIncidentNumber = "";
 
-
-    var title = document.title
-    var blankTitle = "";
-    var tempTitle = ""
-    function flashTitle() {
-
-        console.log("title...")
-        console.log(document.title)
-
-        if (tempTitle == " ") {
-            document.title = title
-            tempTitle = title
-        } else {
-            document.title = "Tulsa FD - Updated"
-            tempTitle = " "
-        };
-        window.setTimeout(flashTitle, 2000)
-    };
-    
-    // flashTitle();
-    
-
     // define map position, zoom and layer
-    map = L.map('map', {
+    var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_DEFAULT_ZOOM,
         layers: [mapLayers[0]]
@@ -217,14 +213,10 @@ $(document).ready(function() {
     L.control.layers(baseMaps).addTo(map)   // add all map layers to layer control
     L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
 
-
-
-
-
     // /////////////////////////////////////
     function getTfdData() {
 
-        $.ajax({ type: "GET", url: url }).done(function(response){
+        $.ajax({ type: "GET", url: CONST_MAP_JSON_URL }).done(function(response){
 
             updateIndexedDB(response);
 
@@ -243,7 +235,7 @@ $(document).ready(function() {
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
                     var incident = incidents.Incident[counter]  // fetch incident
 
-                    // see if the incidentNumber is in an array, if not it is a new incident so add a blue marker
+                    // see if the incidentNumber is in an array, if not it is a new incident so add it to the array and add a blue marker
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
                         markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
                         var vehicles  = incident.Vehicles.Vehicle
@@ -254,21 +246,23 @@ $(document).ready(function() {
                             marker.bindPopup(popupString);
                         });
                     }
-                    
+                
+                    //////////////////////////////////////////////////////////////////////
                     // store the newest incident and recent incidents
                     if (counter == 0) {
                         currentIncidentNumber = incident.IncidentNumber;        // store the newest incident (to make into a red marker)
                         currentMarker = marker
-                    } else if (counter > 0 && counter <= nRecentMarkersToDisplay) {
+                    } else if (counter > 0 && counter <= gnRecentMarkersToDisplay) {
                         recentMarkers.push(marker)                              // store inicdent(to make into a yellow marker)
                     }
+                    //////////////////////////////////////////////////////////////////////
                 }
 
                 //////////////////////////////////////////////////////////////////////
                 // change current incident marker to red
                 currentMarker.setIcon(CONST_PIN_RED)
                 currentMarker.openPopup();
-                if ($(window).focus) { 
+                if ($(window).focus && gbZoomTo) { 
                     map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
                 } else {
                     map.panTo([incident.Latitude, incident.Longitude]);
