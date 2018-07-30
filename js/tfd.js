@@ -19,7 +19,7 @@ const CONST_MARKER_RED           = new L.Icon({ iconUrl: CONST_MARKER_COLOR_RED,
 const CONST_MARKER_YELLOW        = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
 
-// defintion of map layers; first layer is the default layer displayed
+// definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
         name: "Grayscale",
@@ -158,7 +158,7 @@ function clearRecentMarkers(recentMarkers) {    // make the yellow marker(s) blu
 
 
 //////////////////////////////////////////////////////////////////////
-function getUrlParameterOptions(url) {
+function getUrlParameterOptions(url, fnCallback) {
 
     // read in url parameters (recent and zoomTo)
     try {
@@ -172,13 +172,43 @@ function getUrlParameterOptions(url) {
 
             myObject[myKey]  = myValue;
         }
-        return myObject;
+        fnCallback(myObject);
     } catch (error) {
-        return {}
+        fnCallback({});
     }
 };
 //////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////////////////////////////////////////
+// make the marker red and flashing
+function handleCurrentIncident(map, currentMarker, incident) {
+    currentMarker.setIcon(CONST_MARKER_RED)
+    currentMarker.openPopup();
+    if ($(window).focus && gbZoomTo) { 
+        map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
+    } else {
+        map.panTo([incident.Latitude, incident.Longitude]);
+        map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+    }
+    // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
+    function blink() { L.DomUtil.addClass(currentMarker._icon, "blinking"); }
+    blink();
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+// make the markers yellow and flashing
+function handleRecentIncidents(recentMarkers) {
+    for (var counter = 0; counter < recentMarkers.length; counter++) {
+        var myMarker = recentMarkers[counter];
+        myMarker.setIcon(CONST_MARKER_YELLOW)
+        function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
+        blink2();
+    }
+}
+//////////////////////////////////////////////////////////////////////
 
 var gnRecentMarkersToDisplay
 var gbZoomTo
@@ -188,16 +218,19 @@ var gbZoomTo
 // here we go
 $(document).ready(function() {
 
+    // /////////////////////////////////////
     // read in and set url parameters
-    var params = getUrlParameterOptions(window.location.search.slice(1));
-    if (params['recent']) { gnRecentMarkersToDisplay = params['recent'] } 
-    else { gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY }
-
-    if (params['zoomTo']) { gbZoomTo = Boolean(params['zoomTo']) } 
-    else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
-    console.log("gnRecentMarkersToDisplay: " + gnRecentMarkersToDisplay)
-    console.log("gbZoomTo: " + gbZoomTo)
     
+    var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
+
+        if (params['recent']) { gnRecentMarkersToDisplay = params['recent'] } 
+        else { gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY }
+
+        if (params['zoomTo']) { gbZoomTo = Boolean(params['zoomTo']) } 
+        else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
+    });
+    // /////////////////////////////////////
+
     var marker;
     var markers = [];
     var currentMarker;
@@ -258,31 +291,8 @@ $(document).ready(function() {
                     }
                     //////////////////////////////////////////////////////////////////////
                 }
-
-                //////////////////////////////////////////////////////////////////////
-                // change current incident marker to red
-                currentMarker.setIcon(CONST_MARKER_RED)
-                currentMarker.openPopup();
-                if ($(window).focus && gbZoomTo) { 
-                    map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
-                } else {
-                    map.panTo([incident.Latitude, incident.Longitude]);
-                    map.setZoom(CONST_MAP_INCIDENT_ZOOM)
-                }
-                // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-                function blink() { L.DomUtil.addClass(currentMarker._icon, "blinking"); }
-                blink();
-                //////////////////////////////////////////////////////////////////////
-
-                //////////////////////////////////////////////////////////////////////
-                // change "recent" markers to yellow
-                for (var counter = 0; counter < recentMarkers.length; counter++) {
-                    var myMarker = recentMarkers[counter];
-                    myMarker.setIcon(CONST_MARKER_YELLOW)
-                    function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
-                    blink2();
-                }
-                //////////////////////////////////////////////////////////////////////
+                handleCurrentIncident(map, currentMarker, incident)
+                handleRecentIncidents(recentMarkers)
             }
         })
 
