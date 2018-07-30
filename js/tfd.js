@@ -1,22 +1,22 @@
 //////////////////////////////////////////////////////////////////////
-// default map settings
-const CONST_MAP_DEFAULT_LONGITUDEX = -95.992775
-const CONST_MAP_DEFAULT_LATITUDEY  =  36.1539816
-const CONST_MAP_DEFAULT_ZOOM       =  11
+const CONST_MAP_DEFAULT_LONGITUDEX    = -95.992775
+const CONST_MAP_DEFAULT_LATITUDEY     =  36.1539816
+const CONST_MAP_DEFAULT_ZOOM          =  11
 
-const CONST_MAP_JSON_URL = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
+const CONST_MAP_JSON_URL              = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
+const CONST_JSON_UPDATE               = 60000    // how often to poll for JSON data from server
 
 const CONST_MAP_INCIDENT_ZOOM         = 15
 const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
 
-const CONST_NUM_RECENT_MARKERS_TO_DISPLAY = 3
+const CONST_NUM_RECENT_MARKERS_TO_DISPLAY = 5   // number of yellow markers to display
 
-const CONST_PIN_ANCHOR      = new L.Point(25/2, 41);
-const CONST_MARKER_RED      = "./images/marker-icon-red.png";
-const CONST_MARKER_YELLOW   = "./images/marker-icon-yellow.png"
+const CONST_PIN_ANCHOR           = new L.Point(25/2, 41);
+const CONST_MARKER_COLOR_RED     = "./images/marker-icon-red.png";
+const CONST_MARKER_COLOR_YELLOW  = "./images/marker-icon-yellow.png"
 
-const CONST_PIN_RED         = new L.Icon({ iconUrl: CONST_MARKER_RED,    iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
-const CONST_PIN_YELLOW      = new L.Icon({ iconUrl: CONST_MARKER_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
+const CONST_MARKER_RED           = new L.Icon({ iconUrl: CONST_MARKER_COLOR_RED,    iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
+const CONST_MARKER_YELLOW        = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
 
 // defintion of map layers; first layer is the default layer displayed
@@ -48,20 +48,6 @@ var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIn
 window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
  
-function getVehicles(vehicles) {
-
-    var vehiclesArr = [];
-
-    // if vehicles = 1; then it is a key, value pair
-    // if vehicles > 1; then it is in any array of key, value pairs
-    if (vehicles.Division) {
-        vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
-        return vehiclesArr;
-    } else {
-        return vehicles;
-    }
-}
-
 function updateIndexedDB(json) {
 
     var db = indexedDB.open("TFD", 1);
@@ -108,6 +94,23 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 
 
 //////////////////////////////////////////////////////////////////////
+function getVehicles(vehicles) {
+
+    var vehiclesArr = [];
+
+    // if vehicles = 1; then it is a key, value pair
+    // if vehicles > 1; then it is in any array of key, value pairs
+    if (vehicles.Division) {
+        vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
+        return vehiclesArr;
+    } else {
+        return vehicles;
+    }
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
 function buildVehicleHTMLString(vehicles, fnCallback) {
 
     // build vehicle(s) html string for popup
@@ -115,11 +118,11 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
     var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
 
     if (vehicles.Division) {
-        // only 1 vehicle responding
+        // only 1 vehicle responding; key, value
         vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
     } else {
-        // more than 1 vehicle responding then it is read in an array
+        // more than 1 vehicle; array of key, value
         for (var n = 0; n < vehicles.length; n++) {
             vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
             vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
@@ -157,7 +160,7 @@ function clearRecentMarkers(recentMarkers) {    // make the yellow marker(s) blu
 //////////////////////////////////////////////////////////////////////
 function getUrlParameterOptions(url) {
 
-    // read in url parameters (recent and zoo)
+    // read in url parameters (recent and zoomTo)
     try {
         var paramsArr = url.split("&")
         var myObject = {}
@@ -169,7 +172,6 @@ function getUrlParameterOptions(url) {
 
             myObject[myKey]  = myValue;
         }
-        console.log(myObject)
         return myObject;
     } catch (error) {
         return {}
@@ -196,7 +198,6 @@ $(document).ready(function() {
     console.log("gnRecentMarkersToDisplay: " + gnRecentMarkersToDisplay)
     console.log("gbZoomTo: " + gbZoomTo)
     
-    // var map;
     var marker;
     var markers = [];
     var currentMarker;
@@ -260,7 +261,7 @@ $(document).ready(function() {
 
                 //////////////////////////////////////////////////////////////////////
                 // change current incident marker to red
-                currentMarker.setIcon(CONST_PIN_RED)
+                currentMarker.setIcon(CONST_MARKER_RED)
                 currentMarker.openPopup();
                 if ($(window).focus && gbZoomTo) { 
                     map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
@@ -277,7 +278,7 @@ $(document).ready(function() {
                 // change "recent" markers to yellow
                 for (var counter = 0; counter < recentMarkers.length; counter++) {
                     var myMarker = recentMarkers[counter];
-                    myMarker.setIcon(CONST_PIN_YELLOW)
+                    myMarker.setIcon(CONST_MARKER_YELLOW)
                     function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
                     blink2();
                 }
@@ -286,7 +287,7 @@ $(document).ready(function() {
         })
 
         // retrieve json data
-        setTimeout(getTfdData, 60000);
+        setTimeout(getTfdData, CONST_JSON_UPDATE);
     }
     getTfdData();
 })
