@@ -21,15 +21,15 @@ Display Tulsa Fire Department incidents on a map.
 * Tested on Chrome & Brave
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
-    There are 2 options that may be added to the URL as parameters to override default settings
+    - There are 2 options that may be added to the URL as parameters to override default settings
     
-    parameters:
-    recent=number         ==> change the number of recent incidents displayed; valid values 1 through 10; default = 5
-    zoomTo=true or false  ==> when set to false, the map will not pan and zoom automatically to new incidents; default = true
+    - parameters:
+    - recent=number         ==> change the number of recent incidents displayed; valid values 1 through 10; default = 5
+    - zoomTo=true or false  ==> when set to false, the map will not pan and zoom automatically to new incidents; default = true
 
-    example #1    ==> https://rawgit.com/greghorne/TFD/master/index.html?recent=7
-    example #2    ==> https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false
-    example #3    ==> https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
+    - example #1    ==> https://rawgit.com/greghorne/TFD/master/index.html?recent=7
+    - example #2    ==> https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false
+    - example #3    ==> https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
 
 Notes/Comments:
 
