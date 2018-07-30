@@ -4,7 +4,7 @@ const CONST_MAP_DEFAULT_LATITUDEY     =  36.1539816
 const CONST_MAP_DEFAULT_ZOOM          =  11
 
 const CONST_MAP_JSON_URL              = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
-const CONST_JSON_UPDATE               = 60000    // how often to poll for JSON data from server
+const CONST_JSON_UPDATE_TIME          = 60000    // how often to poll for JSON data from server
 
 const CONST_MAP_INCIDENT_ZOOM         = 15
 const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
@@ -311,7 +311,7 @@ $(document).ready(function() {
         })
 
         // retrieve json data
-        setTimeout(getTfdData, CONST_JSON_UPDATE);
+        setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
     }
     getTfdData();
 })
