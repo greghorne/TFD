@@ -125,11 +125,11 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
 
 function clearCurrentMarker(currentMarker) {
     console.log("currentMarker...")
-    // set it back to default icon (blue)
     currentMarker.closePopup();
     L.DomUtil.removeClass(currentMarker._icon, "blinking");
     currentMarker.setIcon(new L.Icon.Default());
     console.log("exit currentMarker...")
+    return "";
 }
 
 function clearRecentMarkers(recentMarkers) {
@@ -137,6 +137,8 @@ function clearRecentMarkers(recentMarkers) {
     // set it back to default icon (blue)
     for (var n = 0; n < nRecentMarkersToDisplay; n++) {
         var aMarker = recentMarkers[n]
+
+        map.removeLayer(recentMarkers[n])
         L.DomUtil.removeClass(aMarker._icon, "blinking2");
         recentMarkers[n].setIcon(new L.Icon.Default());
     }
@@ -230,62 +232,62 @@ $(document).ready(function() {
             var incidentsCount          = incidents.Incident.length;            // number of json incidents
             var latestIncidentNumber    = incidents.Incident[0].IncidentNumber  // most recent incident from the json object
 
+            // if the following is true, a new incident has occurred that also means the json file has changed (updated)
             if (currentIncidentNumber !== latestIncidentNumber) {
 
-                // clear current marker (red) and recent markers (yellow)
+                // turn any red or yellow icons back to blue
                 if (currentMarker)            { clearCurrentMarker(currentMarker) }
                 if (recentMarkers.length > 0) { recentMarkers = clearRecentMarkers(recentMarkers) }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
-
                     var incident = incidents.Incident[counter]  // fetch incident
 
-                    // see if the incidentNumber is in an array, if not it is a new incident
-                    if ((markers.indexOf(incident.IncidentNumber) == -1) || (counter <= nRecentMarkersToDisplay)) {
-
+                    // see if the incidentNumber is in an array, if not it is a new incident so add a blue marker
+                    if (markers.indexOf(incident.IncidentNumber) == -1) {
                         markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
-                    
                         var vehicles  = incident.Vehicles.Vehicle
                         buildVehicleHTMLString(vehicles, function(vehiclesString) {
-
                             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
-                                            incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-                            
-                            if (counter === 0) {
-                                console.log("red marker...")
-                                marker  = new L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_RED, title: incident.Problem, riseOnHover: true }).addTo(map);
-                                
-                                currentIncidentNumber = incident.IncidentNumber;
-                                currentMarker         = marker
-                                marker.bindPopup(popupString).openPopup();
-
-                                if ($(window).focus) { map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); } 
-                                else {
-                                    map.panTo([incident.Latitude, incident.Longitude]);
-                                    map.setZoom(CONST_MAP_INCIDENT_ZOOM)
-                                }
-                            
-                                // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-                                function blink() { L.DomUtil.addClass(marker._icon, "blinking"); }
-                                blink();
-                                console.log("red marker out...")
-                            } else if (counter > 0 && counter <= nRecentMarkersToDisplay) {
-                                console.log("yellow marker...")
-                                marker = L.marker([incident.Latitude, incident.Longitude], { icon: CONST_PIN_YELLOW, title: incident.Problem, riseOnHover: true }).addTo(map);
-                                marker.bindPopup(popupString);
-                                recentMarkers.push(marker);
-                                function blink2() { L.DomUtil.addClass(marker._icon, "blinking2"); }
-                                blink2();
-                                console.log("yellow marker out...")
-                            } else {
-                                console.log("blue marker...")
-                                marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
-                                marker.bindPopup(popupString);
-                            }
-                        })    
+                                                incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+                            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+                            marker.bindPopup(popupString);
+                        });
+                    }
+                    
+                    // store the newest incident and recent incidents
+                    if (counter == 0) {
+                        currentIncidentNumber = incident.IncidentNumber;        // store the newest incident (to make into a red marker)
+                        currentMarker = marker
+                    } else if (counter > 0 && counter <= nRecentMarkersToDisplay) {
+                        recentMarkers.push(marker)                              // store inicdent(to make into a yellow marker)
                     }
                 }
+
+                //////////////////////////////////////////////////////////////////////
+                // change current incident marker to red
+                currentMarker.setIcon(CONST_PIN_RED)
+                currentMarker.openPopup();
+                if ($(window).focus) { 
+                    map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
+                } else {
+                    map.panTo([incident.Latitude, incident.Longitude]);
+                    map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+                }
+                // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
+                function blink() { L.DomUtil.addClass(currentMarker._icon, "blinking"); }
+                blink();
+                //////////////////////////////////////////////////////////////////////
+
+                //////////////////////////////////////////////////////////////////////
+                // change "recent" markers to yellow
+                for (var counter = 0; counter < recentMarkers.length; counter++) {
+                    var myMarker = recentMarkers[counter];
+                    myMarker.setIcon(CONST_PIN_YELLOW)
+                    function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
+                    blink2();
+                }
+                //////////////////////////////////////////////////////////////////////
             }
         })
 
