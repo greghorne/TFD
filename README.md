@@ -2,7 +2,7 @@
 
 Display Tulsa Fire Department incidents on a map.
 
-* The Webapp:
+* What does it do:
 
     * Polls City of Tulsa Fire Department incident data every 1 minute.
     * The map will center and zoom to the most recent incident (red map marker).
@@ -15,14 +15,13 @@ Display Tulsa Fire Department incidents on a map.
 * Data Source: 
 
     * https://www.cityoftulsa.org/government/departments/information-technology/open-tulsa/open-tulsa-dataset-list/
-
     * https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
 
 * Tested on macOS: Chrome & Brave
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
     - There are 2 options that may be added to the URL as parameters to override default settings
-    - _recent=number_ - change the number of recent incidents displayed; valid values 1 through 10; default = 5
+    - _recent=number_ - change the number of recent incidents displayed; valid values are 1 through 10; default = 5
     - _zoomTo=false_ - when false, turns off automatic panning and zoom to a new incident; default = true
     - example #1: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
     - example #2: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
