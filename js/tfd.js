@@ -164,7 +164,6 @@ function popRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
     }
  
     return recentMarkers;
-
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -276,7 +275,7 @@ $(document).ready(function() {
                 if (currentMarker) { 
                     clearCurrentMarker(currentMarker)   // turn red marker into blue marker
                     recentMarkers.push(currentMarker)   // push the marker onto the recentMarkers array
-                    popRecentMarkers(recentMarkers)     // see if the oldest "recent" marker needs to be removed
+                    recentMarkers = popRecentMarkers(recentMarkers)     // see if the oldest "recent" marker needs to be removed
                 }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
