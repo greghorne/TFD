@@ -4,7 +4,7 @@ const CONST_MAP_DEFAULT_LATITUDEY     =  36.1539816
 const CONST_MAP_DEFAULT_ZOOM          =  11
 
 const CONST_MAP_JSON_URL              = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
-const CONST_JSON_UPDATE_TIME          = 60000    // how often to poll for JSON data from server
+const CONST_JSON_UPDATE_TIME          = 6000    // how often to poll for JSON data from server
 
 const CONST_MAP_INCIDENT_ZOOM         = 15
 const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
@@ -145,26 +145,26 @@ function clearCurrentMarker(marker) {    // make the red marker blue
 
 
 //////////////////////////////////////////////////////////////////////
-function popRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
+// function popRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
 
-    var myMarker;
-    console.log("recentMarkers.length: " + recentMarkers.length)
+    // var myMarker;
+    // console.log("recentMarkers.length: " + recentMarkers.length)
 
-    var myMarker = recentMarkers[recentMarkers.length - 1]
-    L.DomUtil.removeClass(myMarker._icon, "blinking2");
-    myMarker.setIcon(new L.Icon.Default());
+    // var myMarker = recentMarkers[recentMarkers.length - 1]
+    // L.DomUtil.removeClass(myMarker._icon, "blinking2");
+    // myMarker.setIcon(new L.Icon.Default());
 
-    myMarker.setIcon(CONST_MARKER_YELLOW)
-    function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
-    blink2();
+    // myMarker.setIcon(CONST_MARKER_YELLOW)
+    // function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
+    // blink2();
 
-    // pop off the oldest marker (the first one in the array)
-    if (recentMarkers.length > gnRecentMarkersToDisplay) {
-        recentMarkers = recentMarkers.splice(0, 1);
-    }
+    // // pop off the oldest marker (the first one in the array)
+    // if (recentMarkers.length > gnRecentMarkersToDisplay) {
+    //     recentMarkers = recentMarkers.splice(0, 1);
+    // }
  
-    return recentMarkers;
-}
+    // return recentMarkers;
+// }
 //////////////////////////////////////////////////////////////////////
 
 
@@ -219,6 +219,15 @@ function handleRecentIncidents(recentMarkers) {
         function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
         blink2();
     }
+
+    counter = 0
+    while (recentMarkers.length > gnRecentMarkersToDisplay) {
+        var myMarker = recentMarkers[counter]
+        L.DomUtil.removeClass(myMarker._icon, "blinking2");
+        myMarker.setIcon(new L.Icon.Default());
+        recentMarkers = recentMarkers.split(0, 1);
+        counter++
+    }
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -271,11 +280,13 @@ $(document).ready(function() {
 
             // if the following is true, a new incident has occurred (json file has updated)
             if (currentIncidentNumber !== latestIncidentNumber) {
+                console.log(currentMarker)
 
                 if (currentMarker) { 
+                    console.log("here")
                     clearCurrentMarker(currentMarker)   // turn red marker into blue marker
                     recentMarkers.push(currentMarker)   // push the marker onto the recentMarkers array
-                    recentMarkers = popRecentMarkers(recentMarkers)     // see if the oldest "recent" marker needs to be removed
+                    // recentMarkers = popRecentMarkers(recentMarkers)     // see if the oldest "recent" marker needs to be removed
                 }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
@@ -293,13 +304,16 @@ $(document).ready(function() {
                             marker.bindPopup(popupString);
                         });
 
-                        if (counter > 0 && counter <= gnRecentMarkersToDisplay) {
+                        if (counter > 0 && (counter <= gnRecentMarkersToDisplay)) {
                             // new recent marker
+                            console.log("push...")
                             recentMarkers.push(marker)
-                            recentMarkers = popRecentMarkers(recentMarkers) 
+                            // recentMarkers = popRecentMarkers(recentMarkers) 
                         }
                     } 
                 }
+
+                handleRecentIncidents(recentMarkers)
 
                 //////////////////////////////////////////////////////////////////////
                 // store the newest incident 
