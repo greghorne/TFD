@@ -5,9 +5,9 @@ Display Tulsa Fire Department incidents on a map.
 * The Webapp:
 
     * Polls City of Tulsa Fire Department incident data every 1 minute.
-    * The map will center and zoom to the most recent incident (blinking red map marker).
-    * The immediate 5 previous incidents prior to the most recent incident (blinking red) are displayed as blinking yellow map markers.
-    * All other older incidents are represented as blue map markers.
+    * The map will center and zoom to the most recent incident (red map marker).
+    * The 5 previous incidents are displayed as yellow map markers.
+    * All other incidents are displayed as blue map markers.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
 
 * Tech Stack: Leaflet & Javascript
@@ -22,11 +22,12 @@ Display Tulsa Fire Department incidents on a map.
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
     - There are 2 options that may be added to the URL as parameters to override default settings
-    - recent=number - change the number of recent incidents displayed; valid values 1 through 10; default = 5
-    - zoomTo=false - when false, turns off automatic panning and zoom to a new incident; default = true
-    - example #1: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
-    - example #2: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false
-    - example #3: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
+    - _recent=number_ - change the number of recent incidents displayed; valid values 1 through 10; default = 5
+    - _zoomTo=false_ - when false, turns off automatic panning and zoom to a new incident; default = true
+    - example #1: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
+    - example #2: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
+    - example #3: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false
+    
 
 Notes/Comments:
 
