@@ -171,7 +171,7 @@ function getUrlParameterOptions(url, fnCallback) {
 function handleCurrentIncident(map, currentMarker, incident) {
     currentMarker.setIcon(CONST_MARKER_RED)
     currentMarker.openPopup();
-
+    console.log("current: " + incident.Latitude + ", " + incident.Longitude)
     if (eval(gbZoomTo)) {
         if (document.hasFocus()) { 
             map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
@@ -298,7 +298,7 @@ $(document).ready(function() {
 
                 //////////////////////////////////////////////////////////////////////
                 // store the newest incident 
-                currentIncidentNumber = incident.IncidentNumber;        
+                currentIncidentNumber = latestIncidentNumber;        
                 currentMarker = marker
                 handleCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blinking and pan/zoom to incident
                 //////////////////////////////////////////////////////////////////////
