@@ -139,32 +139,7 @@ function clearCurrentMarker(marker) {    // make the red marker blue
     marker.closePopup();
     L.DomUtil.removeClass(marker._icon, "blinking");
     marker.setIcon(new L.Icon.Default());
-    return "";
 }
-//////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
-// function popRecentMarkers(recentMarkers) {    // make the yellow marker(s) blue
-
-    // var myMarker;
-    // console.log("recentMarkers.length: " + recentMarkers.length)
-
-    // var myMarker = recentMarkers[recentMarkers.length - 1]
-    // L.DomUtil.removeClass(myMarker._icon, "blinking2");
-    // myMarker.setIcon(new L.Icon.Default());
-
-    // myMarker.setIcon(CONST_MARKER_YELLOW)
-    // function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
-    // blink2();
-
-    // // pop off the oldest marker (the first one in the array)
-    // if (recentMarkers.length > gnRecentMarkersToDisplay) {
-    //     recentMarkers = recentMarkers.splice(0, 1);
-    // }
- 
-    // return recentMarkers;
-// }
 //////////////////////////////////////////////////////////////////////
 
 
@@ -196,11 +171,14 @@ function getUrlParameterOptions(url, fnCallback) {
 function handleCurrentIncident(map, currentMarker, incident) {
     currentMarker.setIcon(CONST_MARKER_RED)
     currentMarker.openPopup();
-    if ($(window).focus && gbZoomTo) { 
-        map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
-    } else {
-        map.panTo([incident.Latitude, incident.Longitude]);
-        map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+
+    if (eval(gbZoomTo)) {
+        if (document.hasFocus()) { 
+            map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
+        } else {
+            map.panTo([incident.Latitude, incident.Longitude]);
+            map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+        }
     }
     // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
     function blink() { L.DomUtil.addClass(currentMarker._icon, "blinking"); }
@@ -212,6 +190,7 @@ function handleCurrentIncident(map, currentMarker, incident) {
 //////////////////////////////////////////////////////////////////////
 // make the markers yellow and flashing
 function handleRecentIncidents(recentMarkers) {
+    console.log("in handler...")
     console.log("recentMarkers: " + recentMarkers.length)
     for (var counter = 0; counter < recentMarkers.length; counter++) {
         var myMarker = recentMarkers[counter];
@@ -225,15 +204,20 @@ function handleRecentIncidents(recentMarkers) {
         var myMarker = recentMarkers[counter]
         L.DomUtil.removeClass(myMarker._icon, "blinking2");
         myMarker.setIcon(new L.Icon.Default());
-        recentMarkers = recentMarkers.split(0, 1);
+        recentMarkers.shift();
+        console.log(recentMarkers.length)
         counter++
     }
+
+    console.log(recentMarkers)
+    console.log(recentMarkers.length)
+    console.log("out handler...")
+    return recentMarkers;
 }
 //////////////////////////////////////////////////////////////////////
 
 var gnRecentMarkersToDisplay
 var gbZoomTo
-
 
 //////////////////////////////////////////////////////////////////////
 // here we go
@@ -242,11 +226,10 @@ $(document).ready(function() {
     // /////////////////////////////////////
     // read in and set url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
-
         if (params['recent']) { gnRecentMarkersToDisplay = params['recent'] } 
         else { gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY }
 
-        if (params['zoomTo']) { gbZoomTo = Boolean(params['zoomTo']) } 
+        if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
         else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
     });
     // /////////////////////////////////////
@@ -280,13 +263,10 @@ $(document).ready(function() {
 
             // if the following is true, a new incident has occurred (json file has updated)
             if (currentIncidentNumber !== latestIncidentNumber) {
-                console.log(currentMarker)
 
                 if (currentMarker) { 
-                    console.log("here")
                     clearCurrentMarker(currentMarker)   // turn red marker into blue marker
                     recentMarkers.push(currentMarker)   // push the marker onto the recentMarkers array
-                    // recentMarkers = popRecentMarkers(recentMarkers)     // see if the oldest "recent" marker needs to be removed
                 }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
@@ -300,20 +280,21 @@ $(document).ready(function() {
                         buildVehicleHTMLString(vehicles, function(vehiclesString) {
                             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
                                                 incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-                            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem, riseOnHover: true}).addTo(map);
+                            
+                            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address, riseOnHover: true}).addTo(map);
                             marker.bindPopup(popupString);
-                        });
 
-                        if (counter > 0 && (counter <= gnRecentMarkersToDisplay)) {
-                            // new recent marker
-                            console.log("push...")
-                            recentMarkers.push(marker)
-                            // recentMarkers = popRecentMarkers(recentMarkers) 
-                        }
+
+                            if (counter > 0 && (counter <= gnRecentMarkersToDisplay)) {
+                                // new recent marker
+                                console.log("push...")
+                                recentMarkers.push(marker)
+                                // recentMarkers = popRecentMarkers(recentMarkers) 
+                            }
+                        });
                     } 
                 }
-
-                handleRecentIncidents(recentMarkers)
+                recentMarkers = handleRecentIncidents(recentMarkers)
 
                 //////////////////////////////////////////////////////////////////////
                 // store the newest incident 
@@ -321,8 +302,6 @@ $(document).ready(function() {
                 currentMarker = marker
                 handleCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blinking and pan/zoom to incident
                 //////////////////////////////////////////////////////////////////////
-                
-                console.log(recentMarkers)
             }
         })
 
