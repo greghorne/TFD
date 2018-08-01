@@ -21,3 +21,20 @@ html, body { height: 100%; width: 100%; margin: 0px }
   .leaflet-popup-tip {
     background: #dbe7ea !important
   }
+
+
+  .button-tool {
+    background-color: #FFFFFF;
+    width: 360px;
+    height: 36px;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index:  800;    
+	cursor: -webkit-grab;
+    cursor:    -moz-grab;
+    font-size: 12px;
+}
+
+
+.button-pointer { background-image: url(whole-hand-26.png); }
+/* .button-pointer:hover:before { content: "pointer"; } */

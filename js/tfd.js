@@ -171,14 +171,14 @@ function getUrlParameterOptions(url, fnCallback) {
 function handleCurrentIncident(map, currentMarker, incident) {
     currentMarker.setIcon(CONST_MARKER_RED)
     currentMarker.openPopup();
-    console.log("current: " + incident.Latitude + ", " + incident.Longitude)
+    // console.log("current: " + incident.Latitude + ", " + incident.Longitude)
     if (eval(gbZoomTo)) {
-        if (document.hasFocus()) { 
+        // if (document.hasFocus()) { 
             map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
-        } else {
-            map.panTo([incident.Latitude, incident.Longitude]);
-            map.setZoom(CONST_MAP_INCIDENT_ZOOM)
-        }
+        // } else {
+        //     map.panTo([incident.Latitude, incident.Longitude]);
+        //     map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+        // }
     }
     // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
     function blink() { L.DomUtil.addClass(currentMarker._icon, "blinking"); }
@@ -190,8 +190,7 @@ function handleCurrentIncident(map, currentMarker, incident) {
 //////////////////////////////////////////////////////////////////////
 // make the markers yellow and flashing
 function handleRecentIncidents(recentMarkers) {
-    console.log("in handler...")
-    console.log("recentMarkers: " + recentMarkers.length)
+
     for (var counter = 0; counter < recentMarkers.length; counter++) {
         var myMarker = recentMarkers[counter];
         myMarker.setIcon(CONST_MARKER_YELLOW)
@@ -205,16 +204,87 @@ function handleRecentIncidents(recentMarkers) {
         L.DomUtil.removeClass(myMarker._icon, "blinking2");
         myMarker.setIcon(new L.Icon.Default());
         recentMarkers.shift();
-        console.log(recentMarkers.length)
         counter++
     }
 
-    console.log(recentMarkers)
-    console.log(recentMarkers.length)
-    console.log("out handler...")
     return recentMarkers;
 }
 //////////////////////////////////////////////////////////////////////
+var textCustomControlArr = []
+
+function handleRecentInfo(map, info, latlng, marker) {
+ 
+    
+    var textCustomControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
+
+        onAdd: function() {
+            var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control-custom');
+            container.style.width = "320px"
+            container.style.height = "18px"
+            container.style.margin = 0
+            // container.innerHTML   = "<center>" + text + "</center>"
+            container.innerHTML   = "<center>" + info + "</center>"
+            container.style.backgroundColor = "white"
+            // console.log(marker._lastCenter['lat'])
+            // console.log(marker._latlng.lat);
+            // var latlng = marker._lastCenter
+
+
+            container.onclick = function() {
+                // console.log(latlng.lat)
+                console.log("onclick: " + latlng)
+                console.log(marker)
+                map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
+                // map.panTo(latlng);
+                // map.setZoom(CONST_MAP_INCIDENT_ZOOM)
+                marker.openPopup()
+            }
+
+            container.onmouseover = function() {
+                // console.log("at mouseover...")
+            }
+
+            container.onmouseexit = function() {
+                // console.log("at mouseexit...")
+            }
+
+            return container;
+        },
+
+        
+    });
+    var control = map.addControl(new textCustomControl());
+    textCustomControlArr.push(control)
+}
+
+function blankHandleRecentInfo(map) {
+ 
+    var spacerCustomControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
+
+        onAdd: function() {
+            var container = L.DomUtil.create('div');
+            container.style.width = "320px"
+            container.style.height = "18px"
+            container.style.margin = 0
+            container.innerHTML = " "
+            return container;
+        }
+
+
+    });
+
+    var control = map.addControl(new spacerCustomControl());
+    textCustomControlArr.push(control)
+}
+
+
+
 
 var gnRecentMarkersToDisplay
 var gbZoomTo
@@ -226,7 +296,7 @@ $(document).ready(function() {
     // /////////////////////////////////////
     // read in and set url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
-        if (params['recent']) { gnRecentMarkersToDisplay = params['recent'] } 
+        if (params['recent'] && params['recent'] > 0 && params['recent'] <= 10) { gnRecentMarkersToDisplay = params['recent'] } 
         else { gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY }
 
         if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
@@ -249,6 +319,7 @@ $(document).ready(function() {
 
     L.control.layers(baseMaps).addTo(map)   // add all map layers to layer control
     L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
+
 
     // /////////////////////////////////////
     function getTfdData() {
@@ -287,9 +358,7 @@ $(document).ready(function() {
 
                             if (counter > 0 && (counter <= gnRecentMarkersToDisplay)) {
                                 // new recent marker
-                                console.log("push...")
                                 recentMarkers.push(marker)
-                                // recentMarkers = popRecentMarkers(recentMarkers) 
                             }
                         });
                     } 
@@ -302,12 +371,28 @@ $(document).ready(function() {
                 currentMarker = marker
                 handleCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blinking and pan/zoom to incident
                 //////////////////////////////////////////////////////////////////////
+
+                for (var n = 0; n < textCustomControlArr.length - 1; n++) {
+                    var aMarker = textCustomControlArr[n]
+                    aMarker.remove(map);
+                }
+
+                for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
+                    var msg = recentMarkers[counter].options.title
+                    var myMarker = recentMarkers[counter]
+                    handleRecentInfo(map, msg, myMarker._latlng, myMarker)
+                   
+                }
+                blankHandleRecentInfo(map);
             }
+
+
         })
 
         // retrieve json data
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
     }
     getTfdData();
+
 })
 
