@@ -235,12 +235,12 @@ function handleRecentInfo(map, info, latlng, marker) {
 
             container.onclick = function() {
                 // console.log(latlng.lat)
-                console.log("onclick: " + latlng)
-                console.log(marker)
+                // console.log("onclick: " + latlng)
+                // console.log(marker._popup)
+
                 map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
-                // map.panTo(latlng);
-                // map.setZoom(CONST_MAP_INCIDENT_ZOOM)
-                marker.openPopup()
+                // marker.openPopup()
+                // console.log("exiting...")
             }
 
             container.onmouseover = function() {
