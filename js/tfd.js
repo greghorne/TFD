@@ -220,27 +220,17 @@ function handleRecentInfo(map, info, latlng, marker) {
             position: 'bottomright' 
         },
 
-        onAdd: function() {
-            var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control-custom');
+        onAdd: function(map) {
+            var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+
             container.style.width = "320px"
             container.style.height = "18px"
             container.style.margin = 0
-            // container.innerHTML   = "<center>" + text + "</center>"
             container.innerHTML   = "<center>" + info + "</center>"
-            container.style.backgroundColor = "white"
-            // console.log(marker._lastCenter['lat'])
-            // console.log(marker._latlng.lat);
-            // var latlng = marker._lastCenter
-
+            container.style.backgroundColor = "#f9f9eb"
 
             container.onclick = function() {
-                // console.log(latlng.lat)
-                // console.log("onclick: " + latlng)
-                // console.log(marker._popup)
-
                 map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
-                // marker.openPopup()
-                // console.log("exiting...")
             }
 
             container.onmouseover = function() {
@@ -254,34 +244,40 @@ function handleRecentInfo(map, info, latlng, marker) {
             return container;
         },
 
-        
-    });
-    var control = map.addControl(new textCustomControl());
-    textCustomControlArr.push(control)
-}
+        onRemove: function(map) {
 
-function blankHandleRecentInfo(map) {
- 
-    var spacerCustomControl = L.Control.extend({
-        options: {
-            position: 'bottomright' 
-        },
-
-        onAdd: function() {
-            var container = L.DomUtil.create('div');
-            container.style.width = "320px"
-            container.style.height = "18px"
-            container.style.margin = 0
-            container.innerHTML = " "
-            return container;
         }
 
-
+        
     });
+    var myControl = new textCustomControl();
+    map.addControl(myControl);
+    textCustomControlArr.push(myControl)
 
-    var control = map.addControl(new spacerCustomControl());
-    textCustomControlArr.push(control)
 }
+
+// function blankHandleRecentInfo(map) {
+ 
+//     var spacerCustomControl = L.Control.extend({
+//         options: {
+//             position: 'bottomright' 
+//         },
+
+//         onAdd: function(map) {
+//             var container = L.DomUtil.create('div');
+//             container.style.width = "320px"
+//             container.style.height = "18px"
+//             container.style.margin = 0
+//             container.innerHTML = " "
+//             return container;
+//         }
+
+
+//     });
+
+//     var control = map.addControl(new spacerCustomControl());
+//     textCustomControlArr.push(control)
+// }
 
 
 
@@ -372,18 +368,22 @@ $(document).ready(function() {
                 handleCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blinking and pan/zoom to incident
                 //////////////////////////////////////////////////////////////////////
 
+                console.log("length: " + textCustomControlArr.length)
+                var aMarker;
                 for (var n = 0; n < textCustomControlArr.length - 1; n++) {
-                    var aMarker = textCustomControlArr[n]
+                    console.log("n: " + n)
+                    aMarker = textCustomControlArr[n]
                     aMarker.remove(map);
                 }
 
                 for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
+                    console.log("counter: " + counter)
                     var msg = recentMarkers[counter].options.title
                     var myMarker = recentMarkers[counter]
                     handleRecentInfo(map, msg, myMarker._latlng, myMarker)
                    
                 }
-                blankHandleRecentInfo(map);
+                // blankHandleRecentInfo(map);
             }
 
 
@@ -391,8 +391,38 @@ $(document).ready(function() {
 
         // retrieve json data
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
+
+        setTimeout(function() {
+            var aMarker;
+            // for (var n = 0; n < textCustomControlArr.length - 1; n++) {
+            for (var n = 0; n < textCustomControlArr.length; n++) {
+                console.log("n: " + n)
+                aMarker = textCustomControlArr[n]
+                console.log(aMarker)
+                // delete aMarker
+                // aMarker.remove();
+                // map.removeControl(aMarker)
+                // map.remove(aMarker)
+                // aMarker.remove(map)
+                // aMarker.removeFrom(map)
+                // aMarker.remove();
+
+                if (aMarker != null) {
+                    map.removeControl(aMarker)
+                    // aMarker.remove()
+                    // aMarker._controlContainer.removeFrom(map)
+                    // map.remove(aMarker._controlContainer)
+                    // map.removeControl(aMarker)
+                    // textCustomControlArr[n] = null
+                }
+                console.log("removed")
+                
+            }
+        }, 6000)
     }
     getTfdData();
+
+
 
 })
 
