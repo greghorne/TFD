@@ -212,7 +212,7 @@ function handleRecentIncidents(recentMarkers) {
 //////////////////////////////////////////////////////////////////////
 var textCustomControlArr = []
 
-function handleRecentInfo(map, info, latlng, marker) {
+function handleRecentInfo(map, info, latlng, color) {
  
     
     var textCustomControl = L.Control.extend({
@@ -228,6 +228,10 @@ function handleRecentInfo(map, info, latlng, marker) {
             container.style.margin = 0
             container.innerHTML   = "<center>" + info + "</center>"
             container.style.backgroundColor = "#f9f9eb"
+            if (color) { 
+                console.log("red")
+                container.innerHTML   = "<center><font color='red'>" + info + "</font></center>"
+            }
 
             container.onclick = function() {
                 map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
@@ -350,7 +354,7 @@ $(document).ready(function() {
                     console.log("removed: " + n)
                     aMarker = textCustomControlArr[n]
                     map.removeControl(aMarker)
-                    textCustomControlArr.shift(0, 1);
+                    // textCustomControlArr.shift(0, 1);
                 }
 
                 for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
@@ -358,9 +362,13 @@ $(document).ready(function() {
                     var msg = recentMarkers[counter].options.title
                     var myMarker = recentMarkers[counter]
                     console.log(msg)
-                    handleRecentInfo(map, msg, myMarker._latlng, myMarker)
+                    // handleRecentInfo(map, msg, myMarker._latlng, myMarker)
+                    handleRecentInfo(map, msg, myMarker._latlng)
                    
                 }
+                console.log("Updated In...")
+                console.log(incident)
+                handleRecentInfo(map, incident.Problem + " x " + incident.Address, [incident.Latitude, incident.Longitude], "red")
                 console.log("")
                 console.log("Updated...")
             }
