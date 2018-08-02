@@ -2,39 +2,34 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 #map { height: 100%; width: 100% }
 
-
 /* blinking map marker */
-@keyframes fade { 
-    from { opacity: 0; } 
+  @keyframes fade { 
+  from { opacity: 0; } 
 }
 
-.blinking  { animation: fade 1.00s infinite alternate; }
-.blinking2 { animation: fade 1.50s infinite alternate; }
+.blink        { animation: fade 1.00s infinite alternate; }
+.blinkSlower  { animation: fade 1.50s infinite alternate; }
 
-
-
-  /* leaflet css overrides */
-  .leaflet-popup-content-wrapper {
-    background: #dbe7ea !important
-  }
-
-  .leaflet-popup-tip {
-    background: #dbe7ea !important
-  }
-
-
-  .button-tool {
-    background-color: #FFFFFF;
-    width: 360px;
-    height: 36px;
-    background-repeat: no-repeat;
-    background-position: center;
-    z-index:  800;    
-	cursor: -webkit-grab;
-    cursor:    -moz-grab;
-    font-size: 1.0em;
+/* leaflet css overrides */
+.leaflet-popup-content-wrapper {
+  background: #dbe7ea !important
 }
 
+.leaflet-popup-tip {
+  background: #dbe7ea !important
+}
+
+.custom-control {
+  background-color: #FFFFFF;
+  width: 360px;
+  height: 36px;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index:  800;    
+  cursor: -webkit-grab;
+  cursor:    -moz-grab;
+  font-size: 1.0em;
+}
 
 /* .button-pointer { background-image: url(whole-hand-26.png); } */
 /* .button-pointer:hover:before { content: "pointer"; } */

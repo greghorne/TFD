@@ -137,7 +137,7 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
 //////////////////////////////////////////////////////////////////////
 function clearCurrentMarker(marker) {    // make the red marker blue
     marker.closePopup();
-    L.DomUtil.removeClass(marker._icon, "blinking");
+    L.DomUtil.removeClass(marker._icon, "blink");
     marker.setIcon(new L.Icon.Default());
 }
 //////////////////////////////////////////////////////////////////////
@@ -168,7 +168,7 @@ function getUrlParameterOptions(url, fnCallback) {
 
 //////////////////////////////////////////////////////////////////////
 // make the marker red and flashing
-function handleCurrentIncident(map, currentMarker, incident) {
+function processCurrentIncident(map, currentMarker, incident) {
     currentMarker.setIcon(CONST_MARKER_RED)
     currentMarker.openPopup();
     // console.log("current: " + incident.Latitude + ", " + incident.Longitude)
@@ -180,8 +180,8 @@ function handleCurrentIncident(map, currentMarker, incident) {
         //     map.setZoom(CONST_MAP_INCIDENT_ZOOM)
         // }
     }
-    // this is a workaround; setting "blinking" in the L.marker statement offsets the marker and popup
-    function blink() { L.DomUtil.addClass(currentMarker._icon, "blinking"); }
+    // this is a workaround; setting "blink" in the L.marker statement offsets the marker and popup
+    function blink() { L.DomUtil.addClass(currentMarker._icon, "blink"); }
     blink();
 }
 //////////////////////////////////////////////////////////////////////
@@ -189,19 +189,19 @@ function handleCurrentIncident(map, currentMarker, incident) {
 
 //////////////////////////////////////////////////////////////////////
 // make the markers yellow and flashing
-function handleRecentIncidents(recentMarkers) {
+function processRecentIncidents(recentMarkers) {
 
     for (var counter = 0; counter < recentMarkers.length; counter++) {
         var myMarker = recentMarkers[counter];
         myMarker.setIcon(CONST_MARKER_YELLOW)
-        function blink2() { L.DomUtil.addClass(myMarker._icon, "blinking2"); }
+        function blink2() { L.DomUtil.addClass(myMarker._icon, "blinkSlow"); }
         blink2();
     }
 
     counter = 0
     while (recentMarkers.length > gnRecentMarkersToDisplay) {
         var myMarker = recentMarkers[counter]
-        L.DomUtil.removeClass(myMarker._icon, "blinking2");
+        L.DomUtil.removeClass(myMarker._icon, "blinkSlow");
         myMarker.setIcon(new L.Icon.Default());
         recentMarkers.shift();
         counter++
@@ -211,7 +211,7 @@ function handleRecentIncidents(recentMarkers) {
 //////////////////////////////////////////////////////////////////////
 var gtextCustomControlArr = []
 
-function handleRecentInfo(map, info, latlng, bHighlight, myMarker) {
+function processRecentInfo(map, info, latlng, bHighlight, myMarker) {
      
     var textCustomControl = L.Control.extend({
         options: {
@@ -219,7 +219,7 @@ function handleRecentInfo(map, info, latlng, bHighlight, myMarker) {
         },
 
         onAdd: function(map, myMarker) {
-            var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+            var container = L.DomUtil.create('div', 'custom-control leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
 
             container.style.width           = "320px"
             container.style.height          = "18px"
@@ -348,13 +348,13 @@ $(document).ready(function() {
                         });
                     } 
                 }
-                recentMarkers = handleRecentIncidents(recentMarkers)
+                recentMarkers = processRecentIncidents(recentMarkers)
 
                 //////////////////////////////////////////////////////////////////////
                 // store the newest incident 
                 currentIncidentNumber = latestIncidentNumber;        
                 currentMarker = marker
-                handleCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blinking and pan/zoom to incident
+                processCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blink and pan/zoom to incident
                 //////////////////////////////////////////////////////////////////////
 
                 while (gtextCustomControlArr.length > 0) {
@@ -366,9 +366,9 @@ $(document).ready(function() {
                 for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
                     var msg = recentMarkers[counter].options.title
                     var myMarker = recentMarkers[counter]
-                    handleRecentInfo(map, msg, myMarker._latlng, false, myMarker)
+                    processRecentInfo(map, msg, myMarker._latlng, false, myMarker)
                 }
-                handleRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], true)
+                processRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], true)
             }
             
         })
