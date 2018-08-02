@@ -231,6 +231,7 @@ function handleRecentInfo(map, info, latlng, marker) {
 
             container.onclick = function() {
                 map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
+                // myControl.openPopup();
             }
 
             container.onmouseover = function() {
@@ -251,33 +252,36 @@ function handleRecentInfo(map, info, latlng, marker) {
         
     });
     var myControl = new textCustomControl();
-    map.addControl(myControl);
     textCustomControlArr.push(myControl)
+    map.addControl(myControl);
+    
 
 }
 
-// function blankHandleRecentInfo(map) {
+function blankHandleRecentInfo(map) {
  
-//     var spacerCustomControl = L.Control.extend({
-//         options: {
-//             position: 'bottomright' 
-//         },
+    var spacerCustomControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
 
-//         onAdd: function(map) {
-//             var container = L.DomUtil.create('div');
-//             container.style.width = "320px"
-//             container.style.height = "18px"
-//             container.style.margin = 0
-//             container.innerHTML = " "
-//             return container;
-//         }
+        onAdd: function(map) {
+            var container = L.DomUtil.create('div');
+            container.style.width = "320px"
+            container.style.height = "18px"
+            container.style.margin = 0
+            container.innerHTML = " "
+            return container;
+        }
 
 
-//     });
+    });
 
-//     var control = map.addControl(new spacerCustomControl());
-//     textCustomControlArr.push(control)
-// }
+    var myControl = new spacerCustomControl();
+    textCustomControlArr.push(control)
+    map.addControl(myControl);
+    
+}
 
 
 
@@ -371,18 +375,22 @@ $(document).ready(function() {
                 console.log("length: " + textCustomControlArr.length)
                 var aMarker;
                 for (var n = 0; n < textCustomControlArr.length - 1; n++) {
-                    console.log("n: " + n)
+                    console.log("removed: " + n)
                     aMarker = textCustomControlArr[n]
-                    aMarker.remove(map);
+                    map.removeControl(aMarker)
+                    textCustomControlArr.shift(0, 1);
                 }
 
                 for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
                     console.log("counter: " + counter)
                     var msg = recentMarkers[counter].options.title
                     var myMarker = recentMarkers[counter]
+                    console.log(msg)
                     handleRecentInfo(map, msg, myMarker._latlng, myMarker)
                    
                 }
+                console.log("")
+                console.log("Updated...")
                 // blankHandleRecentInfo(map);
             }
 
@@ -391,34 +399,6 @@ $(document).ready(function() {
 
         // retrieve json data
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
-
-        setTimeout(function() {
-            var aMarker;
-            // for (var n = 0; n < textCustomControlArr.length - 1; n++) {
-            for (var n = 0; n < textCustomControlArr.length; n++) {
-                console.log("n: " + n)
-                aMarker = textCustomControlArr[n]
-                console.log(aMarker)
-                // delete aMarker
-                // aMarker.remove();
-                // map.removeControl(aMarker)
-                // map.remove(aMarker)
-                // aMarker.remove(map)
-                // aMarker.removeFrom(map)
-                // aMarker.remove();
-
-                if (aMarker != null) {
-                    map.removeControl(aMarker)
-                    // aMarker.remove()
-                    // aMarker._controlContainer.removeFrom(map)
-                    // map.remove(aMarker._controlContainer)
-                    // map.removeControl(aMarker)
-                    // textCustomControlArr[n] = null
-                }
-                console.log("removed")
-                
-            }
-        }, 6000)
     }
     getTfdData();
 
