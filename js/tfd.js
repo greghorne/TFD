@@ -206,15 +206,13 @@ function handleRecentIncidents(recentMarkers) {
         recentMarkers.shift();
         counter++
     }
-
     return recentMarkers;
 }
 //////////////////////////////////////////////////////////////////////
-var textCustomControlArr = []
+var gtextCustomControlArr = []
 
-function handleRecentInfo(map, info, latlng, color) {
- 
-    
+function handleRecentInfo(map, info, latlng, bHighlight, myMarker) {
+     
     var textCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
@@ -223,50 +221,41 @@ function handleRecentInfo(map, info, latlng, color) {
         onAdd: function(map) {
             var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
 
-            container.style.width = "320px"
-            container.style.height = "18px"
-            container.style.margin = 0
-            container.innerHTML   = "<center>" + info + "</center>"
+            container.style.width           = "320px"
+            container.style.height          = "18px"
+            container.style.margin          = 0
             container.style.backgroundColor = "#f9f9eb"
-            
-            
-            if (color) { 
-                console.log("red")
+           
+            if (bHighlight) { 
                 container.style.backgroundColor = "#dbe7ea"
-                container.innerHTML   = "<center><font color='red'>" + info + "</font></center>"
+                container.innerHTML             = "<center><font color='red'>" + info + "</font></center>"
             } else {
                 container.style.backgroundColor = "#f9f9eb"
-                // container.style.backgroundColor = "#BEBB1F"
-                
+                container.innerHTML             = "<center>" + info + "</center>"
             }
 
             container.onclick = function() {
                 map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
-                // myControl.openPopup();
+                console.log(myMarker.getPopup())
+                console.log(myMarker)
+                myMarker.getPopup.openPopup()
             }
 
             container.onmouseover = function() {
-                // console.log("at mouseover...")
             }
 
             container.onmouseexit = function() {
-                // console.log("at mouseexit...")
             }
 
             return container;
         },
-
         onRemove: function(map) {
-
         }
 
-        
     });
     var myControl = new textCustomControl();
-    textCustomControlArr.push(myControl)
+    gtextCustomControlArr.push(myControl)
     map.addControl(myControl);
-    
-
 }
 
 var gnRecentMarkersToDisplay
@@ -341,6 +330,8 @@ $(document).ready(function() {
 
                             if (counter > 0 && (counter <= gnRecentMarkersToDisplay)) {
                                 // new recent marker
+                                console.log("trace")
+                                console.log(marker)
                                 recentMarkers.push(marker)
                             }
                         });
@@ -355,13 +346,11 @@ $(document).ready(function() {
                 handleCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blinking and pan/zoom to incident
                 //////////////////////////////////////////////////////////////////////
 
-                console.log("length: " + textCustomControlArr.length)
-                var aMarker;
-                for (var n = 0; n < textCustomControlArr.length - 1; n++) {
-                    console.log("removed: " + n)
-                    aMarker = textCustomControlArr[n]
-                    map.removeControl(aMarker)
-                    // textCustomControlArr.shift(0, 1);
+                console.log("length: " + gtextCustomControlArr.length)
+                while (gtextCustomControlArr.length > 0) {
+                    var textControl = gtextCustomControlArr[0]
+                    map.removeControl(textControl)
+                    gtextCustomControlArr.shift(0, 1);
                 }
 
                 for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
@@ -369,20 +358,14 @@ $(document).ready(function() {
                     var msg = recentMarkers[counter].options.title
                     var myMarker = recentMarkers[counter]
                     console.log(msg)
-                    // handleRecentInfo(map, msg, myMarker._latlng, myMarker)
-                    handleRecentInfo(map, msg, myMarker._latlng)
-                   
+                    handleRecentInfo(map, msg, myMarker._latlng, false, myMarker)
                 }
-                console.log("Updated In...")
+                console.log("latest incident...")
                 console.log(incident)
-                handleRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], "red")
-                console.log("")
-                console.log("Updated...")
+                handleRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], true)
+                console.log("latest incident out...")
             }
-
-
         })
-
         // retrieve json data
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
     }
