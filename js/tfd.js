@@ -228,9 +228,16 @@ function handleRecentInfo(map, info, latlng, color) {
             container.style.margin = 0
             container.innerHTML   = "<center>" + info + "</center>"
             container.style.backgroundColor = "#f9f9eb"
+            
+            
             if (color) { 
                 console.log("red")
+                container.style.backgroundColor = "#dbe7ea"
                 container.innerHTML   = "<center><font color='red'>" + info + "</font></center>"
+            } else {
+                container.style.backgroundColor = "#f9f9eb"
+                // container.style.backgroundColor = "#BEBB1F"
+                
             }
 
             container.onclick = function() {
@@ -368,7 +375,7 @@ $(document).ready(function() {
                 }
                 console.log("Updated In...")
                 console.log(incident)
-                handleRecentInfo(map, incident.Problem + " x " + incident.Address, [incident.Latitude, incident.Longitude], "red")
+                handleRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], "red")
                 console.log("")
                 console.log("Updated...")
             }
