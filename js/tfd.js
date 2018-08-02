@@ -218,7 +218,7 @@ function handleRecentInfo(map, info, latlng, bHighlight, myMarker) {
             position: 'bottomright' 
         },
 
-        onAdd: function(map) {
+        onAdd: function(map, myMarker) {
             var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
 
             container.style.width           = "320px"
@@ -236,9 +236,19 @@ function handleRecentInfo(map, info, latlng, bHighlight, myMarker) {
 
             container.onclick = function() {
                 map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
-                console.log(myMarker.getPopup())
-                console.log(myMarker)
-                myMarker.getPopup.openPopup()
+                
+                // .on('zoomend', function() {
+                //     map._layers['158'].fire('click')
+                // })
+                console.log("flyTo...")
+                // map._layers['polyindex0'].fire('click');
+                // map._layers[158].fire('click')
+                // myMarker.fire('click')
+                // map.on('zoomend', function() {
+                //     console.log("here...")
+                //     map._layers['158'].fire('click')
+                // })
+                
             }
 
             container.onmouseover = function() {
@@ -255,7 +265,9 @@ function handleRecentInfo(map, info, latlng, bHighlight, myMarker) {
     });
     var myControl = new textCustomControl();
     gtextCustomControlArr.push(myControl)
-    map.addControl(myControl);
+    var temp = map.addControl(myControl);
+    // console.log("temp")
+    // console.log(temp._popup._leaflet_id)
 }
 
 var gnRecentMarkersToDisplay
@@ -326,12 +338,11 @@ $(document).ready(function() {
                             
                             marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address, riseOnHover: true}).addTo(map);
                             marker.bindPopup(popupString);
+                            // console.log(marker._leaflet_id)
 
 
                             if (counter > 0 && (counter <= gnRecentMarkersToDisplay)) {
                                 // new recent marker
-                                console.log("trace")
-                                console.log(marker)
                                 recentMarkers.push(marker)
                             }
                         });
@@ -346,7 +357,6 @@ $(document).ready(function() {
                 handleCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blinking and pan/zoom to incident
                 //////////////////////////////////////////////////////////////////////
 
-                console.log("length: " + gtextCustomControlArr.length)
                 while (gtextCustomControlArr.length > 0) {
                     var textControl = gtextCustomControlArr[0]
                     map.removeControl(textControl)
@@ -354,22 +364,21 @@ $(document).ready(function() {
                 }
 
                 for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
-                    console.log("counter: " + counter)
                     var msg = recentMarkers[counter].options.title
                     var myMarker = recentMarkers[counter]
-                    console.log(msg)
                     handleRecentInfo(map, msg, myMarker._latlng, false, myMarker)
                 }
-                console.log("latest incident...")
-                console.log(incident)
                 handleRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], true)
-                console.log("latest incident out...")
             }
+            
         })
         // retrieve json data
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
     }
     getTfdData();
+    // console.log(map._layers)
+
+    
 
 
 
