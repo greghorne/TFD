@@ -258,34 +258,6 @@ function handleRecentInfo(map, info, latlng, marker) {
 
 }
 
-function blankHandleRecentInfo(map) {
- 
-    var spacerCustomControl = L.Control.extend({
-        options: {
-            position: 'bottomright' 
-        },
-
-        onAdd: function(map) {
-            var container = L.DomUtil.create('div');
-            container.style.width = "320px"
-            container.style.height = "18px"
-            container.style.margin = 0
-            container.innerHTML = " "
-            return container;
-        }
-
-
-    });
-
-    var myControl = new spacerCustomControl();
-    textCustomControlArr.push(control)
-    map.addControl(myControl);
-    
-}
-
-
-
-
 var gnRecentMarkersToDisplay
 var gbZoomTo
 
@@ -391,7 +363,6 @@ $(document).ready(function() {
                 }
                 console.log("")
                 console.log("Updated...")
-                // blankHandleRecentInfo(map);
             }
 
 
