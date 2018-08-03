@@ -169,9 +169,7 @@ function getUrlParameterOptions(url, fnCallback) {
 function processCurrentIncident(map, currentMarker, incident) {
     currentMarker.setIcon(CONST_MARKER_RED)
     currentMarker.openPopup();
-    if (eval(gbZoomTo)) {
-        map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
-    }
+    if (eval(gbZoomTo) ) { map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); }
     // this is a workaround; setting "blink" in the L.marker statement offsets the marker and popup
     function blink() { L.DomUtil.addClass(currentMarker._icon, "blink"); }
     blink();
@@ -251,7 +249,7 @@ $(document).ready(function() {
     // /////////////////////////////////////
     // read in and set url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
-        if (params['recent'] && params['recent'] > 0 && params['recent'] <= 10) { gnRecentMarkersToDisplay = params['recent'] } 
+        if (params['recent'] && params['recent'] > 0 && params['recent'] <= 20) { gnRecentMarkersToDisplay = params['recent'] } 
         else { gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY }
 
         if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
@@ -307,7 +305,7 @@ $(document).ready(function() {
                             popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
                                                 incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
                             
-                            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address, riseOnHover: true}).addTo(map);
+                            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], riseOnHover: true}).addTo(map);
                             marker.bindPopup(popupString);
 
                             if (counter > 0 && (counter <= gnRecentMarkersToDisplay)) {
@@ -337,13 +335,13 @@ $(document).ready(function() {
                     
                     var nValue = gnRecentMarkersToDisplay - 1
                     switch(counter) {
-                        case 0:         toolTip = "oldest";   break;
-                        case nValue:    toolTip = "newest";   break;
+                        case 0:         toolTip = "oldest recent incident";   break;
+                        case nValue:    toolTip = "newest recent incident";   break;
                     }
                     processRecentInfo(map, msg, myMarker._latlng, false, toolTip)
                 }
                 // process the most current incident (red marker)
-                processRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], true, "Current Incident")
+                processRecentInfo(map, incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")
             }
         })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
