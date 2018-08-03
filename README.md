@@ -6,7 +6,7 @@ Display Tulsa Fire Department incidents on a map.
 
     * Polls City of Tulsa Fire Department incident data every 1 minute.
     * The map will center and zoom to the most recent incident (red map marker).
-    * The 5 previous incidents are displayed as yellow map markers.
+    * The 10 previous incidents are displayed as yellow map markers.
     * All other incidents are displayed as blue map markers.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
 
