@@ -202,11 +202,11 @@ function processRecentIncidents(recentMarkers) {
 
 
 //////////////////////////////////////////////////////////////////////
-function processRecentInfo(map, info, latlng, bHighlight, myMarker) {
+function processRecentInfo(map, info, latlng, bHighlight, title) {
      
     var textCustomControl = L.Control.extend({
         options: {
-            position: 'topright' 
+            position: 'bottomright' 
         },
 
         onAdd: function(map, myMarker) {
@@ -219,6 +219,7 @@ function processRecentInfo(map, info, latlng, bHighlight, myMarker) {
                 container.style.backgroundColor = "#f9f9eb"
                 container.innerHTML             = "<center>" + info + "</center>"
             }
+            if (title) container.title = title
 
             container.onclick     = function() { map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM) }
             container.onmouseover = function() { L.DomUtil.addClass(map._container,'cursor-pointer') }
@@ -333,9 +334,25 @@ $(document).ready(function() {
                 for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
                     var msg         = recentMarkers[counter].options.title
                     var myMarker    = recentMarkers[counter]
-                    processRecentInfo(map, msg, myMarker._latlng, false, myMarker)
+                    var title       = ""
+                    
+                    var nValue = gnRecentMarkersToDisplay - 1
+                    switch(counter) {
+                        case 0:
+                            title = "oldest";
+                            break;
+                        case nValue:
+                            title = "newest";
+                            break;
+                        default:
+                            title = null;
+                            break;
+                    }
+
+                    processRecentInfo(map, msg, myMarker._latlng, false, title)
+
                 }
-                processRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], true)
+                processRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], true, "Current Incident")
             }
             
         })

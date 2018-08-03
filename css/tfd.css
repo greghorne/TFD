@@ -2,6 +2,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 #map { height: 100%; width: 100% }
 
+/* .leaflet-control-container { position: absolute; bottom: 56px; right: 56px }  */
+
 /* blinking map marker */
   @keyframes fade { 
   from { opacity: 0; } 
@@ -26,6 +28,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
   margin: 0 !important;
   z-index:  800;    
   font-size: 1.0em;
+  /* right: 10px; */
 }
 
 .custom-red {
