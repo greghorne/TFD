@@ -103,9 +103,8 @@ function getVehicles(vehicles) {
     if (vehicles.Division) {
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
         return vehiclesArr;
-    } else {
-        return vehicles;
     }
+    return vehicles;
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -186,15 +185,13 @@ function processCurrentIncident(map, currentMarker, incident) {
 function processRecentIncidents(recentMarkers) {
 
     for (var counter = 0; counter < recentMarkers.length; counter++) {
-        // var myMarker = recentMarkers[counter];
         recentMarkers[counter].setIcon(CONST_MARKER_YELLOW)
         function blinkSlower() { L.DomUtil.addClass(recentMarkers[counter]._icon, "blinkSlower"); }
         blinkSlower();
     }
 
-    counter = 0
+    var counter = 0
     while (recentMarkers.length > gnRecentMarkersToDisplay) {
-        // var myMarker = recentMarkers[counter]
         L.DomUtil.removeClass(recentMarkers[counter]._icon, "blinkSlower");
         recentMarkers[counter].setIcon(new L.Icon.Default());
         recentMarkers.shift();
@@ -203,8 +200,9 @@ function processRecentIncidents(recentMarkers) {
     return recentMarkers;
 }
 //////////////////////////////////////////////////////////////////////
-var gtextCustomControlArr = []
 
+
+//////////////////////////////////////////////////////////////////////
 function processRecentInfo(map, info, latlng, bHighlight, myMarker) {
      
     var textCustomControl = L.Control.extend({
@@ -223,7 +221,7 @@ function processRecentInfo(map, info, latlng, bHighlight, myMarker) {
                 container.innerHTML             = "<center>" + info + "</center>"
             }
 
-            container.onclick = function() { map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM) }
+            container.onclick     = function() { map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM) }
             container.onmouseover = function() { L.DomUtil.addClass(map._container,'cursor-pointer') }
             container.onmouseout  = function() { L.DomUtil.removeClass(map._container,'cursor-pointer') }
 
@@ -238,9 +236,13 @@ function processRecentInfo(map, info, latlng, bHighlight, myMarker) {
     map.addControl(myControl);
 
 }
+//////////////////////////////////////////////////////////////////////
 
+
+var gtextCustomControlArr = []
 var gnRecentMarkersToDisplay
 var gbZoomTo
+
 
 //////////////////////////////////////////////////////////////////////
 // here we go
@@ -339,10 +341,8 @@ $(document).ready(function() {
             }
             
         })
-        // retrieve json data
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
     }
     getTfdData();
-
 })
 
