@@ -173,12 +173,7 @@ function processCurrentIncident(map, currentMarker, incident) {
     currentMarker.openPopup();
     // console.log("current: " + incident.Latitude + ", " + incident.Longitude)
     if (eval(gbZoomTo)) {
-        // if (document.hasFocus()) { 
-            map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
-        // } else {
-        //     map.panTo([incident.Latitude, incident.Longitude]);
-        //     map.setZoom(CONST_MAP_INCIDENT_ZOOM)
-        // }
+        map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); 
     }
     // this is a workaround; setting "blink" in the L.marker statement offsets the marker and popup
     function blink() { L.DomUtil.addClass(currentMarker._icon, "blink"); }
@@ -194,14 +189,14 @@ function processRecentIncidents(recentMarkers) {
     for (var counter = 0; counter < recentMarkers.length; counter++) {
         var myMarker = recentMarkers[counter];
         myMarker.setIcon(CONST_MARKER_YELLOW)
-        function blink2() { L.DomUtil.addClass(myMarker._icon, "blinkSlow"); }
-        blink2();
+        function blinkSlower() { L.DomUtil.addClass(myMarker._icon, "blinkSlower"); }
+        blinkSlower();
     }
 
     counter = 0
     while (recentMarkers.length > gnRecentMarkersToDisplay) {
         var myMarker = recentMarkers[counter]
-        L.DomUtil.removeClass(myMarker._icon, "blinkSlow");
+        L.DomUtil.removeClass(myMarker._icon, "blinkSlower");
         myMarker.setIcon(new L.Icon.Default());
         recentMarkers.shift();
         counter++
