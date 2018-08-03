@@ -20,24 +20,14 @@ html, body { height: 100%; width: 100%; margin: 0px }
 }
 
 .custom-control {
-  background-color: #FFFFFF;
-  width: 360px;
-  height: 36px;
-  background-repeat: no-repeat;
-  background-position: center;
+  /* background-color: #FFFFFF; */
+  width: 320px;
+  height: 18px;
+  margin: 0 !important;
   z-index:  800;    
-  cursor: -webkit-grab;
-  cursor:    -moz-grab;
   font-size: 1.0em;
 }
 
 .cursor-pointer {
   cursor: pointer
 }
-
-.cursor-grabber {
-  cursor: grabber;
-}
-
-/* .button-pointer { background-image: url(whole-hand-26.png); } */
-/* .button-pointer:hover:before { content: "pointer"; } */
