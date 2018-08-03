@@ -54,7 +54,7 @@ function updateIndexedDB(json) {
 
     db.onupgradeneeded = function() {
         var database    = db.result;
-        var store = database.createObjectStore("Incidents", {keyPath: "incidentNumber", unique: true});
+        var store       = database.createObjectStore("Incidents", {keyPath: "incidentNumber", unique: true});
     }
 
     db.onsuccess = function() {
@@ -145,7 +145,6 @@ function clearCurrentMarker(marker) {    // make the red marker blue
 //////////////////////////////////////////////////////////////////////
 function getUrlParameterOptions(url, fnCallback) {
 
-    // read in url parameters (recent and zoomTo)
     try {
         var paramsArr = url.split("&")
         var myObject = {}
@@ -207,7 +206,7 @@ function processRecentInfo(map, info, latlng, bHighlight, myMarker) {
      
     var textCustomControl = L.Control.extend({
         options: {
-            position: 'bottomright' 
+            position: 'topright' 
         },
 
         onAdd: function(map, myMarker) {
@@ -327,7 +326,6 @@ $(document).ready(function() {
                 //////////////////////////////////////////////////////////////////////
 
                 while (gtextCustomControlArr.length > 0) {
-                    // var textControl = gtextCustomControlArr[0]
                     map.removeControl(gtextCustomControlArr[0])
                     gtextCustomControlArr.shift(0, 1);
                 }
