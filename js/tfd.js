@@ -292,7 +292,7 @@ $(document).ready(function() {
 
                 if (currentMarker) { 
                     clearCurrentMarker(currentMarker)   // turn red marker into blue marker
-                    recentMarkers.push(currentMarker)   // push the marker onto the recentMarkers array
+                    recentMarkers.push(currentMarker) 
                 }
                 
                 // iterate through all of the JSON incidents backwards, oldest incident first
@@ -319,42 +319,32 @@ $(document).ready(function() {
                 }
                 recentMarkers = processRecentIncidents(recentMarkers)
 
-                //////////////////////////////////////////////////////////////////////
                 // store the newest incident 
                 currentIncidentNumber   = latestIncidentNumber;        
                 currentMarker           = marker
-                processCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blink and pan/zoom to incident
-                //////////////////////////////////////////////////////////////////////
+                processCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blink and pan/zoom to marker
 
-                while (gtextCustomControlArr.length > 0) {
+                while (gtextCustomControlArr.length > 0) {               // clear bottom right controls
                     map.removeControl(gtextCustomControlArr[0])
                     gtextCustomControlArr.shift(0, 1);
                 }
 
+                // process the recent incidents (yellow markers)
                 for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
                     var msg         = recentMarkers[counter].options.title
                     var myMarker    = recentMarkers[counter]
-                    var title       = ""
+                    var toolTip     = null
                     
                     var nValue = gnRecentMarkersToDisplay - 1
                     switch(counter) {
-                        case 0:
-                            title = "oldest";
-                            break;
-                        case nValue:
-                            title = "newest";
-                            break;
-                        default:
-                            title = null;
-                            break;
+                        case 0:         toolTip = "oldest";   break;
+                        case nValue:    toolTip = "newest";   break;
                     }
-
-                    processRecentInfo(map, msg, myMarker._latlng, false, title)
-
+                    processRecentInfo(map, msg, myMarker._latlng, false, toolTip)
                 }
+                // process the most current incident (red marker)
                 processRecentInfo(map, incident.Problem + " - " + incident.Address, [incident.Latitude, incident.Longitude], true, "Current Incident")
             }
-            
         })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
     }
