@@ -31,5 +31,13 @@ html, body { height: 100%; width: 100%; margin: 0px }
   font-size: 1.0em;
 }
 
+.cursor-pointer {
+  cursor: pointer
+}
+
+.cursor-grabber {
+  cursor: grabber;
+}
+
 /* .button-pointer { background-image: url(whole-hand-26.png); } */
 /* .button-pointer:hover:before { content: "pointer"; } */

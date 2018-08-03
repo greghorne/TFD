@@ -214,7 +214,7 @@ function processRecentInfo(map, info, latlng, bHighlight, myMarker) {
         },
 
         onAdd: function(map, myMarker) {
-            var container = L.DomUtil.create('div', 'custom-control leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+            var container = L.DomUtil.create('div', 'custom-control cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
 
             container.style.width           = "320px"
             container.style.height          = "18px"
@@ -247,9 +247,12 @@ function processRecentInfo(map, info, latlng, bHighlight, myMarker) {
             }
 
             container.onmouseover = function() {
+                L.DomUtil.addClass(map._container,'cursor-pointer');
             }
 
-            container.onmouseexit = function() {
+            container.onmouseout = function() {
+                console.log("mouseout...")
+                L.DomUtil.removeClass(map._container,'cursor-pointer');
             }
 
             return container;
