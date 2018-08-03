@@ -9,7 +9,7 @@ const CONST_JSON_UPDATE_TIME          = 6000    // how often to poll for JSON da
 const CONST_MAP_INCIDENT_ZOOM         = 15
 const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
 
-const CONST_NUM_RECENT_MARKERS_TO_DISPLAY = 5   // number of yellow markers to display
+const CONST_NUM_RECENT_MARKERS_TO_DISPLAY = 10   // number of yellow markers to display
 
 const CONST_PIN_ANCHOR           = new L.Point(25/2, 41);
 const CONST_MARKER_COLOR_RED     = "./images/marker-icon-red.png";

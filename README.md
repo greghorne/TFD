@@ -21,7 +21,7 @@ Display Tulsa Fire Department incidents on a map.
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
     - There are 2 options that may be added to the URL as parameters to override default settings
-    - _recent=number_ - change the number of recent incidents displayed; valid values are 1 through 15; default = 5
+    - _recent=number_ - change the number of recent incidents displayed; valid values are 1 through 20; default = 10
     - _zoomTo=false_ - when false, turns off automatic panning and zoom to a new incident; default = true
     - example #1: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
     - example #2: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
