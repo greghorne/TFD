@@ -4,7 +4,7 @@ const CONST_MAP_DEFAULT_LATITUDEY     =  36.1539816
 const CONST_MAP_DEFAULT_ZOOM          =  11
 
 const CONST_MAP_JSON_URL              = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
-const CONST_JSON_UPDATE_TIME          = 6000    // how often to poll for JSON data from server
+const CONST_JSON_UPDATE_TIME          = 60000    // how often to poll for JSON data from server in ms
 
 const CONST_MAP_INCIDENT_ZOOM         = 15
 const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
@@ -98,10 +98,11 @@ function getVehicles(vehicles) {
 
     var vehiclesArr = [];
 
-    // if vehicles = 1; then it is a key, value pair
-    // if vehicles > 1; then it is in any array of key, value pairs
-    if (vehicles.Division) {
-        vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
+    // if vehicles = 1; then it is a key, value pair object
+    // if vehicles > 1; then it is an array of key, value pairs which is what we want
+
+    if (vehicles.Vehicle.Division) {
+        vehiclesArr.push( {division: vehicles.Vehicle.Division, station: vehicles.Vehicle.Station, vehicleID: vehicles.Vehicle.VehicleID} )
         return vehiclesArr;
     }
     return vehicles;
@@ -118,7 +119,9 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
 
     if (vehicles.Division) {
         // only 1 vehicle responding; key, value
-        vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicles.VehicleID + "</td>"
+        var vehicleID = vehicles.VehicleID
+        if (vehicleID == null) vehicleID = "";      // on occasion it has been observed that the VehicleID = null, use empty string instead
+        vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicleID + "</td>"
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
     } else {
         // more than 1 vehicle; array of key, value
