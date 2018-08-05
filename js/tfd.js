@@ -148,6 +148,7 @@ function clearCurrentMarker(marker) {    // make the red marker blue
 //////////////////////////////////////////////////////////////////////
 function getUrlParameterOptions(url, fnCallback) {
 
+    // if anything fails just skip out of the function
     try {
         var paramsArr = url.split("&")
         var myObject = {}
@@ -158,6 +159,7 @@ function getUrlParameterOptions(url, fnCallback) {
             var myValue = params[1];
 
             myObject[myKey]  = myValue;
+            console.log(myObject)
         }
         fnCallback(myObject);
     } catch (error) {
@@ -257,6 +259,7 @@ $(document).ready(function() {
 
         if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
         else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
+
     });
     // /////////////////////////////////////
 
