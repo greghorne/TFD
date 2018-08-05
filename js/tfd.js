@@ -159,8 +159,9 @@ function getUrlParameterOptions(url, fnCallback) {
             var myValue = params[1];
 
             myObject[myKey]  = myValue;
-            console.log(myObject)
         }
+        console.log("url params...")
+        console.log(myObject)
         fnCallback(myObject);
     } catch (error) {
         fnCallback({});
@@ -242,9 +243,27 @@ function processRecentInfo(map, info, latlng, bHighlight, title) {
 //////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////////////////////////////////////////////////
+function inSearchText(txtProblem) {
+
+    var bReturn = false;
+    if (gSearchText) {
+        for (var n = 0; n < gSearchText.length; n++) {
+            if (txtProblem.indexOf(gSearchText[n]) > -1) {
+                bReturn = true
+                break;
+            }
+        }
+    }
+    return bReturn;
+}
+//////////////////////////////////////////////////////////////////////
+
+
 var gtextCustomControlArr = []
 var gnRecentMarkersToDisplay
 var gbZoomTo
+var gSearchText = []
 
 
 //////////////////////////////////////////////////////////////////////
@@ -260,6 +279,8 @@ $(document).ready(function() {
         if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
         else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
 
+        if (params['type']) { gSearchText = params['type'].replace("%20", " ").split("&")[0].split(",") } 
+        else { gSearchText = null }
     });
     // /////////////////////////////////////
 
@@ -292,7 +313,7 @@ $(document).ready(function() {
             var latestIncidentNumber    = incidents.Incident[0].IncidentNumber  // most recent incident from the json object
 
             // if the following is true, a new incident has occurred (json file has updated)
-            if (currentIncidentNumber !== latestIncidentNumber) {
+            if (currentIncidentNumber !== latestIncidentNumber && (bFound || gSearchText == null)) {
 
                 if (currentMarker) { 
                     clearCurrentMarker(currentMarker)   // turn red marker into blue marker
@@ -305,6 +326,12 @@ $(document).ready(function() {
 
                     // see if the incidentNumber is in an array, if not it is a new incident so add it to the array and add a blue marker
                     if (markers.indexOf(incident.IncidentNumber) == -1) {
+
+                        if (gSearchText) {
+                            var bFound = inSearchText(incident.Problem)
+                            console.log(bFound)
+                        }
+
                         markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
                         var vehicles  = incident.Vehicles.Vehicle
                         buildVehicleHTMLString(vehicles, function(vehiclesString) {
