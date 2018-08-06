@@ -34,6 +34,14 @@ html, body { height: 100%; width: 100%; margin: 0px }
 }
 
 .custom-red {
+  color: red;
+}
+
+.custom-black {
+  color: black
+}
+
+.custom-red {
   background-color: #dbe7ea;
 }
 
