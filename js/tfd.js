@@ -264,6 +264,37 @@ function createIncidentInfoControls(map, info, latlng, bHighlight, title) {
 
 
 //////////////////////////////////////////////////////////////////////
+// creates controls found in the lower right of the app
+function createFilterTextControl(map) {
+
+    var filterCustomControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
+
+        onAdd: function(map) {
+
+            var container = L.DomUtil.create('div', 'filter-control leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+          
+            container.style.backgroundColor = "#dbe7ea"
+            var text = gSearchText.toString()
+            container.innerHTML             = "<center><font color='blue'>Filter Keyword(s): " + text + "</font></center>"
+
+            container.title = "Filter Keywords"
+
+            return container;
+        },
+        
+        onRemove: function(map) { }
+
+    });
+    gFilterTextControl = new filterCustomControl();
+    map.addControl(gFilterTextControl);
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
 // creates Help control (question mark at upper right of map)
 function createHelpControl(map) {
      
@@ -275,7 +306,7 @@ function createHelpControl(map) {
         onAdd: function(map) {
             var container = L.DomUtil.create('div', 'button-help cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
             container.title = "Click for Help"
-            container.onclick = function() { console.log(CONST_GITHUB_PAGE); window.open( CONST_GITHUB_PAGE ) }
+            container.onclick = function() { window.open(CONST_GITHUB_PAGE) }
             return container;
         },
 
@@ -312,6 +343,7 @@ var gtextCustomControlArr = []
 var gnRecentMarkersToDisplay
 var gbZoomTo
 var gSearchText = []
+var gFilterTextControl
 
 
 //////////////////////////////////////////////////////////////////////
@@ -327,7 +359,6 @@ $(document).ready(function() {
     // read in a process url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
         if (params !== {}) processParams(params)
-        console.log(params)
     });
 
     // define map position, zoom and layer
@@ -350,7 +381,7 @@ $(document).ready(function() {
 
         $.ajax({ type: "GET", url: CONST_MAP_JSON_URL }).done(function(response){
 
-            updateIndexedDB(response);
+            
 
             var incidents               = response.Incidents                    // all json incidents
             var incidentsCount          = incidents.Incident.length;            // number of json incidents
@@ -359,6 +390,8 @@ $(document).ready(function() {
             // if the following is true, a new incident has occurred (json file has updated)
             // if (currentIncidentNumber !== latestIncidentNumber && (bFound || gSearchText == null)) {
             if (currentIncidentNumber !== latestIncidentNumber) {
+
+                updateIndexedDB(response);  // json file has updated
 
                 if (currentMarker) { 
                     clearCurrentMarker(currentMarker)   // turn red marker into blue marker
@@ -392,13 +425,16 @@ $(document).ready(function() {
                                 lastGoodIncident = incident
                                 lastGoodMarker = marker
                             })
-                            // lastGoodIncident = incident
+                            lastGoodIncident = incident
                             // lastGoodMarker = marker
                         }
                     } 
                 }
-                console.log(recentMarkers)
+                // console.log("recentMarkers")
+                // console.log(recentMarkers.length)
+                // console.log(recentMarkers)
                 recentMarkers = processRecentIncidents(recentMarkers)
+                // console.log(markers)
 
                 // store the newest incident 
                 // currentIncidentNumber   = lastGoodIncident.IncidentNumber;        
@@ -433,7 +469,20 @@ $(document).ready(function() {
                     }
                 }
                 // process the most current incident (red marker)
-                createIncidentInfoControls(map, incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")
+                // createIncidentInfoControls(map, incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")
+                if (recentMarkers.length < gnRecentMarkersToDisplay) {
+                    map.removeControl(gtextCustomControlArr[recentMarkers.length - 1])
+                    gtextCustomControlArr.shift(0,1)
+                }
+                createIncidentInfoControls(map, lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + lastGoodIncident.ResponseDate.split(" ")[1] + lastGoodIncident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")
+                console.log("gSearchText")
+                console.log(gSearchText)
+                if (gSearchText !== {}) { 
+                    console.log("trace..."); 
+                    if (gFilterTextControl) { map.removeControl(gFilterTextControl)}
+                    createFilterTextControl(map)
+                }
+
             }
         })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
