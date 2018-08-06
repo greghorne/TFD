@@ -11,7 +11,7 @@ Display Tulsa Fire Department incidents on a map.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
-    - There are 2 options that may be added to the URL as parameters to override default settings
+    - There are 3 options that may be added to the URL as parameters to override default settings
     - _recent=number_ - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
     - _zoomTo=false_ - when false, turns off automatic panning and zoom to a new incident; default = true
     - _type=Motor Vehicle_  - if search terms, on incidents where the problem description contains the key words are considered for display
