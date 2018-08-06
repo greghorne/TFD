@@ -48,3 +48,41 @@ html, body { height: 100%; width: 100%; margin: 0px }
 .cursor-pointer {
   cursor: pointer
 }
+
+/* .button-sidebar { background-image: url(help.png); } */
+
+.button-help {
+  background-color: #FFFFFF;
+  width: 42px;
+  height: 42px;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index:  800;    
+  background-image: url("../images/help.png");
+}
+
+/* 
+ */
+
+ .vertical-container {
+  height:   0%;
+  margin:   0;
+  padding:  0;
+  /*height:  4%;*/
+  display: -webkit-flex;
+  display:         flex;
+  -webkit-align-items: center;
+         align-items: center;
+  -webkit-justify-content: center;
+         justify-content: center;
+}
+
+/* #msg { 
+  color:    white;
+  background-color: gray;
+  margin:   0;
+  padding:  0;
+  margin:   9px 0;
+  white-space: nowrap;
+} */
+

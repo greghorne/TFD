@@ -18,6 +18,7 @@ const CONST_MARKER_COLOR_YELLOW  = "./images/marker-icon-yellow.png"
 const CONST_MARKER_RED           = new L.Icon({ iconUrl: CONST_MARKER_COLOR_RED,    iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 const CONST_MARKER_YELLOW        = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
+const CONST_GITHUB_PAGE          = "https://github.com/greghorne/TFD"
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -29,7 +30,7 @@ const CONST_MAP_LAYERS = [
         maxZoom: 17
     },
     {
-        name: "OSM",
+        name: "Color",
         url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attirbution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         minZoom:  5,
@@ -263,6 +264,31 @@ function createIncidentInfoControls(map, info, latlng, bHighlight, title) {
 
 
 //////////////////////////////////////////////////////////////////////
+// creates Help control (question mark at upper right of map)
+function createHelpControl(map) {
+     
+    var helpControl = L.Control.extend({
+        options: {
+            position: 'topright' 
+        },
+
+        onAdd: function(map) {
+            var container = L.DomUtil.create('div', 'button-help cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+            container.title = "Click for Help"
+            container.onclick = function() { console.log(CONST_GITHUB_PAGE); window.open( CONST_GITHUB_PAGE ) }
+            return container;
+        },
+
+        onRemove: function(map) { }
+
+    });
+    var myControl = new helpControl();
+    map.addControl(myControl);
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
 // check if any of the url parameter 'type' key words are found in the incdent's 'Problem' text/description
 function foundInSearchText(txtProblem) {
 
@@ -278,6 +304,8 @@ function foundInSearchText(txtProblem) {
     return bReturn;
 }
 //////////////////////////////////////////////////////////////////////
+
+
 
 
 var gtextCustomControlArr = []
@@ -309,11 +337,15 @@ $(document).ready(function() {
         layers: [mapLayers[0]]
     });
 
+
+    ///////////////////////////////////////
     L.control.layers(baseMaps).addTo(map)   // add all map layers to layer control
     L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
+    createHelpControl(map);
+    ///////////////////////////////////////
 
 
-    // /////////////////////////////////////
+    ///////////////////////////////////////
     function getTfdData() {
 
         $.ajax({ type: "GET", url: CONST_MAP_JSON_URL }).done(function(response){

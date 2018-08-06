@@ -10,15 +10,6 @@ Display Tulsa Fire Department incidents on a map.
     * All other incidents are displayed as blue map markers.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
 
-* Tech Stack: Leaflet & Javascript
-
-* Data Source: 
-
-    * https://www.cityoftulsa.org/government/departments/information-technology/open-tulsa/open-tulsa-dataset-list/
-    * https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
-
-* Tested on macOS: Chrome & Brave
-
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
     - There are 2 options that may be added to the URL as parameters to override default settings
     - _recent=number_ - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
@@ -28,7 +19,15 @@ Display Tulsa Fire Department incidents on a map.
     - example #2: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
     - example #3: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false
     - example #4: https://rawgit.com/greghorne/TFD/master/index.html?type=Motor%20Vehicle,Fire,Odor
-    
+
+* Tech Stack: Leaflet & Javascript
+
+* Data Source: 
+
+    * https://www.cityoftulsa.org/government/departments/information-technology/open-tulsa/open-tulsa-dataset-list/
+    * https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
+
+* Tested on macOS: Chrome & Brave
 
 Notes/Comments:
 
