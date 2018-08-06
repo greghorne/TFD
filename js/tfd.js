@@ -160,8 +160,6 @@ function getUrlParameterOptions(url, fnCallback) {
 
             myObject[myKey]  = myValue;
         }
-        console.log("url params...")
-        console.log(myObject)
         fnCallback(myObject);
     } catch (error) {
         fnCallback({});
@@ -313,7 +311,8 @@ $(document).ready(function() {
             var latestIncidentNumber    = incidents.Incident[0].IncidentNumber  // most recent incident from the json object
 
             // if the following is true, a new incident has occurred (json file has updated)
-            if (currentIncidentNumber !== latestIncidentNumber && (bFound || gSearchText == null)) {
+            // if (currentIncidentNumber !== latestIncidentNumber && (bFound || gSearchText == null)) {
+                if (currentIncidentNumber !== latestIncidentNumber) {
 
                 if (currentMarker) { 
                     clearCurrentMarker(currentMarker)   // turn red marker into blue marker
@@ -324,36 +323,47 @@ $(document).ready(function() {
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
                     var incident = incidents.Incident[counter]  // fetch incident
 
-                    // see if the incidentNumber is in an array, if not it is a new incident so add it to the array and add a blue marker
-                    if (markers.indexOf(incident.IncidentNumber) == -1) {
+                    if (gSearchText) {
+                        var bFound = inSearchText(incident.Problem)
+                    }
 
-                        if (gSearchText) {
-                            var bFound = inSearchText(incident.Problem)
-                            console.log(bFound)
+                    if (bFound || gSearchText == null) {
+                        
+
+                        // see if the incidentNumber is in an array, if not it is a new incident so add it to the array and add a blue marker
+                        if (markers.indexOf(incident.IncidentNumber) == -1) {
+
+                            markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
+                            var vehicles  = incident.Vehicles.Vehicle
+                            buildVehicleHTMLString(vehicles, function(vehiclesString) {
+                                popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
+                                                    incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+                                
+                                marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], riseOnHover: true}).addTo(map);
+                                marker.bindPopup(popupString);
+
+                                if (counter > 0 && (counter <= gnRecentMarkersToDisplay)) {
+                                    // new recent marker
+                                    recentMarkers.push(marker)
+                                }
+                            })
+                            lastGoodIncident = incident
+                            lastGoodMarker = marker
                         }
-
-                        markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
-                        var vehicles  = incident.Vehicles.Vehicle
-                        buildVehicleHTMLString(vehicles, function(vehiclesString) {
-                            popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
-                                                incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-                            
-                            marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], riseOnHover: true}).addTo(map);
-                            marker.bindPopup(popupString);
-
-                            if (counter > 0 && (counter <= gnRecentMarkersToDisplay)) {
-                                // new recent marker
-                                recentMarkers.push(marker)
-                            }
-                        })
                     } 
                 }
                 recentMarkers = processRecentIncidents(recentMarkers)
 
                 // store the newest incident 
+                // currentIncidentNumber   = lastGoodIncident.IncidentNumber;        
+                // currentMarker           = marker
+                // processCurrentIncident(map, currentMarker, lastGoodIncident)     // make current incident marker red and blink and pan/zoom to marker
+
                 currentIncidentNumber   = latestIncidentNumber;        
-                currentMarker           = marker
+                currentMarker           = lastGoodMarker
                 processCurrentIncident(map, currentMarker, incident)     // make current incident marker red and blink and pan/zoom to marker
+
+                console.log(lastGoodMarker)
 
                 while (gtextCustomControlArr.length > 0) {               // clear bottom right controls
                     map.removeControl(gtextCustomControlArr[0])
@@ -362,16 +372,19 @@ $(document).ready(function() {
 
                 // process the recent incidents (yellow markers)
                 for (var counter = 0; counter < gnRecentMarkersToDisplay; counter++) {
-                    var msg         = recentMarkers[counter].options.title
-                    var myMarker    = recentMarkers[counter]
-                    var toolTip     = null
-                    
-                    var nValue = gnRecentMarkersToDisplay - 1
-                    switch(counter) {
-                        case 0:         toolTip = "oldest recent incident";   break;
-                        case nValue:    toolTip = "newest recent incident";   break;
+                 
+                    if (recentMarkers[counter]) {
+                        var msg         = recentMarkers[counter].options.title
+                        var myMarker    = recentMarkers[counter]
+                        var toolTip     = null
+                        
+                        var nValue = recentMarkers.length - 1
+                        switch(counter) {
+                            case 0:         toolTip = "oldest recent incident";   break;
+                            case nValue:    toolTip = "newest recent incident";   break;
+                        }
+                        processRecentInfo(map, msg, myMarker._latlng, false, toolTip)
                     }
-                    processRecentInfo(map, msg, myMarker._latlng, false, toolTip)
                 }
                 // process the most current incident (red marker)
                 processRecentInfo(map, incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")

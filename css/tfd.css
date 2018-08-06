@@ -14,7 +14,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 /* leaflet css overrides */
 .leaflet-popup-content-wrapper {
-  background: #dbe7ea !important
+  background: #dbe7ea !important;
+  font-family: 'Times New Roman', Times, serif !important
 }
 
 .leaflet-popup-tip {
@@ -27,7 +28,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
   height: 18px;
   margin: 0 !important;
   z-index:  800;    
-  font-size: 1.0em;
+  font-size: 1.0em !important;
+  font-family: 'Times New Roman', Times, serif
   /* right: 10px; */
 }
 
