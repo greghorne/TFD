@@ -20,14 +20,18 @@ Display Tulsa Fire Department incidents on a map.
     - example #3: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false
     - example #4: https://rawgit.com/greghorne/TFD/master/index.html?type=Motor%20Vehicle,Fire,Odor
 
-* Tech Stack: Leaflet & Javascript
+#
 
-* Data Source: 
+Tech Stack: Leaflet & Javascript
+
+Data Source: 
 
     * https://www.cityoftulsa.org/government/departments/information-technology/open-tulsa/open-tulsa-dataset-list/
     * https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
 
-* Tested on macOS: Chrome & Brave
+Tested on macOS: Chrome & Brave
+
+#
 
 Notes/Comments:
 
