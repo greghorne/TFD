@@ -26,8 +26,8 @@ Tech Stack: Leaflet & Javascript
 
 Data Source: 
 
-    * https://www.cityoftulsa.org/government/departments/information-technology/open-tulsa/open-tulsa-dataset-list/
-    * https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
+    https://www.cityoftulsa.org/government/departments/information-technology/open-tulsa/open-tulsa-dataset-list/
+    https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
 
 Tested on macOS: Chrome & Brave
 
