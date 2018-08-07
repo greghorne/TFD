@@ -99,12 +99,11 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 // returns an array of vehicles 
 function getVehicles(vehicles) {
 
-    var vehiclesArr = [];
-
-    // if vehicles = 1; then it is a key, value pair object
+    // if vehicles = 1; then it is a key, value pair object that needs to be put in an array
     // if vehicles > 1; then it is alread an array of key, value pairs so just return it
 
     if (vehicles.Vehicle.Division) {
+        var vehiclesArr = [];
         vehiclesArr.push( {division: vehicles.Vehicle.Division, station: vehicles.Vehicle.Station, vehicleID: vehicles.Vehicle.VehicleID} )
         return vehiclesArr;
     }
@@ -120,8 +119,8 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
     var vehiclesArr = [];
     var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
 
-    if (vehicles.Division) {
-        // only 1 vehicle responding; key, value
+    if (vehicles.Division) {    
+        // only 1 vehicle; object of key, value
         var vehicleID = vehicles.VehicleID
         if (vehicleID == null) vehicleID = "";      // on occasion it has been observed that the VehicleID = null, use empty string instead
         vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicleID + "</td>"
@@ -150,7 +149,7 @@ function clearCurrentMarker(marker) {
 
 
 //////////////////////////////////////////////////////////////////////
-// read in url parameters and parse into an object
+// read in url parameters and parse into an object; if this fails then return empty object
 function getUrlParameterOptions(url, fnCallback) {
 
     
@@ -183,7 +182,7 @@ function processParams(params) {
     if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
     else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
 
-    if (params['type']) { gSearchText = params['type'].replace("%20", " ").split("&")[0].split(",") } 
+    if (params['filter']) { gSearchText = params['filter'].replace("%20", " ").split("&")[0].split(",") } 
     else { gSearchText = null }
 }
 //////////////////////////////////////////////////////////////////////
@@ -204,7 +203,7 @@ function processCurrentIncident(map, currentMarker, incident) {
 
 
 //////////////////////////////////////////////////////////////////////
-// make the markers yellow and flashing
+// make the array of markers yellow and flashing
 function processRecentIncidents(recentMarkers) {
 
     for (var counter = 0; counter < recentMarkers.length; counter++) {
@@ -227,14 +226,15 @@ function processRecentIncidents(recentMarkers) {
 
 //////////////////////////////////////////////////////////////////////
 // creates controls found in the lower right of the app
-function createIncidentInfoControls(map, info, latlng, bHighlight, title) {
+// this is a text control with text info on a given incident
+function createIncidentTextControl(map, info, latlng, bHighlight, title) {
      
     var textCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
         },
 
-        onAdd: function(map, myMarker) {
+        onAdd: function(map) {
             var container = L.DomUtil.create('div', 'custom-control cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
            
             if (bHighlight) { 
@@ -264,7 +264,7 @@ function createIncidentInfoControls(map, info, latlng, bHighlight, title) {
 
 
 //////////////////////////////////////////////////////////////////////
-// creates controls found in the lower right of the app
+// creates a text control on the map that lists filter keywords
 function createFilterTextControl(map) {
 
     var filterCustomControl = L.Control.extend({
@@ -273,19 +273,11 @@ function createFilterTextControl(map) {
         },
 
         onAdd: function(map) {
-
-            var container = L.DomUtil.create('div', 'filter-control leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
-          
-            container.style.backgroundColor = "#dbe7ea"
-            var text = gSearchText.toString()
-            container.innerHTML             = "<center><font color='blue'>Filter Keyword(s): " + text + "</font></center>"
-
-            container.title = "Filter Keywords"
-
+            var container       = L.DomUtil.create('div', 'filter-control leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+            var text            = gSearchText.toString()
+            container.innerHTML = "<center>Filter Keyword(s): " + text + "</center>"
             return container;
         },
-        
-        onRemove: function(map) { }
 
     });
     gFilterTextControl = new filterCustomControl();
@@ -310,8 +302,6 @@ function createHelpControl(map) {
             return container;
         },
 
-        onRemove: function(map) { }
-
     });
     var myControl = new helpControl();
     map.addControl(myControl);
@@ -320,13 +310,13 @@ function createHelpControl(map) {
 
 
 //////////////////////////////////////////////////////////////////////
-// check if any of the url parameter 'type' key words are found in the incdent's 'Problem' text/description
+// check if any of the url parameter 'filter' keywords are found in the incdent's 'Problem' text/description
 function foundInSearchText(txtProblem) {
 
     var bReturn = false;
     if (gSearchText) {
         for (var n = 0; n < gSearchText.length; n++) {
-            if (txtProblem.indexOf(gSearchText[n]) > -1) {
+            if (txtProblem.toLowerCase().indexOf(gSearchText[n].toLowerCase()) > -1) {
                 bReturn = true
                 break;
             }
@@ -335,8 +325,6 @@ function foundInSearchText(txtProblem) {
     return bReturn;
 }
 //////////////////////////////////////////////////////////////////////
-
-
 
 
 var gtextCustomControlArr = []
@@ -355,6 +343,8 @@ $(document).ready(function() {
     var currentMarker;
     var recentMarkers = [];
     var currentIncidentNumber = "";
+    var lastGoodMarker;
+    var lastGoodIncident
 
     // read in a process url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
@@ -376,12 +366,14 @@ $(document).ready(function() {
     ///////////////////////////////////////
 
 
+    // current incident is a red marker (the newest incident in the json files)
+    // recent incidents are yellow markers (prior to the current incident in which the count can vary)
+
+
     ///////////////////////////////////////
     function getTfdData() {
 
         $.ajax({ type: "GET", url: CONST_MAP_JSON_URL }).done(function(response){
-
-            
 
             var incidents               = response.Incidents                    // all json incidents
             var incidentsCount          = incidents.Incident.length;            // number of json incidents
@@ -395,92 +387,115 @@ $(document).ready(function() {
 
                 if (currentMarker) { 
                     clearCurrentMarker(currentMarker)   // turn red marker into blue marker
-                    recentMarkers.push(currentMarker) 
+                    recentMarkers.push(currentMarker)   // and then add to array of recent markers
                 }
                     
                 // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
                     var incident = incidents.Incident[counter]  // fetch incident
 
-                    if (gSearchText) { var bFound = foundInSearchText(incident.Problem) }
+                    if (gSearchText) { var bFound = foundInSearchText(incident.Problem) }  // check if given incident applies to a text filter
 
-                    if (bFound || gSearchText == null) {
-                        
-                        // see if the incidentNumber is in an array, if not it is a new incident so add it to the array and add a blue marker
+                    if (bFound || gSearchText == null) {    // if meets text filter requirement OR there are no text filters appliled
+
+                        // see if the incidentNumber is in an array
                         if (markers.indexOf(incident.IncidentNumber) == -1) {
 
                             markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
                             var vehicles  = incident.Vehicles.Vehicle
                             buildVehicleHTMLString(vehicles, function(vehiclesString) {
-                                popupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
+                                markerPopupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
                                                     incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
                                 
                                 marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], riseOnHover: true}).addTo(map);
-                                marker.bindPopup(popupString);
+                                marker.bindPopup(markerPopupString);
 
-                                if (counter > 0 && (recentMarkers.length <= gnRecentMarkersToDisplay)) {
-                                    // new recent marker
-                                    recentMarkers.push(marker)
+                                // if (counter > 0 && (recentMarkers.length <= gnRecentMarkersToDisplay)) {
+                                if (counter > 0) {
+                                    recentMarkers.push(marker)  // keep track of marker; push marker into array
                                 }
-                                lastGoodIncident = incident
-                                lastGoodMarker = marker
+                                // lastGoodIncident = incident
+                                // lastGoodMarker   = marker
                             })
+                            lastGoodMarker   = marker
                             lastGoodIncident = incident
-                            // lastGoodMarker = marker
                         }
                     } 
                 }
-                // console.log("recentMarkers")
-                // console.log(recentMarkers.length)
-                // console.log(recentMarkers)
-                recentMarkers = processRecentIncidents(recentMarkers)
-                // console.log(markers)
+                console.log(markers)
 
-                // store the newest incident 
-                // currentIncidentNumber   = lastGoodIncident.IncidentNumber;        
-                // currentMarker           = marker
-                // processCurrentIncident(map, currentMarker, lastGoodIncident)     // make current incident marker red and blink and pan/zoom to marker
+                // process the yellow and red markers
+                if (recentMarkers.length > 0) {     // recentMarkers could be empty if a keyword filter is applied
 
-                currentIncidentNumber   = latestIncidentNumber;        
-                currentMarker           = lastGoodMarker
-                processCurrentIncident(map, lastGoodMarker, lastGoodIncident)     // make current incident marker red and blink and pan/zoom to marker
-
-                console.log(lastGoodMarker)
-
-                while (gtextCustomControlArr.length > 0) {               // clear bottom right controls
-                    map.removeControl(gtextCustomControlArr[0])
-                    gtextCustomControlArr.shift(0, 1);
-                }
-
-                // process the recent incidents (yellow markers)
-                for (var counter = 0; counter < recentMarkers.length; counter++) {
-                    
-                    if (recentMarkers[counter]) {
-                        var msg         = recentMarkers[counter].options.title
-                        var myMarker    = recentMarkers[counter]
-                        var toolTip     = null
-                        
-                        var nValue = recentMarkers.length - 1
-                        switch(counter) {
-                            case 0:         toolTip = "oldest recent incident";   break;
-                            case nValue:    toolTip = "newest recent incident";   break;
-                        }
-                        createIncidentInfoControls(map, msg, myMarker._latlng, false, toolTip)
+                    // following is a special case since all incidents will get a marker since they don't exisit in an array
+                    // thus, destroy the marker and remove it from the array
+                    while  (recentMarkers.length >  gnRecentMarkersToDisplay) {
+                        markers.shift()
+                        recentMarkers.shift()
                     }
-                }
-                // process the most current incident (red marker)
-                // createIncidentInfoControls(map, incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")
-                if (recentMarkers.length < gnRecentMarkersToDisplay) {
-                    map.removeControl(gtextCustomControlArr[recentMarkers.length - 1])
-                    gtextCustomControlArr.shift(0,1)
-                }
-                createIncidentInfoControls(map, lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + lastGoodIncident.ResponseDate.split(" ")[1] + lastGoodIncident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")
-                console.log("gSearchText")
-                console.log(gSearchText)
-                if (gSearchText !== {}) { 
-                    console.log("trace..."); 
-                    if (gFilterTextControl) { map.removeControl(gFilterTextControl)}
-                    createFilterTextControl(map)
+                    console.log("trace...")
+                    console.log(markers)
+
+
+                    recentMarkers = processRecentIncidents(recentMarkers)   // make the array of markers yellow
+
+                    console.log("trace2...")
+                    console.log(markers)
+
+                    currentIncidentNumber   = latestIncidentNumber;        
+                    currentMarker           = lastGoodMarker
+                    console.log("trace3...")
+                    console.log(lastGoodIncident)
+                    console.log(lastGoodMarker)
+                    processCurrentIncident(map, lastGoodMarker, lastGoodIncident)     // make current incident marker red and blink and pan/zoom to marker
+
+                    while (gtextCustomControlArr.length > 0) {                        // clear map of bottom right text controls
+                        map.removeControl(gtextCustomControlArr[0])
+                        gtextCustomControlArr.shift(0, 1);
+                        
+                    }
+                    console.log("trace3.1...")
+                    console.log(recentMarkers.length)
+                    console.log(recentMarkers)
+
+                    // process the recent incidents (yellow markers)
+                    for (var counter = 0; counter < recentMarkers.length; counter++) {
+                        
+                        if (recentMarkers[counter]) {
+                            var msg         = recentMarkers[counter].options.title
+                            var myMarker    = recentMarkers[counter]
+                            var toolTip     = null
+                            
+                            // add a tooltip for the first and last recentMarkers[]
+                            var nMaxArrIndex = recentMarkers.length - 1
+                            switch(counter) {
+                                case 0:            toolTip = "oldest recent incident";   break;
+                                case nMaxArrIndex: toolTip = "newest recent incident";   break;
+                            }
+                            createIncidentTextControl(map, msg, myMarker._latlng, false, toolTip)
+                        }
+                    }
+                    // if true; remove the most recent marker since it is actually the current marker (incident)
+                    console.log("trace4...")
+                    console.log(recentMarkers.length)
+                    console.log(recentMarkers)
+                    if (recentMarkers.length > gnRecentMarkersToDisplay) {
+                        
+                        map.removeControl(gtextCustomControlArr[0])
+                        gtextCustomControlArr.splice(0)
+                        // recentMarkers.splice(-1, 1)
+                        // markers.splice(-1, 1)
+                    } else {
+                        // map.removeControl(gtextCustomControlArr[gtextCustomControlArr.length - 1])
+                        // gtextCustomControlArr.pop()
+                    }
+                    createIncidentTextControl(map, lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + lastGoodIncident.ResponseDate.split(" ")[1] + lastGoodIncident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")
+
+                    // if there is a filter then add the filter text control that lists keywords
+                    if (gSearchText !== null) {         
+                        if (gFilterTextControl) { map.removeControl(gFilterTextControl)}
+                        createFilterTextControl(map)
+                    }
                 }
 
             }
