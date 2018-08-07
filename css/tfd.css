@@ -69,7 +69,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
   margin: 0 !important;
   z-index:  800;    
   font-size: 1.25em !important;
-  font-family: 'Times New Roman', Times, serif
+  font-family: 'Times New Roman', Times, serif;
+  content: attr("Keywords applied for filtering")
 }
 
 /* 
