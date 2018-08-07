@@ -440,7 +440,7 @@ $(document).ready(function() {
                     if (bFirstTime) {
                         if (recentMarkers.length == gnRecentMarkersToDisplay) {
                             console.log("pop it")
-                            // recentMarkers.pop()
+                            recentMarkers.pop()
                         } 
                         bFirstTime = false
                     }
