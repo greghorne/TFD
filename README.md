@@ -14,11 +14,11 @@ Display Tulsa Fire Department incidents on a map.
     - There are 3 options that may be added to the URL as parameters to override default settings
     - _recent=number_ - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
     - _zoomTo=false_ - when false, turns off automatic panning and zoom to a new incident; default = true
-    - _type=Motor Vehicle_  - uses key words/phrases to filter incidents
+    - _filter=Motor Vehicle_  - comma dlimited keywords/phrases to filter incidents; keywords are not case sensitive ex. Fire = fire
     - example #1: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
     - example #2: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
     - example #3: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false
-    - example #4: https://rawgit.com/greghorne/TFD/master/index.html?type=Motor%20Vehicle,Fire,Odor
+    - example #4: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Odor,Motor%20Vehicle
 
 #
 
@@ -37,7 +37,7 @@ Notes/Comments:
 
 * Everything is executed client-side thus there is no web server.
 
-* I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme where it didn't update for over an hour.  Please keep this in mind when viewing incidents on the map.  This is not a real-time map display.
+* I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme where it didn't update for over an hour.  Please keep this in mind when viewing incidents on the map.  _This is not a real-time map display_.
 
 * I have added code for using IndexedDB that is currently keeping all incidents.  Currrently the DB is not being used.  
 
