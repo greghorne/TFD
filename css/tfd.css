@@ -63,6 +63,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 .filter-control {
   background-color: #FFFFFF !important;
+  /* background-color: whitesmoke */
   width: 360px;
   height: 24px;
   margin: 0 !important;
