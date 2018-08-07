@@ -176,14 +176,19 @@ function getUrlParameterOptions(url, fnCallback) {
 // read and set url parameters to variables
 function processParams(params) {
     
-    if (params['recent'] && params['recent'] > 0 && params['recent'] <= 20) { gnRecentMarkersToDisplay = params['recent'] } 
-    else { gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY }
+    gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY
+    gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT
+    gSearchText = null
 
-    if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
-    else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
+    // params is turned off
+    // if (params['recent'] && params['recent'] > 0 && params['recent'] <= 20) { gnRecentMarkersToDisplay = params['recent'] } 
+    // else { gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY }
 
-    if (params['filter']) { gSearchText = params['filter'].replace("%20", " ").split("&")[0].split(",") } 
-    else { gSearchText = null }
+    // if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
+    // else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
+
+    // if (params['filter']) { gSearchText = params['filter'].replace("%20", " ").split("&")[0].split(",") } 
+    // else { gSearchText = null }
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -437,13 +442,11 @@ $(document).ready(function() {
                     console.log(recentMarkers.length)
                     console.log(recentMarkers)
 
-                    if (bFirstTime) {
-                        if (recentMarkers.length == gnRecentMarkersToDisplay) {
-                            console.log("pop it")
-                            recentMarkers.pop()
-                        } 
-                        bFirstTime = false
-                    }
+
+                    // if (recentMarkers.length == gnRecentMarkersToDisplay) {
+                    //     console.log("pop it")
+                    //     recentMarkers.pop()
+                    // }
 
                     console.log("trace5...")
 
