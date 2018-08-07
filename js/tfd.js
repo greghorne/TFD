@@ -345,6 +345,7 @@ $(document).ready(function() {
     var currentIncidentNumber = "";
     var lastGoodMarker;
     var lastGoodIncident
+    var bFirstTime = true;
 
     // read in a process url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
@@ -422,31 +423,37 @@ $(document).ready(function() {
                         }
                     } 
                 }
-                console.log(markers)
 
                 // process the yellow and red markers
                 if (recentMarkers.length > 0) {     // recentMarkers could be empty if a keyword filter is applied
 
-                    // following is a special case since all incidents will get a marker since they don't exisit in an array
-                    // thus, destroy the marker and remove it from the array
-                    while  (recentMarkers.length >  gnRecentMarkersToDisplay) {
-                        markers.shift()
-                        recentMarkers.shift()
+                    while  (recentMarkers.length >  gnRecentMarkersToDisplay) { 
+                        console.log("shift1"); 
+                        recentMarkers.shift() 
                     }
-                    console.log("trace...")
-                    console.log(markers)
 
+
+                    console.log("trace4...")
+                    console.log(recentMarkers.length)
+                    console.log(recentMarkers)
+
+                    if (bFirstTime) {
+                        if (recentMarkers.length < gnRecentMarkersToDisplay) {
+                            console.log("pop it")
+                            recentMarkers.pop()
+                        } else {
+                            console.log("shift it")
+                            recentMarkers.shift()
+                        }
+                        bFirstTime = false
+                    }
+                    console.log("trace5...")
 
                     recentMarkers = processRecentIncidents(recentMarkers)   // make the array of markers yellow
 
-                    console.log("trace2...")
-                    console.log(markers)
-
                     currentIncidentNumber   = latestIncidentNumber;        
                     currentMarker           = lastGoodMarker
-                    console.log("trace3...")
-                    console.log(lastGoodIncident)
-                    console.log(lastGoodMarker)
+
                     processCurrentIncident(map, lastGoodMarker, lastGoodIncident)     // make current incident marker red and blink and pan/zoom to marker
 
                     while (gtextCustomControlArr.length > 0) {                        // clear map of bottom right text controls
@@ -454,9 +461,6 @@ $(document).ready(function() {
                         gtextCustomControlArr.shift(0, 1);
                         
                     }
-                    console.log("trace3.1...")
-                    console.log(recentMarkers.length)
-                    console.log(recentMarkers)
 
                     // process the recent incidents (yellow markers)
                     for (var counter = 0; counter < recentMarkers.length; counter++) {
@@ -475,20 +479,7 @@ $(document).ready(function() {
                             createIncidentTextControl(map, msg, myMarker._latlng, false, toolTip)
                         }
                     }
-                    // if true; remove the most recent marker since it is actually the current marker (incident)
-                    console.log("trace4...")
-                    console.log(recentMarkers.length)
-                    console.log(recentMarkers)
-                    if (recentMarkers.length > gnRecentMarkersToDisplay) {
-                        
-                        map.removeControl(gtextCustomControlArr[0])
-                        gtextCustomControlArr.splice(0)
-                        // recentMarkers.splice(-1, 1)
-                        // markers.splice(-1, 1)
-                    } else {
-                        // map.removeControl(gtextCustomControlArr[gtextCustomControlArr.length - 1])
-                        // gtextCustomControlArr.pop()
-                    }
+
                     createIncidentTextControl(map, lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + lastGoodIncident.ResponseDate.split(" ")[1] + lastGoodIncident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")
 
                     // if there is a filter then add the filter text control that lists keywords
@@ -497,7 +488,6 @@ $(document).ready(function() {
                         createFilterTextControl(map)
                     }
                 }
-
             }
         })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
