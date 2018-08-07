@@ -438,15 +438,13 @@ $(document).ready(function() {
                     console.log(recentMarkers)
 
                     if (bFirstTime) {
-                        if (recentMarkers.length < gnRecentMarkersToDisplay) {
+                        if (recentMarkers.length == gnRecentMarkersToDisplay) {
                             console.log("pop it")
-                            recentMarkers.pop()
-                        } else {
-                            console.log("shift it")
-                            recentMarkers.shift()
-                        }
+                            // recentMarkers.pop()
+                        } 
                         bFirstTime = false
                     }
+
                     console.log("trace5...")
 
                     recentMarkers = processRecentIncidents(recentMarkers)   // make the array of markers yellow
