@@ -1,8 +1,5 @@
 # TFD
 
-_Currently the code is being rewritten so the site is not working properly._
-_This README will be updated when a code update is posted._
-
 Display Tulsa Fire Department incidents on a map.
 
 * What does it do:

@@ -9,16 +9,19 @@ const CONST_JSON_UPDATE_TIME          = 60000    // how often to poll for JSON d
 const CONST_MAP_INCIDENT_ZOOM         = 15
 const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
 
-const CONST_NUM_RECENT_MARKERS_TO_DISPLAY = 10   // number of yellow markers to display
-
 const CONST_PIN_ANCHOR           = new L.Point(25/2, 41);
 const CONST_MARKER_COLOR_RED     = "./images/marker-icon-red.png";
 const CONST_MARKER_COLOR_YELLOW  = "./images/marker-icon-yellow.png"
+const CONST_MARKER_COLOR_BLUE    = "./images/marker-icon-blue.png"
 
 const CONST_MARKER_RED           = new L.Icon({ iconUrl: CONST_MARKER_COLOR_RED,    iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 const CONST_MARKER_YELLOW        = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
+const CONST_MARKER_BLUE          = new L.Icon({ iconUrl: CONST_MARKER_COLOR_BLUE,   iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
 const CONST_GITHUB_PAGE          = "https://github.com/greghorne/TFD"
+
+const CONST_RED_MARKER_MAX_COUNT    = 1
+const CONST_YELLOW_MARKER_MAX_COUNT = 10
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -139,20 +142,9 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
 
 
 //////////////////////////////////////////////////////////////////////
-// make the red marker blue
-function clearCurrentMarker(marker) {    
-    marker.closePopup();
-    L.DomUtil.removeClass(marker._icon, "blink");
-    marker.setIcon(new L.Icon.Default());
-}
-//////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
 // read in url parameters and parse into an object; if this fails then return empty object
 function getUrlParameterOptions(url, fnCallback) {
 
-    
     try {
         var paramsArr = url.split("&")
         var myObject = {}
@@ -176,55 +168,18 @@ function getUrlParameterOptions(url, fnCallback) {
 // read and set url parameters to variables
 function processParams(params) {
     
-    gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY
-    gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT
-    gSearchText = null
+    // gnRecentMarkersToDisplay = CONST_YELLOW_MARKER_MAX_COUNT
+    // gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT
+    // gSearchText = null
 
-    // params is turned off
-    // if (params['recent'] && params['recent'] > 0 && params['recent'] <= 20) { gnRecentMarkersToDisplay = params['recent'] } 
-    // else { gnRecentMarkersToDisplay = CONST_NUM_RECENT_MARKERS_TO_DISPLAY }
+    if (params['recent'] && params['recent'] > 0 && params['recent'] <= 20) { gnRecentMarkersToDisplay = params['recent'] } 
+    else { gnRecentMarkersToDisplay = CONST_YELLOW_MARKER_MAX_COUNT }
 
-    // if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
-    // else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
+    if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
+    else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
 
-    // if (params['filter']) { gSearchText = params['filter'].replace("%20", " ").split("&")[0].split(",") } 
-    // else { gSearchText = null }
-}
-//////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
-// make the marker red and flashing
-function processCurrentIncident(map, currentMarker, incident) {
-    currentMarker.setIcon(CONST_MARKER_RED)
-    currentMarker.openPopup();
-    if (eval(gbZoomTo) ) { map.flyTo([incident.Latitude, incident.Longitude], CONST_MAP_INCIDENT_ZOOM); }
-
-    // per Internet ==> this is a workaround; setting "blink" in the L.marker statement offsets the marker and popup
-    function blink() { L.DomUtil.addClass(currentMarker._icon, "blink"); }
-    blink();
-}
-//////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
-// make the array of markers yellow and flashing
-function processRecentIncidents(recentMarkers) {
-
-    for (var counter = 0; counter < recentMarkers.length; counter++) {
-        recentMarkers[counter].setIcon(CONST_MARKER_YELLOW)
-        function blinkSlower() { L.DomUtil.addClass(recentMarkers[counter]._icon, "blinkSlower"); }
-        blinkSlower();
-    }
-
-    var counter = 0
-    while (recentMarkers.length > gnRecentMarkersToDisplay) {
-        L.DomUtil.removeClass(recentMarkers[counter]._icon, "blinkSlower");
-        recentMarkers[counter].setIcon(new L.Icon.Default());
-        recentMarkers.shift();
-        counter++
-    }
-    return recentMarkers;
+    if (params['filter']) { gSearchText = params['filter'].replace("%20", " ").split("&")[0].split(",") } 
+    else { gSearchText = null }
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -232,7 +187,7 @@ function processRecentIncidents(recentMarkers) {
 //////////////////////////////////////////////////////////////////////
 // creates controls found in the lower right of the app
 // this is a text control with text info on a given incident
-function createIncidentTextControl(map, info, latlng, bHighlight, title) {
+function createIncidentTextControl(map, info, marker, bHighlight, title) {
      
     var textCustomControl = L.Control.extend({
         options: {
@@ -249,9 +204,14 @@ function createIncidentTextControl(map, info, latlng, bHighlight, title) {
                 container.style.backgroundColor = "#f9f9eb"
                 container.innerHTML             = "<center>" + info + "</center>"
             }
+
             if (title) container.title = title
 
-            container.onclick     = function() { map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM) }
+            container.onclick = function() { 
+                console.log(marker)
+                // marker._openPopup()
+                map.flyTo(marker._latlng, CONST_MAP_INCIDENT_ZOOM) 
+            }
             container.onmouseover = function() { L.DomUtil.addClass(map._container,'cursor-pointer') }
             container.onmouseout  = function() { L.DomUtil.removeClass(map._container,'cursor-pointer') }
 
@@ -332,10 +292,85 @@ function foundInSearchText(txtProblem) {
 //////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////////////////////////////////////////////////
+function moveMarker(fromMarkers, toMarkers, markerColor, classToRemove, classToAdd) {
+
+    // remove oldest marker from fromMarkers and add it to toMarkers
+    var marker = fromMarkers[0]
+    L.DomUtil.removeClass(marker._icon, classToRemove);
+
+    marker.setIcon(markerColor);
+
+    if (classToAdd) { 
+        // per Internet ==> this is a workaround; setting "blink" in the L.marker statement offsets the marker and popup
+        function blink() { L.DomUtil.addClass(marker._icon, classToAdd) }
+        blink();
+    }
+    
+    toMarkers.push(marker)
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+function fifoMarkers(newestMarkers, recentMarkers, olderMarkers) {
+
+    // as necessary shift marker from newestMarkers[] and push to recentMarkers[]
+    while (newestMarkers.length > CONST_RED_MARKER_MAX_COUNT) {
+        // move red marker to recentMarkers
+        moveMarker(newestMarkers, recentMarkers, CONST_MARKER_YELLOW, "blink", "blinkSlower")
+        newestMarkers.shift()
+    }
+
+    // as necessary shift marker from recentMarkers[] and push to olderMarkers[]
+    while (recentMarkers.length > gnRecentMarkersToDisplay) {
+        moveMarker(recentMarkers, olderMarkers, CONST_MARKER_BLUE, "blinkSlower")
+        recentMarkers.shift()
+    }
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+function createRedMarker(incident) {
+
+    var marker;
+    var vehicles  = incident.Vehicles.Vehicle
+    
+    buildVehicleHTMLString(vehicles, function(vehiclesString) {
+        markerPopupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
+                            incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
+        
+        marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], riseOnHover: true});
+        marker.bindPopup(markerPopupString);
+
+    })
+    marker.setIcon(CONST_MARKER_RED)
+    return marker;
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+function processNewIncident(map, incident, newestMarkers, recentMarkers, olderMarkers) {
+
+    var marker = createRedMarker(incident); 
+    newestMarkers.push(marker)
+    marker.addTo(map);
+
+    // per Internet ==> this is a workaround; setting "blink" in the L.marker statement offsets the marker and popup
+    function blink() { L.DomUtil.addClass(marker._icon, "blink"); }
+    blink();
+
+    fifoMarkers(newestMarkers, recentMarkers, olderMarkers)
+}
+//////////////////////////////////////////////////////////////////////
+
+
 var gtextCustomControlArr = []
 var gnRecentMarkersToDisplay
 var gbZoomTo
-var gSearchText = []
+var gSearchText = null
 var gFilterTextControl
 
 
@@ -343,19 +378,17 @@ var gFilterTextControl
 // here we go
 $(document).ready(function() {
 
-    var marker;
-    var markers = [];
-    var currentMarker;
-    var recentMarkers = [];
-    var currentIncidentNumber = "";
-    var lastGoodMarker;
-    var lastGoodIncident
-    var bFirstTime = true;
+    var allIncidentNumbers = []
+    var newestMarkers = []
+    var recentMarkers = []
+    var olderMarkers  = []
+
 
     // read in a process url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
         if (params !== {}) processParams(params)
     });
+
 
     // define map position, zoom and layer
     var map = L.map('map', {
@@ -372,125 +405,85 @@ $(document).ready(function() {
     ///////////////////////////////////////
 
 
-    // current incident is a red marker (the newest incident in the json files)
-    // recent incidents are yellow markers (prior to the current incident in which the count can vary)
-
-
     ///////////////////////////////////////
     function getTfdData() {
 
         $.ajax({ type: "GET", url: CONST_MAP_JSON_URL }).done(function(response){
 
-            var incidents               = response.Incidents                    // all json incidents
-            var incidentsCount          = incidents.Incident.length;            // number of json incidents
-            var latestIncidentNumber    = incidents.Incident[0].IncidentNumber  // most recent incident from the json object
+            // check if we have seen this incident number before
+            if (allIncidentNumbers.indexOf(response.Incidents.Incident[0].IncidentNumber) == -1) {      
 
-            // if the following is true, a new incident has occurred (json file has updated)
-            // if (currentIncidentNumber !== latestIncidentNumber && (bFound || gSearchText == null)) {
-            if (currentIncidentNumber !== latestIncidentNumber) {
+                updateIndexedDB(response);                       // json file has updated
 
-                updateIndexedDB(response);  // json file has updated
+                var incidents      = response.Incidents          // all json incidents
+                var incidentsCount = incidents.Incident.length;  // number of json incidents
 
-                if (currentMarker) { 
-                    clearCurrentMarker(currentMarker)   // turn red marker into blue marker
-                    recentMarkers.push(currentMarker)   // and then add to array of recent markers
-                }
-                    
                 // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
+
                     var incident = incidents.Incident[counter]  // fetch incident
 
-                    if (gSearchText) { var bFound = foundInSearchText(incident.Problem) }  // check if given incident applies to a text filter
-
-                    if (bFound || gSearchText == null) {    // if meets text filter requirement OR there are no text filters appliled
-
-                        // see if the incidentNumber is in an array
-                        if (markers.indexOf(incident.IncidentNumber) == -1) {
-
-                            markers.push(incident.IncidentNumber)   // add incident number to array; array contains incident number for all markers that have been created
-                            var vehicles  = incident.Vehicles.Vehicle
-                            buildVehicleHTMLString(vehicles, function(vehiclesString) {
-                                markerPopupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
-                                                    incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-                                
-                                marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], riseOnHover: true}).addTo(map);
-                                marker.bindPopup(markerPopupString);
-
-                                // if (counter > 0 && (recentMarkers.length <= gnRecentMarkersToDisplay)) {
-                                if (counter > 0) {
-                                    recentMarkers.push(marker)  // keep track of marker; push marker into array
-                                }
-                                // lastGoodIncident = incident
-                                // lastGoodMarker   = marker
-                            })
-                            lastGoodMarker   = marker
-                            lastGoodIncident = incident
-                        }
-                    } 
-                }
-
-                // process the yellow and red markers
-                if (recentMarkers.length > 0) {     // recentMarkers could be empty if a keyword filter is applied
-
-                    while  (recentMarkers.length >  gnRecentMarkersToDisplay) { 
-                        console.log("shift1"); 
-                        recentMarkers.shift() 
-                    }
-
-
-                    console.log("trace4...")
-                    console.log(recentMarkers.length)
-                    console.log(recentMarkers)
-
-
-                    // if (recentMarkers.length == gnRecentMarkersToDisplay) {
-                    //     console.log("pop it")
-                    //     recentMarkers.pop()
-                    // }
-
-                    console.log("trace5...")
-
-                    recentMarkers = processRecentIncidents(recentMarkers)   // make the array of markers yellow
-
-                    currentIncidentNumber   = latestIncidentNumber;        
-                    currentMarker           = lastGoodMarker
-
-                    processCurrentIncident(map, lastGoodMarker, lastGoodIncident)     // make current incident marker red and blink and pan/zoom to marker
-
-                    while (gtextCustomControlArr.length > 0) {                        // clear map of bottom right text controls
-                        map.removeControl(gtextCustomControlArr[0])
-                        gtextCustomControlArr.shift(0, 1);
+                    // check if the incident number is in the array; if not it is a never before seen incident
+                    if (allIncidentNumbers.indexOf(incident.IncidentNumber) == -1) {     
                         
-                    }
+                        allIncidentNumbers.push(incident.IncidentNumber)
 
-                    // process the recent incidents (yellow markers)
-                    for (var counter = 0; counter < recentMarkers.length; counter++) {
+                        // check if given incident 'Problem' text meets filter requirements
+                        var bFound = false
+                        if (gSearchText) { bFound = foundInSearchText(incident.Problem) }  
+
+                        // if filter requirement is met OR there is no filter to apply
                         
-                        if (recentMarkers[counter]) {
-                            var msg         = recentMarkers[counter].options.title
-                            var myMarker    = recentMarkers[counter]
-                            var toolTip     = null
-                            
-                            // add a tooltip for the first and last recentMarkers[]
-                            var nMaxArrIndex = recentMarkers.length - 1
-                            switch(counter) {
-                                case 0:            toolTip = "oldest recent incident";   break;
-                                case nMaxArrIndex: toolTip = "newest recent incident";   break;
-                            }
-                            createIncidentTextControl(map, msg, myMarker._latlng, false, toolTip)
+                        if (bFound || gSearchText == null) {    
+                            console.log(incident.Problem)
+                            processNewIncident(map, incident, newestMarkers, recentMarkers, olderMarkers)
                         }
                     }
+                }
+                
 
-                    createIncidentTextControl(map, lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + lastGoodIncident.ResponseDate.split(" ")[1] + lastGoodIncident.ResponseDate.split(" ")[2], [incident.Latitude, incident.Longitude], true, "Current Incident")
+                while (gtextCustomControlArr.length > 0) {  // clear map of bottom right text controls
+                    map.removeControl(gtextCustomControlArr[0])
+                    gtextCustomControlArr.shift(0, 1);
+                    
+                }
 
-                    // if there is a filter then add the filter text control that lists keywords
-                    if (gSearchText !== null) {         
-                        if (gFilterTextControl) { map.removeControl(gFilterTextControl)}
-                        createFilterTextControl(map)
+                // create text controls for recentMarkers (lower right controls)
+                for (var counter = 0;  counter < CONST_YELLOW_MARKER_MAX_COUNT; counter++) {
+                    
+                    if (recentMarkers[counter]) {
+                        var msg         = recentMarkers[counter].options.title
+                        var myMarker    = recentMarkers[counter]
+                        var toolTip     = null
+                        
+                        // add a tooltip for the first and last recentMarkers[]
+                        var nMaxArrIndex = recentMarkers.length - 1
+                        switch(counter) {
+                            case 0:            toolTip = "oldest recent incident";   break;
+                            case nMaxArrIndex: toolTip = "newest recent incident";   break;
+                        }
+                        createIncidentTextControl(map, msg, myMarker, false, toolTip)
                     }
                 }
+
+                // create text control for newestMarker
+                createIncidentTextControl(map, 
+                                          response.Incidents.Incident[0].Problem + " - " + response.Incidents.Incident[0].Address + " - " + response.Incidents.Incident[0].ResponseDate.split(" ")[1] + response.Incidents.Incident[0].ResponseDate.split(" ")[2], 
+                                          newestMarkers[0], 
+                                          true, 
+                                          "Current Incident"
+                )
+
+                // create text control for filter keyword(s)
+                if (gSearchText !== null) {         
+                    if (gFilterTextControl) { map.removeControl(gFilterTextControl)}
+                    createFilterTextControl(map)
+                }
+
+                newestMarkers[0].openPopup()
+                map.flyTo(newestMarkers[0]._latlng, CONST_MAP_INCIDENT_ZOOM)
             }
-        })
+         })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
     }
     getTfdData();
