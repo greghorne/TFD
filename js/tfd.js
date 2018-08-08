@@ -433,9 +433,6 @@ $(document).ready(function() {
                         // if filter requirement is met OR there is no filter to apply
                         
                         if (bFound || gSearchText == null) {   
-                            // console.log("======") 
-                            // console.log(incident.Problem)
-                            // console.log(incident.IncidentNumber)
                             processNewIncident(map, incident, newestMarkers, recentMarkers, olderMarkers)
                             lastGoodIncident = incident
                         }
@@ -473,7 +470,7 @@ $(document).ready(function() {
                                             lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + 
                                             lastGoodIncident.ResponseDate.split(" ")[1] + 
                                             lastGoodIncident.ResponseDate.split(" ")[2], 
-                                            newestMarkers[counter], 
+                                            newestMarkers[0], 
                                             true, 
                                             "Current Incident"
                     )
