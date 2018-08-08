@@ -175,7 +175,7 @@ function processParams(params) {
     if (params['recent'] && params['recent'] > 0 && params['recent'] <= 20) { gnRecentMarkersToDisplay = params['recent'] } 
     else { gnRecentMarkersToDisplay = CONST_YELLOW_MARKER_MAX_COUNT }
 
-    if (params['zoomTo']) { gbZoomTo = params['zoomTo'] } 
+    if (params['zoomTo']) { gbZoomTo = eval(params['zoomTo']) } 
     else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
 
     if (params['filter']) { gSearchText = params['filter'].replace("%20", " ").split("&")[0].split(",") } 
@@ -473,11 +473,16 @@ $(document).ready(function() {
                 // create text control for newestMarker
                 if (lastGoodIncident) {
                     createIncidentTextControl(map, 
-                                            lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + lastGoodIncident.ResponseDate.split(" ")[1] + lastGoodIncident.ResponseDate.split(" ")[2], 
+                                            lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + 
+                                            lastGoodIncident.ResponseDate.split(" ")[1] + 
+                                            lastGoodIncident.ResponseDate.split(" ")[2], 
                                             newestMarkers[counter], 
                                             true, 
                                             "Current Incident"
                     )
+                    newestMarkers[0].openPopup()
+                    console.log(eval(gbZoomTo))
+                    if (gbZoomTo) { map.flyTo(newestMarkers[0]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                 }
 
                 // create text control for filter keyword(s)
@@ -486,8 +491,7 @@ $(document).ready(function() {
                     createFilterTextControl(map)
                 }
 
-                newestMarkers[0].openPopup()
-                map.flyTo(newestMarkers[0]._latlng, CONST_MAP_INCIDENT_ZOOM)
+
             }
          })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
