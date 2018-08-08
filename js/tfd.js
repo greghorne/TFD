@@ -167,10 +167,6 @@ function getUrlParameterOptions(url, fnCallback) {
 //////////////////////////////////////////////////////////////////////
 // read and set url parameters to variables
 function processParams(params) {
-    
-    // gnRecentMarkersToDisplay = CONST_YELLOW_MARKER_MAX_COUNT
-    // gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT
-    // gSearchText = null
 
     if (params['recent'] && params['recent'] > 0 && params['recent'] <= 20) { gnRecentMarkersToDisplay = params['recent'] } 
     else { gnRecentMarkersToDisplay = CONST_YELLOW_MARKER_MAX_COUNT }
@@ -208,7 +204,7 @@ function createIncidentTextControl(map, info, marker, bHighlight, title) {
             if (title) container.title = title
 
             container.onclick = function() { 
-                console.log(marker)
+                // console.log(marker)
                 // marker._openPopup()
                 map.flyTo(marker._latlng, CONST_MAP_INCIDENT_ZOOM) 
             }
@@ -368,10 +364,12 @@ function processNewIncident(map, incident, newestMarkers, recentMarkers, olderMa
 
 
 var gtextCustomControlArr = []
+var gFilterTextControl
+
+// url param variables
 var gnRecentMarkersToDisplay
 var gbZoomTo
 var gSearchText = null
-var gFilterTextControl
 
 
 //////////////////////////////////////////////////////////////////////
@@ -436,9 +434,9 @@ $(document).ready(function() {
                         // if filter requirement is met OR there is no filter to apply
                         
                         if (bFound || gSearchText == null) {   
-                            console.log("======") 
-                            console.log(incident.Problem)
-                            console.log(incident.IncidentNumber)
+                            // console.log("======") 
+                            // console.log(incident.Problem)
+                            // console.log(incident.IncidentNumber)
                             processNewIncident(map, incident, newestMarkers, recentMarkers, olderMarkers)
                             lastGoodIncident = incident
                         }
@@ -453,7 +451,7 @@ $(document).ready(function() {
                 }
 
                 // create text controls for recentMarkers (lower right controls)
-                for (var counter = 0;  counter < CONST_YELLOW_MARKER_MAX_COUNT; counter++) {
+                for (var counter = 0;  counter < gnRecentMarkersToDisplay; counter++) {
                     
                     if (recentMarkers[counter]) {
                         var msg         = recentMarkers[counter].options.title
@@ -481,7 +479,6 @@ $(document).ready(function() {
                                             "Current Incident"
                     )
                     newestMarkers[0].openPopup()
-                    console.log(eval(gbZoomTo))
                     if (gbZoomTo) { map.flyTo(newestMarkers[0]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                 }
 
