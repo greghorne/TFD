@@ -185,6 +185,8 @@ function processParams(params) {
 // this is a text control with text info on a given incident
 function createIncidentTextControl(map, info, marker, bHighlight, title) {
      
+    var latlng = marker._latlng
+
     var textCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
@@ -204,9 +206,7 @@ function createIncidentTextControl(map, info, marker, bHighlight, title) {
             if (title) container.title = title
 
             container.onclick = function() { 
-                // console.log(marker)
-                // marker._openPopup()
-                map.flyTo(marker._latlng, CONST_MAP_INCIDENT_ZOOM) 
+                map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM) 
             }
             container.onmouseover = function() { L.DomUtil.addClass(map._container,'cursor-pointer') }
             container.onmouseout  = function() { L.DomUtil.removeClass(map._container,'cursor-pointer') }
