@@ -388,7 +388,6 @@ $(document).ready(function() {
         if (params !== {}) processParams(params)
     });
 
-
     // define map position, zoom and layer
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
