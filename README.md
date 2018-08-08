@@ -15,17 +15,18 @@ There are 3 options that may be added to the URL as parameters to override defau
 
 
     - _recent=number_ - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
-    example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
 
     - _zoomTo=false_ - when false, turns off automatic panning and zoom to a new incident; default = true
-    example: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
 
     - _filter=Motor Vehicle_  - comma dlimited keywords/phrases to filter incidents; keywords are not case sensitive ex. Fire = fire
-    example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
-    example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Motor%20Vehicle
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Motor%20Vehicle
     
     - _other examples_:
-    example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor,MVA
     
 
 #
