@@ -378,10 +378,11 @@ var gFilterTextControl
 // here we go
 $(document).ready(function() {
 
-    var allIncidentNumbers = []
-    var newestMarkers = []
-    var recentMarkers = []
-    var olderMarkers  = []
+    var allIncidentNumbers  = []
+    var newestMarkers       = []
+    var recentMarkers       = []
+    var olderMarkers        = []
+    var lastGoodIncident    = null;
 
 
     // read in a process url parameters
@@ -434,9 +435,12 @@ $(document).ready(function() {
 
                         // if filter requirement is met OR there is no filter to apply
                         
-                        if (bFound || gSearchText == null) {    
+                        if (bFound || gSearchText == null) {   
+                            console.log("======") 
                             console.log(incident.Problem)
+                            console.log(incident.IncidentNumber)
                             processNewIncident(map, incident, newestMarkers, recentMarkers, olderMarkers)
+                            lastGoodIncident = incident
                         }
                     }
                 }
@@ -467,16 +471,18 @@ $(document).ready(function() {
                 }
 
                 // create text control for newestMarker
-                createIncidentTextControl(map, 
-                                          response.Incidents.Incident[0].Problem + " - " + response.Incidents.Incident[0].Address + " - " + response.Incidents.Incident[0].ResponseDate.split(" ")[1] + response.Incidents.Incident[0].ResponseDate.split(" ")[2], 
-                                          newestMarkers[0], 
-                                          true, 
-                                          "Current Incident"
-                )
+                if (lastGoodIncident) {
+                    createIncidentTextControl(map, 
+                                            lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + lastGoodIncident.ResponseDate.split(" ")[1] + lastGoodIncident.ResponseDate.split(" ")[2], 
+                                            newestMarkers[counter], 
+                                            true, 
+                                            "Current Incident"
+                    )
+                }
 
                 // create text control for filter keyword(s)
                 if (gSearchText !== null) {         
-                    if (gFilterTextControl) { map.removeControl(gFilterTextControl)}
+                    if (gFilterTextControl) { map.removeControl(gFilterTextControl) }
                     createFilterTextControl(map)
                 }
 
