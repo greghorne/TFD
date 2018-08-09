@@ -18,12 +18,11 @@ const CONST_MARKER_RED           = new L.Icon({ iconUrl: CONST_MARKER_COLOR_RED,
 const CONST_MARKER_YELLOW        = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 const CONST_MARKER_BLUE          = new L.Icon({ iconUrl: CONST_MARKER_COLOR_BLUE,   iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
-const CONST_GITHUB_PAGE          = "https://github.com/greghorne/TFD"
+const CONST_HELP_PAGE          = "https://github.com/greghorne/TFD"
 
-const CONST_RED_MARKER_MAX_COUNT    = 1
+const CONST_RED_MARKER_MAX_COUNT    = 2     // leave as 1; not test with other values
 const CONST_YELLOW_MARKER_MAX_COUNT = 10
 
-const CONST_BASE_LAYER              = 1
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
@@ -62,8 +61,6 @@ const CONST_MAP_LAYERS = [
         maxZoom: 17
     }
 ];
-
-
 //////////////////////////////////////////////////////////////////////
 
 
@@ -108,26 +105,11 @@ function updateIndexedDB(json) {
 
 
 //////////////////////////////////////////////////////////////////////
-// build map layers (dynamically) from CONST_MAP_LAYERS
-var mapLayers = [];
-var baseMaps  = {};
-for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
-    mapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
-        attribution: CONST_MAP_LAYERS[n].attribution, 
-        minZoon: CONST_MAP_LAYERS[n].minZoom, 
-        maxZoom: CONST_MAP_LAYERS[n].maxZoom 
-    })
-    baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
-}
-//////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
 // returns an array of vehicles 
 function getVehicles(vehicles) {
 
-    // if vehicles = 1; then it is a key, value pair object that needs to be put in an array
-    // if vehicles > 1; then it is alread an array of key, value pairs so just return it
+    // if vehicles = 1; then it is a key value pair object that needs to be put into an array
+    // if vehicles > 1; then it is alread an array of key value pairs so just return it
 
     if (vehicles.Vehicle.Division) {
         var vehiclesArr = [];
@@ -166,7 +148,7 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
 
 
 //////////////////////////////////////////////////////////////////////
-// read in url parameters and parse into an object; if this fails then return empty object
+// read in url parameters and parse into an object; any error return empty object
 function getUrlParameterOptions(url, fnCallback) {
 
     try {
@@ -277,6 +259,8 @@ function createFilterTextControl(map, filterTextControl) {
     });
     filterTextControl = new filterCustomControl();
     map.addControl(filterTextControl);
+
+    return filterTextControl;
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -293,7 +277,7 @@ function createHelpControl(map) {
         onAdd: function(map) {
             var container = L.DomUtil.create('div', 'button-help cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
             container.title = "Click for Help"
-            container.onclick = function() { window.open(CONST_GITHUB_PAGE) }
+            container.onclick = function() { window.open(CONST_HELP_PAGE) }   // webpage to open when clicked
             return container;
         },
 
@@ -345,14 +329,14 @@ function moveMarker(fromMarkers, toMarkers, markerColor, classToRemove, classToA
 //////////////////////////////////////////////////////////////////////
 function fifoMarkers(newestMarkers, recentMarkers, olderMarkers) {
 
-    // as necessary shift marker from newestMarkers[] and push to recentMarkers[]
+    // as necessary shift out marker from newestMarkers[] and push to recentMarkers[]
     while (newestMarkers.length > CONST_RED_MARKER_MAX_COUNT) {
         // move red marker to recentMarkers
         moveMarker(newestMarkers, recentMarkers, CONST_MARKER_YELLOW, "blink", "blinkSlower")
         newestMarkers.shift()
     }
 
-    // as necessary shift marker from recentMarkers[] and push to olderMarkers[]
+    // as necessary shift out marker from recentMarkers[] and push to olderMarkers[]
     while (recentMarkers.length > gnRecentMarkersToDisplay) {
         moveMarker(recentMarkers, olderMarkers, CONST_MARKER_BLUE, "blinkSlower")
         recentMarkers.shift()
@@ -397,11 +381,29 @@ function processNewIncident(map, incident, newestMarkers, recentMarkers, olderMa
 //////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////////////////////////////////////////////////
 // url param variables
 var gnRecentMarkersToDisplay
 var gbZoomTo
 var gSearchText = null
 var gnBaseLayer
+
+var gmapLayers  = [];
+var gbaseMaps   = {};
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+// build map layers (dynamically) from CONST_MAP_LAYERS
+for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
+    gmapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
+        attribution: CONST_MAP_LAYERS[n].attribution, 
+        minZoon: CONST_MAP_LAYERS[n].minZoom, 
+        maxZoom: CONST_MAP_LAYERS[n].maxZoom 
+    })
+    gbaseMaps[[CONST_MAP_LAYERS[n].name]] = gmapLayers[n];
+}
+//////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////
@@ -427,12 +429,12 @@ $(document).ready(function() {
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_DEFAULT_ZOOM,
-        layers: [mapLayers[gnBaseLayer]]
+        layers: [gmapLayers[gnBaseLayer]]
     });
 
 
     ///////////////////////////////////////
-    L.control.layers(baseMaps).addTo(map)   // add all map layers to layer control
+    L.control.layers(gbaseMaps).addTo(map)   // add all map layers to layer control
     L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
     createHelpControl(map);
     ///////////////////////////////////////
@@ -492,24 +494,21 @@ $(document).ready(function() {
                     }
                 }
 
-                // create text control for newestMarker
                 if (lastGoodIncident) {
                     createIncidentTextControl(map, 
-                                              lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + 
-                                              lastGoodIncident.ResponseDate.split(" ")[1] + 
-                                              lastGoodIncident.ResponseDate.split(" ")[2], 
-                                              newestMarkers[0], 
+                                              newestMarkers[newestMarkers.length - 1].options['title'],
+                                              newestMarkers[newestMarkers.length - 1], 
                                               true, 
                                               "Current Incident",
                                               textCustomControlArr)
-                    newestMarkers[0].openPopup()
-                    if (gbZoomTo) { map.flyTo(newestMarkers[0]._latlng, CONST_MAP_INCIDENT_ZOOM) }
+                    newestMarkers[newestMarkers.length - 1].openPopup()
+                    if (gbZoomTo) { map.flyTo(newestMarkers[newestMarkers.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                 }
 
                 // create text control for filter keyword(s)
                 if (gSearchText !== null) {         
-                    if (filterTextControl) { map.removeControl(filterTextControl) }
-                    createFilterTextControl(map, filterTextControl)
+                    map.removeControl(filterTextControl)
+                    filterTextControl = createFilterTextControl(map, filterTextControl)
                 }
 
             }
