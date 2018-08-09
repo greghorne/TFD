@@ -1,6 +1,6 @@
 # TFD
 
-Display Tulsa Fire Department incidents on a map.
+Display City of Tulsa Fire Department incidents on a map.
 
 * What does it do:
 
@@ -19,19 +19,19 @@ There are 4 options that may be added to the URL as parameters to override defau
     recent=number - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
     ex: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
 
-    zoomTo=false - when false, turns off automatic panning and zoom to a new incident; default = true
+    zoomTo=boolean - when false, turns off automatic panning and zoom to a new incident; default = true
     ex: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
 
-    filter=fire - comma delimited keywords/phrases to filter incidents; keywords are not case sensitive
+    filter=text - comma delimited keywords/phrases to filter incidents; keywords are not case sensitive
     ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
     ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=fire,Odor,Motor%Vehicle
 
-    baseLayer=1 - defines which map to display on startup
-                  0 = Grayscale OSM (default)
-                  1 = Esri OSM
-                  2 = Hydda OSM
-                  3 = Basic OSM
-                  4 = Esri World Imagery
+    baseLayer=number - defines which map to display on startup
+                       0 = Grayscale OSM (default)
+                       1 = Esri OSM
+                       2 = Hydda OSM
+                       3 = Basic OSM
+                       4 = Esri World Imagery
     ex: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
     
     other examples:
