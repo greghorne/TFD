@@ -34,13 +34,36 @@ const CONST_MAP_LAYERS = [
         maxZoom: 17
     },
     {
-        name: "Color",
+        name: "Esri",
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+        minZoom:  5,
+        maxZoom: 17
+    },
+    {
+        name: "Hydda",
+        url: "https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png",
+        attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        minZoom:  5,
+        maxZoom: 17
+    },
+    {
+        name: "Standar OSM",
         url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        attirbution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        minZoom:  5,
+        maxZoom: 17
+    },
+    {
+        name: "Esri World Imagery",
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
         minZoom:  5,
         maxZoom: 17
     }
 ];
+
+
 //////////////////////////////////////////////////////////////////////
 
 
