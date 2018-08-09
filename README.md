@@ -36,6 +36,7 @@ There are 4 options that may be added to the URL as parameters to override defau
     
     other examples:
     [link test](https://www.google.com)
+    some text with a link <a href="http://www.google.com" target="blank">google</a>
     [https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building]
     [https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2]
 
