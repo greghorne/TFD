@@ -48,7 +48,7 @@ const CONST_MAP_LAYERS = [
         maxZoom: 17
     },
     {
-        name: "Standar OSM",
+        name: "Standard OSM",
         url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         minZoom:  5,
@@ -201,7 +201,7 @@ function processParams(params) {
     if (params['filter']) { gSearchText = params['filter'].replace("%20", " ").split("&")[0].split(",") } 
     else { gSearchText = null }
 
-    if (params['baseLayer']) { gnBaseLayer = params['baseLayer'].replace("%20", " ").split("&")[0].split(",") } 
+    if (params['baseLayer'] && params['baseLayer'] >=0 && params['baseLayer'] <= 4) { gnBaseLayer = params['baseLayer'].replace("%20", " ").split("&")[0].split(",") } 
     else { gnBaseLayer = 0 }
 }
 //////////////////////////////////////////////////////////////////////
