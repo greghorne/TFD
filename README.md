@@ -24,8 +24,8 @@ There are 4 options that may be added to the URL as parameters to override defau
     - example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
     - example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Motor%20Vehicle
 
-    - _baseLayer=1_  - defines which map to display, 0 = Grayscale (default), 1 = Color
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=1
+    - _baseLayer=1_  - defines which map to display, 0 = Grayscale (default), 1 = Esri, 2 = Hydda, 3 = Standar OSM, 4 = Esri World Imagery
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
     
     - _other examples_:
     - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
