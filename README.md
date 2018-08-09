@@ -22,11 +22,16 @@ There are 4 options that may be added to the URL as parameters to override defau
     zoomTo=false - when false, turns off automatic panning and zoom to a new incident; default = true
     ex: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
 
-    filter=Motor Vehicle  - comma dlimited keywords/phrases to filter incidents; keywords are not case sensitive ex. Fire = fire
+    filter=fire - comma delimited keywords/phrases to filter incidents; keywords are not case sensitive
     ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
-    ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Motor
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=fire,Motor
 
-    baseLayer=1 - defines which map to display, 0 = Grayscale (default), 1 = Esri, 2 = Hydda, 3 = Standar OSM, 4 = Esri World Imagery
+    baseLayer=1 - defines which map to display 
+                  0 = Grayscale (default)
+                  1 = Esri
+                  2 = Hydda
+                  3 = Standar OSM
+                  4 = Esri World Imagery
     ex: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
     
     other examples:
