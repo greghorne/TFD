@@ -35,8 +35,8 @@ There are 4 options that may be added to the URL as parameters to override defau
     ex: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
     
     other examples:
-    ex: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
-    ex: [https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2]
+    [https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building]
+    [https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2]
 
 #
 
