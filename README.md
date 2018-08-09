@@ -16,22 +16,22 @@ Display Tulsa Fire Department incidents on a map.
 
 There are 4 options that may be added to the URL as parameters to override default settings
 
-    _recent=number_ - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
-    example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
+    recent=number - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
 
-    _zoomTo=false_ - when false, turns off automatic panning and zoom to a new incident; default = true
-    example: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
+    zoomTo=false - when false, turns off automatic panning and zoom to a new incident; default = true
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
 
-    _filter=Motor Vehicle_  - comma dlimited keywords/phrases to filter incidents; keywords are not case sensitive ex. Fire = fire
-    example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
-    example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Motor
+    filter=Motor Vehicle  - comma dlimited keywords/phrases to filter incidents; keywords are not case sensitive ex. Fire = fire
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Motor
 
-    _baseLayer=1_  - defines which map to display, 0 = Grayscale (default), 1 = Esri, 2 = Hydda, 3 = Standar OSM, 4 = Esri World Imagery
-    example: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
+    baseLayer=1 - defines which map to display, 0 = Grayscale (default), 1 = Esri, 2 = Hydda, 3 = Standar OSM, 4 = Esri World Imagery
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
     
-    _other examples_:
-    example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
-    example: https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2
+    other examples:
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2
 
 #
 
