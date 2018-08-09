@@ -16,11 +16,11 @@
 
 **There are 4 options that may be added to the URL as parameters to override default settings**
 
-**1) recent=number** - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
+**1) recent=number** - change the number of recent incidents (yellow markers) displayed; valid values are 1 thru 20; default=10
 
 	https://rawgit.com/greghorne/TFD/master/index.html?recent=7
 #
-**2) zoomTo=boolean** - when false, turns off automatic panning and zoom to a new incident; default = true
+**2) zoomTo=boolean** - when false, turns off automatic panning and zoom to a new incident; default=true
 
 	https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
 #
