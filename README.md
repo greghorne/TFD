@@ -17,14 +17,14 @@ Display City of Tulsa Fire Department incidents on a map.
 There are 4 options that may be added to the URL as parameters to override default settings
 
     recent=number - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
-    https://rawgit.com/greghorne/TFD/master/index.html?recent=7
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
 
     zoomTo=boolean - when false, turns off automatic panning and zoom to a new incident; default = true
-    https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
 
     filter=text - comma delimited keywords/phrases to filter incidents; keywords are not case sensitive
-    https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
-    https://rawgit.com/greghorne/TFD/master/index.html?filter=fire,Odor,Motor%Vehicle
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=fire,Odor,Motor%Vehicle
 
     baseLayer=number - defines which map to display on startup
                        0 = Grayscale OSM (default)
@@ -32,11 +32,11 @@ There are 4 options that may be added to the URL as parameters to override defau
                        2 = Hydda OSM
                        3 = Basic OSM
                        4 = Esri World Imagery
-    https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
     
     other examples:
-    https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
-    https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
+    ex: http://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2
 
 #
 
