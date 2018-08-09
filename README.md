@@ -29,7 +29,7 @@ There are 4 options that may be added to the URL as parameters to override defau
     
     - _other examples_:
     - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor,MVA?baseLayer=1
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor,MVA&baseLayer=1
     
 
 #
