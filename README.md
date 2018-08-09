@@ -10,7 +10,7 @@ Display Tulsa Fire Department incidents on a map.
     * All other incidents are displayed as blue map markers.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
 
-* To execute: https://rawgit.com/greghorne/TFD/master/index.html
+* Deployment/execution: https://rawgit.com/greghorne/TFD/master/index.html
 
 #
 
@@ -24,13 +24,13 @@ There are 4 options that may be added to the URL as parameters to override defau
 
     filter=fire - comma delimited keywords/phrases to filter incidents; keywords are not case sensitive
     ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
-    ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=fire,Motor
+    ex: https://rawgit.com/greghorne/TFD/master/index.html?filter=fire,Odor,Motor%Vehicle
 
-    baseLayer=1 - defines which map to display 
-                  0 = Grayscale (default)
-                  1 = Esri
-                  2 = Hydda
-                  3 = Standar OSM
+    baseLayer=1 - defines which map to display on startup
+                  0 = Grayscale OSM (default)
+                  1 = Esri OSM
+                  2 = Hydda OSM
+                  3 = Basic OSM
                   4 = Esri World Imagery
     ex: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
     
