@@ -11,26 +11,27 @@ Display Tulsa Fire Department incidents on a map.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
+
+#
+
 There are 4 options that may be added to the URL as parameters to override default settings
 
+    _recent=number_ - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
+    example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
 
-    - _recent=number_ - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7
+    _zoomTo=false_ - when false, turns off automatic panning and zoom to a new incident; default = true
+    example: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
 
-    - _zoomTo=false_ - when false, turns off automatic panning and zoom to a new incident; default = true
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
+    _filter=Motor Vehicle_  - comma dlimited keywords/phrases to filter incidents; keywords are not case sensitive ex. Fire = fire
+    example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
+    example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Motor
 
-    - _filter=Motor Vehicle_  - comma dlimited keywords/phrases to filter incidents; keywords are not case sensitive ex. Fire = fire
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Motor%20Vehicle
-
-    - _baseLayer=1_  - defines which map to display, 0 = Grayscale (default), 1 = Esri, 2 = Hydda, 3 = Standar OSM, 4 = Esri World Imagery
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
+    _baseLayer=1_  - defines which map to display, 0 = Grayscale (default), 1 = Esri, 2 = Hydda, 3 = Standar OSM, 4 = Esri World Imagery
+    example: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
     
-    - _other examples_:
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2
-    
+    _other examples_:
+    example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
+    example: https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2
 
 #
 
