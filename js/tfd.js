@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////
-const CONST_MAP_DEFAULT_LONGITUDEX    = -95.992775
-const CONST_MAP_DEFAULT_LATITUDEY     =  36.1539816
+const CONST_MAP_DEFAULT_LONGITUDEX    = -95.891431
+const CONST_MAP_DEFAULT_LATITUDEY     =  36.096613
 const CONST_MAP_DEFAULT_ZOOM          =  11
 
 const CONST_MAP_JSON_URL              = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
