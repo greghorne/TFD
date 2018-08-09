@@ -23,6 +23,7 @@ const CONST_GITHUB_PAGE          = "https://github.com/greghorne/TFD"
 const CONST_RED_MARKER_MAX_COUNT    = 1
 const CONST_YELLOW_MARKER_MAX_COUNT = 10
 
+const CONST_BASE_LAYER              = 1
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
@@ -176,6 +177,9 @@ function processParams(params) {
 
     if (params['filter']) { gSearchText = params['filter'].replace("%20", " ").split("&")[0].split(",") } 
     else { gSearchText = null }
+
+    if (params['baseLayer']) { gnBaseLayer = params['baseLayer'].replace("%20", " ").split("&")[0].split(",") } 
+    else { gnBaseLayer = 0 }
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -183,16 +187,18 @@ function processParams(params) {
 //////////////////////////////////////////////////////////////////////
 // creates controls found in the lower right of the app
 // this is a text control with text info on a given incident
-function createIncidentTextControl(map, info, marker, bHighlight, title) {
+function createIncidentTextControl(map, info, marker, bHighlight, title, textCustomControlArr) {
      
     var latlng = marker._latlng
+    var leafletID = marker._leaflet_id
 
     var textCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
         },
 
-        onAdd: function(map) {
+        onAdd: function() {
+            var myMarker = marker;
             var container = L.DomUtil.create('div', 'custom-control cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
            
             if (bHighlight) { 
@@ -206,6 +212,11 @@ function createIncidentTextControl(map, info, marker, bHighlight, title) {
             if (title) container.title = title
 
             container.onclick = function() { 
+                
+                // console.log(leafletID)
+                // console.log(map._layers[leafletID]._events.click[0].fn)
+                // map._layers[leafletID].openPopup();
+                
                 map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM) 
             }
             container.onmouseover = function() { L.DomUtil.addClass(map._container,'cursor-pointer') }
@@ -218,7 +229,7 @@ function createIncidentTextControl(map, info, marker, bHighlight, title) {
 
     });
     var myControl = new textCustomControl();
-    gtextCustomControlArr.push(myControl)
+    textCustomControlArr.push(myControl)
     map.addControl(myControl);
 }
 //////////////////////////////////////////////////////////////////////
@@ -226,7 +237,7 @@ function createIncidentTextControl(map, info, marker, bHighlight, title) {
 
 //////////////////////////////////////////////////////////////////////
 // creates a text control on the map that lists filter keywords
-function createFilterTextControl(map) {
+function createFilterTextControl(map, filterTextControl) {
 
     var filterCustomControl = L.Control.extend({
         options: {
@@ -241,8 +252,8 @@ function createFilterTextControl(map) {
         },
 
     });
-    gFilterTextControl = new filterCustomControl();
-    map.addControl(gFilterTextControl);
+    filterTextControl = new filterCustomControl();
+    map.addControl(filterTextControl);
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -363,18 +374,19 @@ function processNewIncident(map, incident, newestMarkers, recentMarkers, olderMa
 //////////////////////////////////////////////////////////////////////
 
 
-var gtextCustomControlArr = []
-var gFilterTextControl
-
 // url param variables
 var gnRecentMarkersToDisplay
 var gbZoomTo
 var gSearchText = null
+var gnBaseLayer
 
 
 //////////////////////////////////////////////////////////////////////
 // here we go
 $(document).ready(function() {
+
+    var textCustomControlArr = []
+    var filterTextControl
 
     var allIncidentNumbers  = []
     var newestMarkers       = []
@@ -383,16 +395,16 @@ $(document).ready(function() {
     var lastGoodIncident    = null;
 
 
-    // read in a process url parameters
+    // read in and process url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
         if (params !== {}) processParams(params)
     });
 
-    // define map position, zoom and layer
+    // define map position, zoom and baselayer
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_DEFAULT_ZOOM,
-        layers: [mapLayers[0]]
+        layers: [mapLayers[gnBaseLayer]]
     });
 
 
@@ -426,64 +438,56 @@ $(document).ready(function() {
                         
                         allIncidentNumbers.push(incident.IncidentNumber)
 
-                        // check if given incident 'Problem' text meets filter requirements
+                        // check if given incident 'Problem' text meets filtering requirements
                         var bFound = false
                         if (gSearchText) { bFound = foundInSearchText(incident.Problem) }  
 
                         // if filter requirement is met OR there is no filter to apply
-                        
                         if (bFound || gSearchText == null) {   
                             processNewIncident(map, incident, newestMarkers, recentMarkers, olderMarkers)
                             lastGoodIncident = incident
                         }
                     }
                 }
-                
 
-                while (gtextCustomControlArr.length > 0) {  // clear map of bottom right text controls
-                    map.removeControl(gtextCustomControlArr[0])
-                    gtextCustomControlArr.shift(0, 1);
-                    
+                while (textCustomControlArr.length > 0) {  // clear map of bottom right text controls
+                    map.removeControl(textCustomControlArr[0])
+                    textCustomControlArr.shift(0, 1);
                 }
 
                 // create text controls for recentMarkers (lower right controls)
                 for (var counter = 0;  counter < gnRecentMarkersToDisplay; counter++) {
-                    
                     if (recentMarkers[counter]) {
-                        var msg         = recentMarkers[counter].options.title
-                        var myMarker    = recentMarkers[counter]
-                        var toolTip     = null
                         
                         // add a tooltip for the first and last recentMarkers[]
-                        var nMaxArrIndex = recentMarkers.length - 1
+                        var toolTip = null
                         switch(counter) {
-                            case 0:            toolTip = "oldest recent incident";   break;
-                            case nMaxArrIndex: toolTip = "newest recent incident";   break;
+                            case 0:                             toolTip = "oldest recent incident";   break;
+                            case (recentMarkers.length - 1):    toolTip = "newest recent incident";   break;
                         }
-                        createIncidentTextControl(map, msg, myMarker, false, toolTip)
+                        createIncidentTextControl(map, recentMarkers[counter].options.title, recentMarkers[counter], false, toolTip, textCustomControlArr)
                     }
                 }
 
                 // create text control for newestMarker
                 if (lastGoodIncident) {
                     createIncidentTextControl(map, 
-                                            lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + 
-                                            lastGoodIncident.ResponseDate.split(" ")[1] + 
-                                            lastGoodIncident.ResponseDate.split(" ")[2], 
-                                            newestMarkers[0], 
-                                            true, 
-                                            "Current Incident"
-                    )
+                                              lastGoodIncident.Problem + " - " + lastGoodIncident.Address + " - " + 
+                                              lastGoodIncident.ResponseDate.split(" ")[1] + 
+                                              lastGoodIncident.ResponseDate.split(" ")[2], 
+                                              newestMarkers[0], 
+                                              true, 
+                                              "Current Incident",
+                                              textCustomControlArr)
                     newestMarkers[0].openPopup()
                     if (gbZoomTo) { map.flyTo(newestMarkers[0]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                 }
 
                 // create text control for filter keyword(s)
                 if (gSearchText !== null) {         
-                    if (gFilterTextControl) { map.removeControl(gFilterTextControl) }
-                    createFilterTextControl(map)
+                    if (filterTextControl) { map.removeControl(filterTextControl) }
+                    createFilterTextControl(map, filterTextControl)
                 }
-
 
             }
          })
