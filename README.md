@@ -11,7 +11,7 @@ Display Tulsa Fire Department incidents on a map.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
 
 * To execute: https://rawgit.com/greghorne/TFD/master/index.html
-There are 3 options that may be added to the URL as parameters to override default settings
+There are 4 options that may be added to the URL as parameters to override default settings
 
 
     - _recent=number_ - change the number of recent incidents displayed (yellow markers); valid values are 1 through 20; default = 10
@@ -23,10 +23,13 @@ There are 3 options that may be added to the URL as parameters to override defau
     - _filter=Motor Vehicle_  - comma dlimited keywords/phrases to filter incidents; keywords are not case sensitive ex. Fire = fire
     - example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
     - example: https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire,Motor%20Vehicle
+
+    - _baseLayer=1_  - defines which map to display, 0 = Grayscale (default), 1 = Color
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=1
     
     - _other examples_:
     - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
-    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor,MVA
+    - example: https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor,MVA?baseLayer=1
     
 
 #
