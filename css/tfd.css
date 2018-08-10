@@ -28,30 +28,24 @@ html, body { height: 100%; width: 100%; margin: 0px }
   font-family: 'Times New Roman', Times, serif
 }
 
-.custom-red {
+#hightlight-text {
   color: red;
 }
 
-.custom-black {
-  color: black
+.highlight-background {
+  background-color: #dbe7ea !important;
 }
 
-.custom-red {
-  background-color: #dbe7ea;
+#normal-text {
+  color: black;
 }
 
-.cursor-pointer {
+.normal-background {
+  background-color: #FFFFFF !important;
+}
+
+ .cursor-pointer {
   cursor: pointer
-}
-
-.button-help {
-  background-color: #FFFFFF;
-  width: 42px;
-  height: 42px;
-  background-repeat: no-repeat;
-  background-position: center;
-  z-index:  800;    
-  background-image: url("../images/help.png");
 }
 
 .filter-control {
@@ -65,4 +59,23 @@ html, body { height: 100%; width: 100%; margin: 0px }
   font-family: 'Times New Roman', Times, serif;
   content: attr("Keywords applied for filtering")
 }
+
+.button-custom {
+  background-color: #FFFFFF;
+  width: 42px;
+  height: 42px;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index:  800;    
+}
+
+.help-icon {
+  background-image: url("../images/help.png");
+}
+
+.citygram-icon {
+  background-image: url("../images/letter-32.png");
+}
+
+
 
