@@ -18,7 +18,8 @@ const CONST_MARKER_RED           = new L.Icon({ iconUrl: CONST_MARKER_COLOR_RED,
 const CONST_MARKER_YELLOW        = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 const CONST_MARKER_BLUE          = new L.Icon({ iconUrl: CONST_MARKER_COLOR_BLUE,   iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
-const CONST_HELP_PAGE          = "https://github.com/greghorne/TFD"
+const CONST_HELP_PAGE            = "https://github.com/greghorne/TFD"
+const CONST_CITYGRAM_PAGE        = "https://www.citygram.org/tulsa"
 
 const CONST_RED_MARKER_MAX_COUNT    =  1     // leave as 1; not test with other values
 const CONST_YELLOW_MARKER_MAX_COUNT = 10
@@ -204,16 +205,19 @@ function createIncidentTextControl(map, info, marker, bHighlight, title, textCus
 
         onAdd: function() {
             var myMarker = marker;
-            var container = L.DomUtil.create('div', 'custom-control cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+            var container = L.DomUtil.create('div', 'custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
            
             if (bHighlight) { 
                 container.style.backgroundColor = "#dbe7ea"
-                container.innerHTML             = "<center><font color='red'>" + info + "</font></center>"
+                // L.DomUtil.addClass(map._container, 'hightlight-background')
+                container.innerHTML             = "<center><span id='hightlight-text'>" + info + "</span></center>"
             } else {
                 container.style.backgroundColor = "#f9f9eb"
-                container.innerHTML             = "<center>" + info + "</center>"
+                // L.DomUtil.addClass(map._container, 'normal-background')
+                container.innerHTML             = "<center><span id='normal-text'>" + info + "</span></center>"
             }
 
+            // add tooltip
             if (title) container.title = title
 
             container.onclick = function() { 
@@ -250,7 +254,7 @@ function createFilterTextControl(map, filterTextControl) {
         },
 
         onAdd: function(map) {
-            var container       = L.DomUtil.create('div', 'filter-control leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+            var container       = L.DomUtil.create('div', 'filter-control leaflet-bar', L.DomUtil.get('map'));
             var text            = gSearchText.toString()
             container.innerHTML = "<center>Filter Keyword(s): " + text + "</center>"
             return container;
@@ -275,7 +279,7 @@ function createHelpControl(map) {
         },
 
         onAdd: function(map) {
-            var container = L.DomUtil.create('div', 'button-help cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+            var container = L.DomUtil.create('div', 'button-custom help-icon cursor-pointer leaflet-bar', L.DomUtil.get('map'));
             container.title = "Click for Help"
             container.onclick = function() { window.open(CONST_HELP_PAGE) }   // webpage to open when clicked
             return container;
@@ -283,6 +287,29 @@ function createHelpControl(map) {
 
     });
     var myControl = new helpControl();
+    map.addControl(myControl);
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+// creates Help control (question mark at upper right of map)
+function createCityGramControl(map) {
+     
+    var cityGramControl = L.Control.extend({
+        options: {
+            position: 'topright' 
+        },
+
+        onAdd: function(map) {
+            var container = L.DomUtil.create('div', 'button-custom citygram-icon cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+            container.title = "Citygram - Tulsa"
+            container.onclick = function() { window.open(CONST_CITYGRAM_PAGE) }   // webpage to open when clicked
+            return container;
+        },
+
+    });
+    var myControl = new cityGramControl();
     map.addControl(myControl);
 }
 //////////////////////////////////////////////////////////////////////
@@ -437,6 +464,7 @@ $(document).ready(function() {
     L.control.layers(gbaseMaps).addTo(map)   // add all map layers to layer control
     L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
     createHelpControl(map);
+    createCityGramControl(map);
     ///////////////////////////////////////
 
 
@@ -506,8 +534,6 @@ $(document).ready(function() {
                 }
 
                 // create text control for filter keyword(s)
-                console.log(gSearchText)
-                console.log(filterTextControl)
                 if (gSearchText !== null) {         
                     if (filterTextControl) map.removeControl(filterTextControl)
                     filterTextControl = createFilterTextControl(map, filterTextControl)

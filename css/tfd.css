@@ -16,16 +16,30 @@ html, body { height: 100%; width: 100%; margin: 0px }
 }
 
 .leaflet-popup-tip {
-  background: #dbe7ea !important
+  background: #dbe7ea !important;
+}
+
+.leaflet-popup-content-wrapper {
+  box-shadow: 5px 5px 5px rgba(0,0,0,0.4) !important;
+}
+
+.leaflet-control-layers-toggle {
+	width: 38px !important;
+	height: 38px !important;
+  }
+  
+.leaflet-control-layers {
+  box-shadow: 5px 5px 5px #888888 !important;
 }
 
 .custom-control {
   width: 360px;
   height: 18px;
-  margin: 0 !important;
+  margin: 0px !important;
   z-index:  800;    
   font-size: 1.0em !important;
-  font-family: 'Times New Roman', Times, serif
+  font-family: 'Times New Roman', Times, serif;
+  /* box-shadow: 3px 3px 3px rgba(0,0,0,0.4) !important; */
 }
 
 #hightlight-text {
@@ -50,7 +64,6 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 .filter-control {
   background-color: #FFFFFF !important;
-  /* background-color: whitesmoke */
   width: 360px;
   height: 24px;
   margin: 0 !important;
@@ -62,11 +75,12 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 .button-custom {
   background-color: #FFFFFF;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   background-repeat: no-repeat;
   background-position: center;
   z-index:  800;    
+  box-shadow: 5px 5px 5px #888888 !important;
 }
 
 .help-icon {
@@ -76,6 +90,3 @@ html, body { height: 100%; width: 100%; margin: 0px }
 .citygram-icon {
   background-image: url("../images/letter-32.png");
 }
-
-
-
