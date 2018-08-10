@@ -411,13 +411,13 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 $(document).ready(function() {
 
     var textCustomControlArr = []
-    var filterTextControl
+    var filterTextControl    = null
 
-    var allIncidentNumbers  = []
-    var newestMarkers       = []
-    var recentMarkers       = []
-    var olderMarkers        = []
-    var lastGoodIncident    = null;
+    var allIncidentNumbers   = []
+    var newestMarkers        = []
+    var recentMarkers        = []
+    var olderMarkers         = []
+    var lastGoodIncident     = null;
 
 
     // read in and process url parameters
@@ -506,8 +506,10 @@ $(document).ready(function() {
                 }
 
                 // create text control for filter keyword(s)
+                console.log(gSearchText)
+                console.log(filterTextControl)
                 if (gSearchText !== null) {         
-                    map.removeControl(filterTextControl)
+                    if (filterTextControl) map.removeControl(filterTextControl)
                     filterTextControl = createFilterTextControl(map, filterTextControl)
                 }
 
