@@ -68,4 +68,4 @@
 * I have added code for using IndexedDB that is currently keeping all incidents.  Currrently the DB is not being used.  
 
 **<p align="center">This is not a real-time map display.</p>**
-**<p align="center">This webpage is for demonstration purposes.</p>**
+**<p align="center">This webapp is for demonstration purposes.</p>**
