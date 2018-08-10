@@ -1,8 +1,6 @@
 html, body { height: 100%; width: 100%; margin: 0px }
 #map { height: 100%; width: 100% }
 
-/* .leaflet-control-container { position: absolute; bottom: 56px; right: 56px }  */
-
 /* blinking map marker */
   @keyframes fade { 
   from { opacity: 0; } 
@@ -22,14 +20,12 @@ html, body { height: 100%; width: 100%; margin: 0px }
 }
 
 .custom-control {
-  /* background-color: #FFFFFF; */
   width: 360px;
   height: 18px;
   margin: 0 !important;
   z-index:  800;    
   font-size: 1.0em !important;
   font-family: 'Times New Roman', Times, serif
-  /* right: 10px; */
 }
 
 .custom-red {
@@ -47,8 +43,6 @@ html, body { height: 100%; width: 100%; margin: 0px }
 .cursor-pointer {
   cursor: pointer
 }
-
-/* .button-sidebar { background-image: url(help.png); } */
 
 .button-help {
   background-color: #FFFFFF;
@@ -71,29 +65,4 @@ html, body { height: 100%; width: 100%; margin: 0px }
   font-family: 'Times New Roman', Times, serif;
   content: attr("Keywords applied for filtering")
 }
-
-/* 
- */
-
- /* .vertical-container {
-  height:   0%;
-  margin:   0;
-  padding:  0;
-  /*height:  4%;*/
-  display: -webkit-flex;
-  display:         flex;
-  -webkit-align-items: center;
-         align-items: center;
-  -webkit-justify-content: center;
-         justify-content: center;
-} */
-
-/* #msg { 
-  color:    white;
-  background-color: gray;
-  margin:   0;
-  padding:  0;
-  margin:   9px 0;
-  white-space: nowrap;
-} */
 
