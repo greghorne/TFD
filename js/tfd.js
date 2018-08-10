@@ -20,7 +20,7 @@ const CONST_MARKER_BLUE          = new L.Icon({ iconUrl: CONST_MARKER_COLOR_BLUE
 
 const CONST_HELP_PAGE          = "https://github.com/greghorne/TFD"
 
-const CONST_RED_MARKER_MAX_COUNT    = 2     // leave as 1; not test with other values
+const CONST_RED_MARKER_MAX_COUNT    =  1     // leave as 1; not test with other values
 const CONST_YELLOW_MARKER_MAX_COUNT = 10
 
 // definition of map layers; first layer is the default layer displayed
