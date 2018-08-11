@@ -91,7 +91,7 @@ function updateIndexedDB(json) {
 
         var incidentsCount = json.Incidents.Incident.length;
 
-        for (var n = 0; n < incidentsCount; n++) {  // iterate through json
+        for (var counter = 0; counter < incidentsCount; counter++) {  // iterate through json
             var incident    = json.Incidents.Incident[n];
             var vehiclesArr = getVehicles(incident.Vehicles);
             // 'put' will update a record if it exists or create a new one.
@@ -138,9 +138,9 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
     } else {
         // more than 1 vehicle; array of key, value
-        for (var n = 0; n < vehicles.length; n++) {
-            vehiclesString += "</tr><td>" + vehicles[n].Division + "</td><td>" + vehicles[n].Station + "</td><td>" + vehicles[n].VehicleID + "</td>"
-            vehiclesArr.push( {division: vehicles[n].Division, station: vehicles[n].Station, vehicleID: vehicles[n].VehicleID} )
+        for (var counter = 0; counter < vehicles.length; counter++) {
+            vehiclesString += "</tr><td>" + vehicles[counter].Division + "</td><td>" + vehicles[counter].Station + "</td><td>" + vehicles[counter].VehicleID + "</td>"
+            vehiclesArr.push( {division: vehicles[counter].Division, station: vehicles[counter].Station, vehicleID: vehicles[counter].VehicleID} )
         }
     }
     vehiclesString += "</table>"
@@ -227,7 +227,7 @@ function createIncidentTextControl(map, info, marker, bHighlight, title, textCus
                 setTimeout(function() { marker.openPopup(); }, 1000)
             })
 
-            container.onmouseover = function() { L.DomUtil.addClass(map._container,'cursor-pointer') }
+            container.onmouseover = function() { L.DomUtil.addClass(map._container,   'cursor-pointer') }
             container.onmouseout  = function() { L.DomUtil.removeClass(map._container,'cursor-pointer') }
 
             return container;
@@ -321,8 +321,8 @@ function foundInSearchText(txtProblem) {
 
     var bReturn = false;
     if (gSearchText) {
-        for (var n = 0; n < gSearchText.length; n++) {
-            if (txtProblem.toLowerCase().indexOf(gSearchText[n].toLowerCase()) > -1) {
+        for (var counter = 0; counter < gSearchText.length; counter++) {
+            if (txtProblem.toLowerCase().indexOf(gSearchText[counter].toLowerCase()) > -1) {
                 bReturn = true
                 break;
             }
@@ -439,7 +439,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 $(document).ready(function() {
 
     var textCustomControlArr = []
-    var filterTextControl    = null
+    var filterTextControl    = null;
 
     var allIncidentNumbers   = []
     var newestMarkers        = []
@@ -447,21 +447,24 @@ $(document).ready(function() {
     var olderMarkers         = []
     var lastGoodIncident     = null;
 
+    var params
+    var map
+
 
     // read in and process url parameters
-    var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
+    params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
         if (params !== {}) processParams(params)
     });
 
     // define map position, zoom and baselayer
-    var map = L.map('map', {
+    map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_DEFAULT_ZOOM,
         layers: [gmapLayers[gnBaseLayer]]
     });
 
     ///////////////////////////////////////
-    L.control.layers(gbaseMaps).addTo(map)   // add all map layers to layer control
+    L.control.layers(gbaseMaps).addTo(map)                      // add all map layers to layer control
     L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
     createHelpControl(map);
     createCityGramControl(map);
@@ -507,7 +510,7 @@ $(document).ready(function() {
                     textCustomControlArr.shift(0, 1);
                 }
 
-                // create text controls for recentMarkers (lower right controls)
+                // create text controls for recentMarkers (bottom right controls)
                 for (var counter = 0;  counter < gnRecentMarkersToDisplay; counter++) {
                     if (recentMarkers[counter]) {
                         
