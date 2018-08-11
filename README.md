@@ -2,15 +2,24 @@
 
 **Display City of Tulsa Fire Department incidents on a map.**
 
-* **What does it do:**
+* **What does it do?**
 
     * Polls City of Tulsa Fire Department incident data every 1 minute.
-    * The map will center and zoom to the most recent incident (red map marker).
+    * The map will center and zoom to the newest incident and display as a red map marker. 
     * The 10 previous incidents are displayed as yellow map markers.
-    * All other incidents are displayed as blue map markers.
+    * All older incidents are displayed as blue map markers.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
 
-* **Deployment:** https://rawgit.com/greghorne/TFD/master/index.html
+#
+
+| Map Marker Incident | Icon          |
+|:-------------:|:-------------:|
+| Newest | ![Alt text](https://rawgit.com/greghorne/TFD/master/images/marker-icon-red.png "Current Incident") |
+| Recent | ![Alt text](https://rawgit.com/greghorne/TFD/master/images/marker-icon-yellow.png "Recent Incident") |
+| Older | ![Alt text](https://rawgit.com/greghorne/TFD/master/images/marker-icon-blue.png "Older Incident") |
+
+#
+**Deployment:** https://rawgit.com/greghorne/TFD/master/index.html
 
 #
 
