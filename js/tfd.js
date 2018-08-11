@@ -9,10 +9,11 @@ const CONST_JSON_UPDATE_TIME          = 60000    // how often to poll for JSON d
 const CONST_MAP_INCIDENT_ZOOM         = 15
 const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
 
-const CONST_PIN_ANCHOR           = new L.Point(25/2, 41);
 const CONST_MARKER_COLOR_RED     = "./images/marker-icon-red.png";
 const CONST_MARKER_COLOR_YELLOW  = "./images/marker-icon-yellow.png"
 const CONST_MARKER_COLOR_BLUE    = "./images/marker-icon-blue.png"
+
+const CONST_PIN_ANCHOR           = new L.Point(25/2, 41);
 
 const CONST_MARKER_RED           = new L.Icon({ iconUrl: CONST_MARKER_COLOR_RED,    iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 const CONST_MARKER_YELLOW        = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
@@ -21,8 +22,8 @@ const CONST_MARKER_BLUE          = new L.Icon({ iconUrl: CONST_MARKER_COLOR_BLUE
 const CONST_HELP_PAGE            = "https://github.com/greghorne/TFD"
 const CONST_CITYGRAM_PAGE        = "https://www.citygram.org/tulsa"
 
-const CONST_RED_MARKER_MAX_COUNT    =  1     // leave as 1; not test with other values
-const CONST_YELLOW_MARKER_MAX_COUNT = 10
+const CONST_RED_MARKER_MAX_COUNT    =  1     // leave as 1; not tested with other values
+const CONST_YELLOW_MARKER_MAX_COUNT = 10     // default number of yellow markers to display
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -220,23 +221,22 @@ function createIncidentTextControl(map, info, marker, bHighlight, title, textCus
             // add tooltip
             if (title) container.title = title
 
-            container.onclick = function() { 
-                
-                // console.log(leafletID)
-                // console.log(map._layers[leafletID]._events.click[0].fn)
-                // map._layers[leafletID].openPopup();
-                
-                map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM) 
-            }
+            L.DomEvent.on(container, 'click', function(e) {
+                L.DomEvent.stopPropagation(e);
+                map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
+                setTimeout(function() { marker.openPopup(); }, 1000)
+            })
+
             container.onmouseover = function() { L.DomUtil.addClass(map._container,'cursor-pointer') }
             container.onmouseout  = function() { L.DomUtil.removeClass(map._container,'cursor-pointer') }
 
             return container;
         },
-        
+
         onRemove: function(map) { }
 
     });
+
     var myControl = new textCustomControl();
     textCustomControlArr.push(myControl)
     map.addControl(myControl);
@@ -387,6 +387,7 @@ function createRedMarker(incident) {
 
     })
     marker.setIcon(CONST_MARKER_RED)
+
     return marker;
 }
 //////////////////////////////////////////////////////////////////////
@@ -414,14 +415,14 @@ var gnRecentMarkersToDisplay
 var gbZoomTo
 var gSearchText = null
 var gnBaseLayer
-
-var gmapLayers  = [];
-var gbaseMaps   = {};
 //////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////
 // build map layers (dynamically) from CONST_MAP_LAYERS
+var gmapLayers  = [];
+var gbaseMaps   = {};
+
 for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     gmapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
         attribution: CONST_MAP_LAYERS[n].attribution, 
@@ -459,14 +460,12 @@ $(document).ready(function() {
         layers: [gmapLayers[gnBaseLayer]]
     });
 
-
     ///////////////////////////////////////
     L.control.layers(gbaseMaps).addTo(map)   // add all map layers to layer control
     L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
     createHelpControl(map);
     createCityGramControl(map);
     ///////////////////////////////////////
-
 
     ///////////////////////////////////////
     function getTfdData() {
@@ -522,6 +521,7 @@ $(document).ready(function() {
                     }
                 }
 
+                // create text conrtol for newestMarkers
                 if (lastGoodIncident) {
                     createIncidentTextControl(map, 
                                               newestMarkers[newestMarkers.length - 1].options['title'],
