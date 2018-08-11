@@ -39,10 +39,9 @@ html, body { height: 100%; width: 100%; margin: 0px }
   z-index:  800;    
   font-size: 1.0em !important;
   font-family: 'Times New Roman', Times, serif;
-  /* box-shadow: 3px 3px 3px rgba(0,0,0,0.4) !important; */
 }
 
-#hightlight-text {
+.hightlight-text.body {
   color: red;
 }
 
@@ -50,12 +49,12 @@ html, body { height: 100%; width: 100%; margin: 0px }
   background-color: #dbe7ea !important;
 }
 
-#normal-text {
+.normal-text {
   color: black;
 }
 
 .normal-background {
-  background-color: #FFFFFF !important;
+  background-color: #f9f9eb !important;
 }
 
  .cursor-pointer {
