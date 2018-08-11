@@ -91,8 +91,10 @@ function updateIndexedDB(json) {
 
         var incidentsCount = json.Incidents.Incident.length;
 
+        console.log(incidentsCount)
+
         for (var counter = 0; counter < incidentsCount; counter++) {  // iterate through json
-            var incident    = json.Incidents.Incident[n];
+            var incident    = json.Incidents.Incident[counter];
             var vehiclesArr = getVehicles(incident.Vehicles);
             // 'put' will update a record if it exists or create a new one.
             store.put({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
@@ -215,7 +217,7 @@ function createIncidentTextControl(map, info, marker, bHighlight, title, textCus
                 container.innerHTML = "<center style='color: black'>" + info + "</center>"
             }
            
-            // add tooltip
+            // tooltip
             if (title) container.title = title
 
             L.DomEvent.on(container, 'click', function(e) {
@@ -444,17 +446,13 @@ $(document).ready(function() {
     var olderMarkers         = []
     var lastGoodIncident     = null;
 
-    var params
-    var map
-
-
     // read in and process url parameters
-    params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
+    var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
         if (params !== {}) processParams(params)
     });
 
     // define map position, zoom and baselayer
-    map = L.map('map', {
+    var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_DEFAULT_ZOOM,
         layers: [gmapLayers[gnBaseLayer]]
@@ -466,6 +464,7 @@ $(document).ready(function() {
     createHelpControl(map);
     createCityGramControl(map);
     ///////////////////////////////////////
+
 
     ///////////////////////////////////////
     function getTfdData() {
