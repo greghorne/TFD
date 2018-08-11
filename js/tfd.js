@@ -205,19 +205,16 @@ function createIncidentTextControl(map, info, marker, bHighlight, title, textCus
         },
 
         onAdd: function() {
-            var myMarker = marker;
-            var container = L.DomUtil.create('div', 'custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-           
-            if (bHighlight) { 
-                container.style.backgroundColor = "#dbe7ea"
-                // L.DomUtil.addClass(map._container, 'hightlight-background')
-                container.innerHTML             = "<center><span id='hightlight-text'>" + info + "</span></center>"
-            } else {
-                container.style.backgroundColor = "#f9f9eb"
-                // L.DomUtil.addClass(map._container, 'normal-background')
-                container.innerHTML             = "<center><span id='normal-text'>" + info + "</span></center>"
-            }
+            var container;
 
+            if (bHighlight) {
+                container = L.DomUtil.create('div', 'highlight-background custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
+                container.innerHTML = "<center style='color: red'>" + info + "</center>"
+            } else {
+                container = L.DomUtil.create('div', 'normal-background custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
+                container.innerHTML = "<center style='color: black'>" + info + "</center>"
+            }
+           
             // add tooltip
             if (title) container.title = title
 
