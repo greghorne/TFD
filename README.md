@@ -76,7 +76,7 @@
 
 * Code for using IndexedDB has been added to track all incidents although the data is currently not being used for any other purpose.
 
-* JSON Data - Incidents.Incident[x].Vehicles.Vehicle - if 1 vehicle it is an object of key, value pairs; if greater than 1 is is an array of key, value pairs
+* JSON Data - Incidents.Incident[x].Vehicles.Vehicle - if 1 vehicle it is an object of key, value pairs; if greater than 1 it is an array of key, value pairs
 
 * JSON Data - Incidents.Incident[x].Vehicles.Vehicle - if 1 vehicle it has been observed at times that VehicleID is null
 
