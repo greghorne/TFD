@@ -80,5 +80,3 @@
 
 * JSON Data - Incidents.Incident[x].Vehicles.Vehicle - if 1 vehicle it has been observed at times that VehicleID is null
 
-**<p align="center">This is not a real-time map display.</p>**
-**<p align="center">This webapp is for demonstration purposes.</p>**
