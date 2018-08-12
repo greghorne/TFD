@@ -33,13 +33,13 @@
 
 	https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
 #
-**3) filter=text** - comma delimited keywords/phrases to filter incidents; keywords are not case sensitive
+**3) filter=text** - comma delimited keywords/phrases to filter incidents; keywords are not case sensitive; do not add unnecessary spaces/blanks and no spaces/blanks next to commas
 
 	https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
 
 	https://rawgit.com/greghorne/TFD/master/index.html?filter=fire,Odor,Motor%20Vehicle
 #
-**4) baseLayer=number** - defines which map to display on startup
+**4) baseLayer=number** - defines which base map to display on startup
 
                    0 = Grayscale OSM (default)
                    1 = Esri OSM
@@ -74,7 +74,11 @@
 
 * I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme where it didn't update for over an hour.  Please keep this in mind when viewing incidents on the map.  
 
-* I have added code for using IndexedDB that is currently keeping all incidents.  Currrently the DB is not being used.  
+* Code for using IndexedDB has been added to track all incidents although the data is currently not being used for any other purpose.
+
+* JSON Data - Incidents.Incident[x].Vehicles.Vehicle - if 1 vehicle it is an object of key, value pairs; if greater than 1 is is an array of key value pairs
+
+* JSON Data - Incidents.Incident[x].Vehicles.Vehicle - if 1 vehicle it has been observed at times that VehicleID is null
 
 **<p align="center">This is not a real-time map display.</p>**
 **<p align="center">This webapp is for demonstration purposes.</p>**
