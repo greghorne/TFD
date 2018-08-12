@@ -28,8 +28,10 @@ const CONST_YELLOW_MARKER_MAX_COUNT = 10     // default number of yellow markers
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
+        // not https so can generate warnings
+        // 2018-08-12 - https site currently has a NET::ERR_CERT_COMMON_NAME_INVALID so it will not load the map images
         name: "Grayscale OSM",
-        url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
+        url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",      
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         minZoom:  5,
         maxZoom: 17
@@ -50,7 +52,7 @@ const CONST_MAP_LAYERS = [
     },
     {
         name: "Basic OSM",
-        url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
         minZoom:  5,
         maxZoom: 17
@@ -91,8 +93,6 @@ function updateIndexedDB(json) {
 
         var incidentsCount = json.Incidents.Incident.length;
 
-        console.log(incidentsCount)
-
         for (var counter = 0; counter < incidentsCount; counter++) {  // iterate through json
             var incident    = json.Incidents.Incident[counter];
             var vehiclesArr = getVehicles(incident.Vehicles);
@@ -113,7 +113,7 @@ function updateIndexedDB(json) {
 function getVehicles(vehicles) {
 
     // if vehicles = 1; then it is a key value pair object that needs to be put into an array
-    // if vehicles > 1; then it is alread an array of key value pairs so just return it
+    // if vehicles > 1; then it is already an array of key value pairs so just return it
 
     if (vehicles.Vehicle.Division) {
         var vehiclesArr = [];
@@ -196,10 +196,10 @@ function processParams(params) {
 //////////////////////////////////////////////////////////////////////
 // creates controls found in the lower right of the app
 // this is a text control with text info on a given incident
-function createIncidentTextControl(map, info, marker, bHighlight, title, textCustomControlArr) {
+function createIncidentTextControl(map, marker, bHighlight, title, textCustomControlArr) {
      
     var latlng = marker._latlng
-    var leafletID = marker._leaflet_id
+    var info   = marker.options['title']
 
     var textCustomControl = L.Control.extend({
         options: {
@@ -223,7 +223,7 @@ function createIncidentTextControl(map, info, marker, bHighlight, title, textCus
             L.DomEvent.on(container, 'click', function(e) {
                 L.DomEvent.stopPropagation(e);
                 map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
-                setTimeout(function() { marker.openPopup(); }, 1000)
+                setTimeout(function() { marker.openPopup(); }, 1000)  // delay opening marker popup
             })
 
             container.onmouseover = function() { L.DomUtil.addClass(map._container,   'cursor-pointer') }
@@ -355,14 +355,14 @@ function moveMarker(fromMarkers, toMarkers, markerColor, classToRemove, classToA
 //////////////////////////////////////////////////////////////////////
 function fifoMarkers(newestMarkers, recentMarkers, olderMarkers) {
 
-    // as necessary shift out marker from newestMarkers[] and push to recentMarkers[]
+    // as necessary shift out marker(s) from newestMarkers[] and push to recentMarkers[]
     while (newestMarkers.length > CONST_RED_MARKER_MAX_COUNT) {
         // move red marker to recentMarkers
         moveMarker(newestMarkers, recentMarkers, CONST_MARKER_YELLOW, "blink", "blinkSlower")
         newestMarkers.shift()
     }
 
-    // as necessary shift out marker from recentMarkers[] and push to olderMarkers[]
+    // as necessary shift out marker(s) from recentMarkers[] and push to olderMarkers[]
     while (recentMarkers.length > gnRecentMarkersToDisplay) {
         moveMarker(recentMarkers, olderMarkers, CONST_MARKER_BLUE, "blinkSlower")
         recentMarkers.shift()
@@ -484,10 +484,10 @@ $(document).ready(function() {
 
                     var incident = incidents.Incident[counter]  // fetch incident
 
-                    // check if the incident number is in the array; if not it is a never before seen incident
+                    // check if the incident number is in the array 
                     if (allIncidentNumbers.indexOf(incident.IncidentNumber) == -1) {     
                         
-                        allIncidentNumbers.push(incident.IncidentNumber)
+                        allIncidentNumbers.push(incident.IncidentNumber)  // push new incident number onto array
 
                         // check if given incident 'Problem' text meets filtering requirements
                         var bFound = false
@@ -516,14 +516,16 @@ $(document).ready(function() {
                             case 0:                             toolTip = "oldest recent incident";   break;
                             case (recentMarkers.length - 1):    toolTip = "newest recent incident";   break;
                         }
-                        createIncidentTextControl(map, recentMarkers[counter].options.title, recentMarkers[counter], false, toolTip, textCustomControlArr)
+                        createIncidentTextControl(map, 
+                            // recentMarkers[counter].options.title, 
+                            recentMarkers[counter], false, toolTip, textCustomControlArr)
                     }
                 }
 
                 // create text conrtol for newestMarkers
                 if (lastGoodIncident) {
                     createIncidentTextControl(map, 
-                                              newestMarkers[newestMarkers.length - 1].options['title'],
+                                            //   newestMarkers[newestMarkers.length - 1].options['title'],
                                               newestMarkers[newestMarkers.length - 1], 
                                               true, 
                                               "Current Incident",
@@ -537,7 +539,6 @@ $(document).ready(function() {
                     if (filterTextControl) map.removeControl(filterTextControl)
                     filterTextControl = createFilterTextControl(map, filterTextControl)
                 }
-
             }
          })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
