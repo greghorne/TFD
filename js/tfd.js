@@ -92,6 +92,7 @@ function updateIndexedDB(json) {
     }
 
     db.onsuccess = function() {
+
         var database = db.result
         var tx       = database.transaction(["Incidents"], "readwrite");
         var store    = tx.objectStore("Incidents");
@@ -99,6 +100,7 @@ function updateIndexedDB(json) {
         var incidentsCount = json.Incidents.Incident.length;
 
         for (var counter = 0; counter < incidentsCount; counter++) {  // iterate through all json incidents
+
             var incident    = json.Incidents.Incident[counter];
             var vehiclesArr = getVehicles(incident.Vehicles);
 
@@ -151,6 +153,7 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
             vehiclesArr.push( {division: vehicles[counter].Division, station: vehicles[counter].Station, vehicleID: vehicles[counter].VehicleID} )
         }
     }
+
     vehiclesString += "</table>"
     fnCallback(vehiclesString);
 }
@@ -285,8 +288,8 @@ function createHelpControl(map) {
         },
 
         onAdd: function(map) {
-            var container = L.DomUtil.create('div', 'button-custom help-icon cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-            container.title = "Click for Help"
+            var container     = L.DomUtil.create('div', 'button-custom help-icon cursor-pointer leaflet-bar', L.DomUtil.get('map'));
+            container.title   = "Click for Help"
             container.onclick = function() { window.open(CONST_HELP_PAGE) }   // webpage to open when clicked
             return container;
         },
@@ -308,8 +311,8 @@ function createCityGramControl(map) {
         },
 
         onAdd: function(map) {
-            var container = L.DomUtil.create('div', 'button-custom citygram-icon cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
-            container.title = "Citygram - Tulsa"
+            var container     = L.DomUtil.create('div', 'button-custom citygram-icon cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
+            container.title   = "Citygram - Tulsa"
             container.onclick = function() { window.open(CONST_CITYGRAM_PAGE) }   // webpage to open when clicked
             return container;
         },
@@ -354,26 +357,25 @@ function moveMarker(fromMarkers, toMarkers, markerColor, classToRemove, classToA
         function blink() { L.DomUtil.addClass(marker._icon, classToAdd) }
         blink();
     }
-    
     toMarkers.push(marker)
 }
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////
-function fifoMarkers(newestMarkers, recentMarkers, olderMarkers) {
-
-    // as necessary shift out marker(s) from newestMarkers[] and push to recentMarkers[]
-    while (newestMarkers.length > CONST_RED_MARKER_MAX_COUNT) {
-        // move red marker to recentMarkers
-        moveMarker(newestMarkers, recentMarkers, CONST_MARKER_YELLOW, "blink", "blinkSlower")
-        newestMarkers.shift()
-    }
-
-    // as necessary shift out marker(s) from recentMarkers[] and push to olderMarkers[]
-    while (recentMarkers.length > gnRecentMarkersToDisplay) {
-        moveMarker(recentMarkers, olderMarkers, CONST_MARKER_BLUE, "blinkSlower")
-        recentMarkers.shift()
+function fifoMarkers(newestMarkersArr, recentMarkersArr, olderMarkersArr) {
+   
+    // as necessary shift out marker(s) from newestMarkersArr[] and push to recentMarkersArr[]
+    while (newestMarkersArr.length > CONST_RED_MARKER_MAX_COUNT) {
+        // move red marker to recentMarkersArr
+        moveMarker(newestMarkersArr, recentMarkersArr, CONST_MARKER_YELLOW, "blink", "blinkSlower")
+        newestMarkersArr.shift()
+    }  
+    
+    // as necessary shift out marker(s) from recentMarkersArr[] and push to olderMarkersArr[]
+    while (recentMarkersArr.length > gnRecentMarkersToDisplay) {
+        moveMarker(recentMarkersArr, olderMarkersArr, CONST_MARKER_BLUE, "blinkSlower")
+        recentMarkersArr.shift()
     }
 }
 //////////////////////////////////////////////////////////////////////
@@ -383,7 +385,7 @@ function fifoMarkers(newestMarkers, recentMarkers, olderMarkers) {
 function createRedMarker(incident) {
 
     var marker;
-    var vehicles  = incident.Vehicles.Vehicle
+    var vehicles = incident.Vehicles.Vehicle
     
     buildVehicleHTMLString(vehicles, function(vehiclesString) {
         markerPopupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
@@ -397,37 +399,37 @@ function createRedMarker(incident) {
 
     return marker;
 }
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////////////////////////////
-function processNewIncident(map, incident, newestMarkers, recentMarkers, olderMarkers) {
+////////////////////////////////////////////////////////////////////
+function processNewIncident(map, incident, newestMarkersArr, recentMarkersArr, olderMarkersArr) {
 
-    var marker = createRedMarker(incident); 
-    newestMarkers.push(marker)
+   var marker = createRedMarker(incident); 
+    newestMarkersArr.push(marker)
     marker.addTo(map);
 
-    // per Internet ==> this is a workaround; setting "blink" in the L.marker statement offsets the marker and popup
+    // per Intert ==> this is a workaround; setting "blink" in the L.marker statement offsets the marker and popup
     function blink() { L.DomUtil.addClass(marker._icon, "blink"); }
-    blink();
-
-    fifoMarkers(newestMarkers, recentMarkers, olderMarkers)
+    blink();    
+    fifoMarkers(newestMarkersArr, recentMarkersArr, olderMarkersArr)
 }
-//////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 function clearTextControls(map, textCustomControlArr, fnCallback) {
+
     while (textCustomControlArr.length > 0) {  
         map.removeControl(textCustomControlArr[0])
         textCustomControlArr.shift(0, 1);
     }
     fnCallback();
 }
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 function addControlsToMap(map) {
     L.control.layers(gbaseMaps).addTo(map)                     // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
@@ -438,18 +440,18 @@ function addControlsToMap(map) {
 
 
 //////////////////////////////////////////////////////////////////////
-function createRecentControls(map, recentMarkers, bHighlight, textCustomControlArr, fnCallback) {
+function createRecentControls(map, recentMarkersArr, bHighlight, textCustomControlArr, fnCallback) {
  
-    // create text controls for recentMarkers (lower right controls)
+    // create text controls for recentMarkersArr (lower right controls)
     for (var counter = 0;  counter < gnRecentMarkersToDisplay; counter++) {
-        if (recentMarkers[counter]) {
+        if (recentMarkersArr[counter]) {
             
-            var toolTip = null  // add a tooltip for the first and last recentMarkers[]
+            var toolTip = null  // add a tooltip for the first and last recentMarkersArr[]
             switch(counter) {
-                case 0:                             toolTip = CONST_OLDEST_RECENT_INCIDENT;   break;
-                case (recentMarkers.length - 1):    toolTip = CONST_NEWEST_RECENT_INCIDENT;   break;
+                case 0:                             toolTip = CONST_OLDEST_RECENT_INCIDENT; break;
+                case (recentMarkersArr.length - 1): toolTip = CONST_NEWEST_RECENT_INCIDENT; break;
             }
-            createIncidentTextControl(map, recentMarkers[counter], bHighlight, toolTip, textCustomControlArr)
+            createIncidentTextControl(map, recentMarkersArr[counter], bHighlight, toolTip, textCustomControlArr)
         }
     }
     fnCallback()
@@ -483,17 +485,16 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 
 
 //////////////////////////////////////////////////////////////////////
-// here we go...
 $(document).ready(function() {
 
-    var textCustomControlArr = []
-    var filterTextControl    = null;
+    var textCustomControlArr  = []
+    var filterTextControl     = null;
 
-    var allIncidentNumbers   = []
-    var newestMarkers        = []
-    var recentMarkers        = []
-    var olderMarkers         = []
-    var lastGoodIncident     = null;
+    var allIncidentNumbersArr = []
+    var newestMarkersArr      = []
+    var recentMarkersArr      = []
+    var olderMarkersArr       = []
+    var lastGoodIncident      = null;
 
     // read in and process url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
@@ -509,49 +510,53 @@ $(document).ready(function() {
 
     addControlsToMap(map);
 
-    ///////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
     function getTfdData() {
 
         $.ajax({ type: "GET", url: CONST_MAP_JSON_URL }).done(function(response){
 
+            //////////////////////////////////////////////////////////////////////
             // check if we have seen this incident number before
-            if (allIncidentNumbers.indexOf(response.Incidents.Incident[0].IncidentNumber) == -1) {      
+            if (allIncidentNumbersArr.indexOf(response.Incidents.Incident[0].IncidentNumber) == -1) {      
 
                 updateIndexedDB(response);                       // json file has updated, update indexedDB
 
                 var incidents      = response.Incidents          // all json incidents
                 var incidentsCount = incidents.Incident.length;  // number of json incidents
 
+                //////////////////////////////////////////////////////////////////////
                 // iterate through all of the JSON incidents backwards, oldest incident first
                 for (var counter = incidentsCount - 1; counter >= 0; counter--) {
 
                     var incident = incidents.Incident[counter]  // fetch incident
 
                     // check if the incident number is in the array 
-                    if (allIncidentNumbers.indexOf(incident.IncidentNumber) == -1) {     
+                    if (allIncidentNumbersArr.indexOf(incident.IncidentNumber) == -1) {     
                         
-                        allIncidentNumbers.push(incident.IncidentNumber)  // push new incident number onto array
+                        allIncidentNumbersArr.push(incident.IncidentNumber)  // push new incident number onto array
 
                         // check if given incident 'Problem' text meets filtering requirements
                         var bFound = false
                         if (gSearchText) { bFound = foundInSearchText(incident.Problem) }  
 
-                        // if filter requirement is met OR there is no filter to apply process the new incident
-                        if (bFound || gSearchText == null) {   
-                            processNewIncident(map, incident, newestMarkers, recentMarkers, olderMarkers)
+                        // if filter requirement is met OR there is no filter to applprocess the new incident
+                        if (bFound || gSearchText == null) { 
+                            processNewIncident(map, incident, newestMarkersArr, recentMarkersArr, olderMarkersArr)
                             lastGoodIncident = incident
                         }
                     }
                 }
+                //////////////////////////////////////////////////////////////////////
 
+                //////////////////////////////////////////////////////////////////////
                 // update text controls at the lower right of the map
                 clearTextControls(map, textCustomControlArr, function() {
-                    createRecentControls(map, recentMarkers, false, textCustomControlArr, function() {
+                    createRecentControls(map, recentMarkersArr, false, textCustomControlArr, function() {
 
-                        if (lastGoodIncident) {             // create text conrtol for newestMarkers
-                            createIncidentTextControl(map, newestMarkers[newestMarkers.length - 1], true, "Current Incident", textCustomControlArr)
-                            newestMarkers[newestMarkers.length - 1].openPopup()
-                            if (gbZoomTo) { map.flyTo(newestMarkers[newestMarkers.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
+                        if (lastGoodIncident) {             // create text conrtol for newestMarkersArr
+                            createIncidentTextControl(map, newestMarkersArr[newestMarkersArr.length - 1], true, "Current Incident", textCustomControlArr)
+                            newestMarkersArr[newestMarkersArr.length - 1].openPopup()
+                            if (gbZoomTo) { map.flyTo(newestMarkersArr[newestMarkersArr.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                         }
                         
                         if (gSearchText !== null) {         // create text control for filter keyword(s) if applicable
@@ -560,10 +565,16 @@ $(document).ready(function() {
                         }
                     })
                 });
+                //////////////////////////////////////////////////////////////////////
+
             }
+            //////////////////////////////////////////////////////////////////////
+
          })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
     }
+    //////////////////////////////////////////////////////////////////////
+
     getTfdData();
 })
 
