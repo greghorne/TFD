@@ -66,7 +66,13 @@
 	https://www.cityoftulsa.org/government/departments/information-technology/open-tulsa/open-tulsa-dataset-list/
 	https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn
 #
-**Tested on macOS:** Chrome & Brave
+**Tested on macOS & Windows 10:** 
+
+    Chrome, Brave, Edge 
+    Opera   - Dev Console indexedDB not displaying any data (macOS only)
+            - Will not display Grayscale map layer (Win10 only)
+    Firefox - Dev Console indexedDB "No data present for selected host" (macOS only)
+
 
 #
 
