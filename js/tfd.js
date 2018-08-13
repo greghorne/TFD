@@ -34,7 +34,7 @@ const CONST_YELLOW_MARKER_MAX_COUNT   = 10     // default number of yellow marke
 const CONST_MAP_LAYERS = [
     {
         // not https so can generate warnings due to mixed content
-        // 2018-08-12 - https site currently has a NET::ERR_CERT_COMMON_NAME_INVALID so it will not load the map tiles
+        // 2018-08-12 - https site currently has a NET::ERR_CERT_COMMON_NAME_INVALID
         name: "Grayscale OSM",
         url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",      
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
@@ -75,8 +75,8 @@ const CONST_MAP_LAYERS = [
 
 //////////////////////////////////////////////////////////////////////
 // prepare indexedDB 
-var deleteIndexedDB = window.indexedDB.deleteDatabase("TFD")
 var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+var deleteIndexedDB = window.indexedDB.deleteDatabase("TFD")
 
 // prefixes of window.IDB objects
 window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
