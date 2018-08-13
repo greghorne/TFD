@@ -38,6 +38,8 @@
 	https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
 
 	https://rawgit.com/greghorne/TFD/master/index.html?filter=fire,Odor,Motor%20Vehicle
+
+    For a phrase like 'Motor Vehicle' you will have to manually enter the equivalent of a space in the url string between 'Motor' and 'Vehicle.  A space is equal to %20
 #
 **4) baseLayer=number** - defines which base map to display on startup
 
