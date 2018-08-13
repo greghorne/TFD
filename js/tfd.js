@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////
 const CONST_MAP_DEFAULT_LONGITUDEX    = -95.891431
 const CONST_MAP_DEFAULT_LATITUDEY     =  36.096613
-const CONST_MAP_DEFAULT_ZOOM          =  10
+const CONST_MAP_INITIAL_ZOOM          =  10
 
 const CONST_MAP_JSON_URL              = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
 const CONST_JSON_UPDATE_TIME          = 60000    // how often to poll for JSON data from server in ms
@@ -9,27 +9,32 @@ const CONST_JSON_UPDATE_TIME          = 60000    // how often to poll for JSON d
 const CONST_MAP_INCIDENT_ZOOM         = 15
 const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
 
-const CONST_MARKER_COLOR_RED     = "./images/marker-icon-red.png";
-const CONST_MARKER_COLOR_YELLOW  = "./images/marker-icon-yellow.png"
-const CONST_MARKER_COLOR_BLUE    = "./images/marker-icon-blue.png"
+const CONST_MARKER_COLOR_RED          = "./images/marker-icon-red.png";
+const CONST_MARKER_COLOR_YELLOW       = "./images/marker-icon-yellow.png"
+const CONST_MARKER_COLOR_BLUE         = "./images/marker-icon-blue.png"
 
-const CONST_PIN_ANCHOR           = new L.Point(25/2, 41);
+const CONST_PIN_ANCHOR                = new L.Point(25/2, 41);
 
-const CONST_MARKER_RED           = new L.Icon({ iconUrl: CONST_MARKER_COLOR_RED,    iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
-const CONST_MARKER_YELLOW        = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
-const CONST_MARKER_BLUE          = new L.Icon({ iconUrl: CONST_MARKER_COLOR_BLUE,   iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
+const CONST_MARKER_RED                = new L.Icon({ iconUrl: CONST_MARKER_COLOR_RED,    iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
+const CONST_MARKER_YELLOW             = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
+const CONST_MARKER_BLUE               = new L.Icon({ iconUrl: CONST_MARKER_COLOR_BLUE,   iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
-const CONST_HELP_PAGE            = "https://github.com/greghorne/TFD"
-const CONST_CITYGRAM_PAGE        = "https://www.citygram.org/tulsa"
+const CONST_HELP_PAGE                 = "https://github.com/greghorne/TFD"
+const CONST_CITYGRAM_PAGE             = "https://www.citygram.org/tulsa"
 
-const CONST_RED_MARKER_MAX_COUNT    =  1     // leave as 1; not tested with other values
-const CONST_YELLOW_MARKER_MAX_COUNT = 10     // default number of yellow markers to display
+const CONST_OLDEST_RECENT_INCIDENT    = "oldest recent incident";
+const CONST_NEWEST_RECENT_INCIDENT    = "newest recent incident";
+const CONST_VEHICLES_STRING           = "<table></br>Responding Vehicle(s):</br>"
+
+const CONST_RED_MARKER_MAX_COUNT      =  1     // leave as 1; code not implemented for other values
+const CONST_YELLOW_MARKER_MAX_COUNT   = 10     // default number of yellow markers to display
+
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
-        // not https so can generate warnings
-        // 2018-08-12 - https site currently has a NET::ERR_CERT_COMMON_NAME_INVALID so it will not load the map images
+        // not https so can generate warnings due to mixed content
+        // 2018-08-12 - https site currently has a NET::ERR_CERT_COMMON_NAME_INVALID so it will not load the map tiles
         name: "Grayscale OSM",
         url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",      
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
@@ -93,10 +98,11 @@ function updateIndexedDB(json) {
 
         var incidentsCount = json.Incidents.Incident.length;
 
-        for (var counter = 0; counter < incidentsCount; counter++) {  // iterate through json
+        for (var counter = 0; counter < incidentsCount; counter++) {  // iterate through all json incidents
             var incident    = json.Incidents.Incident[counter];
             var vehiclesArr = getVehicles(incident.Vehicles);
-            // 'put' will update a record if it exists or create a new one.
+
+            // 'put' will update a record if it exists or create a new one
             store.put({ incidentNumber: incident.IncidentNumber, problem: incident.Problem, address: incident.Address, date: incident.ResponseDate, lat: incident.Latitude, lng: incident.Longitude, vehicles: vehiclesArr })
         }
 
@@ -130,16 +136,16 @@ function getVehicles(vehicles) {
 function buildVehicleHTMLString(vehicles, fnCallback) {
     
     var vehiclesArr = [];
-    var vehiclesString = "<table></br>Responding Vehicle(s):</br>"
+    var vehiclesString = CONST_VEHICLES_STRING
 
     if (vehicles.Division) {    
-        // only 1 vehicle; object of key, value
+        // only 1 vehicle; object of key, value paris
         var vehicleID = vehicles.VehicleID
         if (vehicleID == null) vehicleID = "";      // on occasion it has been observed that the VehicleID = null, use empty string instead
         vehiclesString += "</tr><td>" + vehicles.Division + "</td><td>" + vehicles.Station + "</td><td>" + vehicleID + "</td>"
         vehiclesArr.push( {division: vehicles.Division, station: vehicles.Station, vehicleID: vehicles.VehicleID} )
     } else {
-        // more than 1 vehicle; array of key, value
+        // more than 1 vehicle; array of key, value pairs
         for (var counter = 0; counter < vehicles.length; counter++) {
             vehiclesString += "</tr><td>" + vehicles[counter].Division + "</td><td>" + vehicles[counter].Station + "</td><td>" + vehicles[counter].VehicleID + "</td>"
             vehiclesArr.push( {division: vehicles[counter].Division, station: vehicles[counter].Station, vehicleID: vehicles[counter].VehicleID} )
@@ -152,7 +158,8 @@ function buildVehicleHTMLString(vehicles, fnCallback) {
 
 
 //////////////////////////////////////////////////////////////////////
-// read in url parameters and parse into an object; any error return empty object
+// read in url parameters and parse into an object
+// function is unforgiving, any error returns empty object
 function getUrlParameterOptions(url, fnCallback) {
 
     try {
@@ -195,7 +202,7 @@ function processParams(params) {
 
 //////////////////////////////////////////////////////////////////////
 // creates controls found in the lower right of the app
-// this is a text control with text info on a given incident
+// this is a text control with info on a given incident
 function createIncidentTextControl(map, marker, bHighlight, title, textCustomControlArr) {
      
     var latlng = marker._latlng
@@ -292,7 +299,7 @@ function createHelpControl(map) {
 
 
 //////////////////////////////////////////////////////////////////////
-// creates Help control (question mark at upper right of map)
+// creates Citygram control
 function createCityGramControl(map) {
      
     var cityGramControl = L.Control.extend({
@@ -336,6 +343,7 @@ function foundInSearchText(txtProblem) {
 function moveMarker(fromMarkers, toMarkers, markerColor, classToRemove, classToAdd) {
 
     // remove oldest marker from fromMarkers and add it to toMarkers
+    // either a red marker becoming yellow OR a yellow marker becoming blue
     var marker = fromMarkers[0]
     L.DomUtil.removeClass(marker._icon, classToRemove);
 
@@ -418,7 +426,7 @@ var gnBaseLayer
 
 
 //////////////////////////////////////////////////////////////////////
-// build map layers (dynamically) from CONST_MAP_LAYERS
+// build map layers dynamically from CONST_MAP_LAYERS
 var gmapLayers  = [];
 var gbaseMaps   = {};
 
@@ -434,7 +442,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 
 
 //////////////////////////////////////////////////////////////////////
-// here we go
+// here we go...
 $(document).ready(function() {
 
     var textCustomControlArr = []
@@ -451,16 +459,16 @@ $(document).ready(function() {
         if (params !== {}) processParams(params)
     });
 
-    // define map position, zoom and baselayer
+    // create map and define position, zoom and baselayer
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
-        zoom: CONST_MAP_DEFAULT_ZOOM,
+        zoom: CONST_MAP_INITIAL_ZOOM,
         layers: [gmapLayers[gnBaseLayer]]
     });
 
     ///////////////////////////////////////
-    L.control.layers(gbaseMaps).addTo(map)                      // add all map layers to layer control
-    L.control.scale({imperial: true, metric: false}).addTo(map) // add scalebar
+    L.control.layers(gbaseMaps).addTo(map)                     // add all map layers to layer control
+    L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
     createHelpControl(map);
     createCityGramControl(map);
     ///////////////////////////////////////
@@ -474,7 +482,7 @@ $(document).ready(function() {
             // check if we have seen this incident number before
             if (allIncidentNumbers.indexOf(response.Incidents.Incident[0].IncidentNumber) == -1) {      
 
-                updateIndexedDB(response);                       // json file has updated
+                updateIndexedDB(response);                       // json file has updated, update indexedDB
 
                 var incidents      = response.Incidents          // all json incidents
                 var incidentsCount = incidents.Incident.length;  // number of json incidents
@@ -493,7 +501,7 @@ $(document).ready(function() {
                         var bFound = false
                         if (gSearchText) { bFound = foundInSearchText(incident.Problem) }  
 
-                        // if filter requirement is met OR there is no filter to apply
+                        // if filter requirement is met OR there is no filter to apply process the new incident
                         if (bFound || gSearchText == null) {   
                             processNewIncident(map, incident, newestMarkers, recentMarkers, olderMarkers)
                             lastGoodIncident = incident
@@ -501,7 +509,8 @@ $(document).ready(function() {
                     }
                 }
 
-                while (textCustomControlArr.length > 0) {  // clear map of bottom right text controls
+                // clear map of bottom right text controls
+                while (textCustomControlArr.length > 0) {  
                     map.removeControl(textCustomControlArr[0])
                     textCustomControlArr.shift(0, 1);
                 }
@@ -513,19 +522,16 @@ $(document).ready(function() {
                         // add a tooltip for the first and last recentMarkers[]
                         var toolTip = null
                         switch(counter) {
-                            case 0:                             toolTip = "oldest recent incident";   break;
-                            case (recentMarkers.length - 1):    toolTip = "newest recent incident";   break;
+                            case 0:                             toolTip = CONST_OLDEST_RECENT_INCIDENT;   break;
+                            case (recentMarkers.length - 1):    toolTip = CONST_NEWEST_RECENT_INCIDENT;   break;
                         }
-                        createIncidentTextControl(map, 
-                            // recentMarkers[counter].options.title, 
-                            recentMarkers[counter], false, toolTip, textCustomControlArr)
+                        createIncidentTextControl(map, recentMarkers[counter], false, toolTip, textCustomControlArr)
                     }
                 }
 
                 // create text conrtol for newestMarkers
                 if (lastGoodIncident) {
                     createIncidentTextControl(map, 
-                                            //   newestMarkers[newestMarkers.length - 1].options['title'],
                                               newestMarkers[newestMarkers.length - 1], 
                                               true, 
                                               "Current Incident",
@@ -534,7 +540,7 @@ $(document).ready(function() {
                     if (gbZoomTo) { map.flyTo(newestMarkers[newestMarkers.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                 }
 
-                // create text control for filter keyword(s)
+                // create text control for filter keyword(s) if applicable
                 if (gSearchText !== null) {         
                     if (filterTextControl) map.removeControl(filterTextControl)
                     filterTextControl = createFilterTextControl(map, filterTextControl)
