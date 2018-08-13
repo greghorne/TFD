@@ -417,6 +417,47 @@ function processNewIncident(map, incident, newestMarkers, recentMarkers, olderMa
 
 
 //////////////////////////////////////////////////////////////////////
+function clearTextControls(map, textCustomControlArr, fnCallback) {
+    while (textCustomControlArr.length > 0) {  
+        map.removeControl(textCustomControlArr[0])
+        textCustomControlArr.shift(0, 1);
+    }
+    fnCallback();
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+function addControlsToMap(map) {
+    L.control.layers(gbaseMaps).addTo(map)                     // add all map layers to layer control
+    L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
+    createHelpControl(map);
+    createCityGramControl(map);
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+function createRecentControls(map, recentMarkers, bHighlight, textCustomControlArr, fnCallback) {
+ 
+    // create text controls for recentMarkers (lower right controls)
+    for (var counter = 0;  counter < gnRecentMarkersToDisplay; counter++) {
+        if (recentMarkers[counter]) {
+            
+            var toolTip = null  // add a tooltip for the first and last recentMarkers[]
+            switch(counter) {
+                case 0:                             toolTip = CONST_OLDEST_RECENT_INCIDENT;   break;
+                case (recentMarkers.length - 1):    toolTip = CONST_NEWEST_RECENT_INCIDENT;   break;
+            }
+            createIncidentTextControl(map, recentMarkers[counter], bHighlight, toolTip, textCustomControlArr)
+        }
+    }
+    fnCallback()
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
 // url param variables
 var gnRecentMarkersToDisplay
 var gbZoomTo
@@ -466,13 +507,7 @@ $(document).ready(function() {
         layers: [gmapLayers[gnBaseLayer]]
     });
 
-    ///////////////////////////////////////
-    L.control.layers(gbaseMaps).addTo(map)                     // add all map layers to layer control
-    L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
-    createHelpControl(map);
-    createCityGramControl(map);
-    ///////////////////////////////////////
-
+    addControlsToMap(map);
 
     ///////////////////////////////////////
     function getTfdData() {
@@ -509,42 +544,22 @@ $(document).ready(function() {
                     }
                 }
 
-                // clear map of bottom right text controls
-                while (textCustomControlArr.length > 0) {  
-                    map.removeControl(textCustomControlArr[0])
-                    textCustomControlArr.shift(0, 1);
-                }
+                // update text controls at the lower right of the map
+                clearTextControls(map, textCustomControlArr, function() {
+                    createRecentControls(map, recentMarkers, false, textCustomControlArr, function() {
 
-                // create text controls for recentMarkers (bottom right controls)
-                for (var counter = 0;  counter < gnRecentMarkersToDisplay; counter++) {
-                    if (recentMarkers[counter]) {
-                        
-                        // add a tooltip for the first and last recentMarkers[]
-                        var toolTip = null
-                        switch(counter) {
-                            case 0:                             toolTip = CONST_OLDEST_RECENT_INCIDENT;   break;
-                            case (recentMarkers.length - 1):    toolTip = CONST_NEWEST_RECENT_INCIDENT;   break;
+                        if (lastGoodIncident) {             // create text conrtol for newestMarkers
+                            createIncidentTextControl(map, newestMarkers[newestMarkers.length - 1], true, "Current Incident", textCustomControlArr)
+                            newestMarkers[newestMarkers.length - 1].openPopup()
+                            if (gbZoomTo) { map.flyTo(newestMarkers[newestMarkers.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                         }
-                        createIncidentTextControl(map, recentMarkers[counter], false, toolTip, textCustomControlArr)
-                    }
-                }
-
-                // create text conrtol for newestMarkers
-                if (lastGoodIncident) {
-                    createIncidentTextControl(map, 
-                                              newestMarkers[newestMarkers.length - 1], 
-                                              true, 
-                                              "Current Incident",
-                                              textCustomControlArr)
-                    newestMarkers[newestMarkers.length - 1].openPopup()
-                    if (gbZoomTo) { map.flyTo(newestMarkers[newestMarkers.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
-                }
-
-                // create text control for filter keyword(s) if applicable
-                if (gSearchText !== null) {         
-                    if (filterTextControl) map.removeControl(filterTextControl)
-                    filterTextControl = createFilterTextControl(map, filterTextControl)
-                }
+                        
+                        if (gSearchText !== null) {         // create text control for filter keyword(s) if applicable
+                            if (filterTextControl) { map.removeControl(filterTextControl) }
+                            filterTextControl = createFilterTextControl(map, filterTextControl)
+                        }
+                    })
+                });
             }
          })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
