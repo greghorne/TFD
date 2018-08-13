@@ -330,7 +330,7 @@ function createRedMarker(incident) {
 ////////////////////////////////////////////////////////////////////
 function processNewIncident(map, incident, newestMarkersArr, recentMarkersArr, olderMarkersArr) {
 
-   var marker = createRedMarker(incident); 
+    var marker = createRedMarker(incident); 
     newestMarkersArr.push(marker)
     marker.addTo(map);
 
