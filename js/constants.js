@@ -32,6 +32,8 @@ const CONST_VEHICLES_STRING           = "<table></br>Responding Vehicle(s):</br>
 const CONST_RED_MARKER_MAX_COUNT      =  1     // leave as 1; code not implemented for other values
 const CONST_YELLOW_MARKER_MAX_COUNT   = 10     // default number of yellow markers to display
 
+const CONST_3D_BUILDINGS_URL          = 'https://{s}.data.osmbuildings.org/0.3/anonymous/tile/{z}/{x}/{y}.json'
+
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
