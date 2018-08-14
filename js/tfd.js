@@ -204,65 +204,40 @@ function createFilterTextControl(map, filterTextControl) {
 
 
 //////////////////////////////////////////////////////////////////////
-// creates Help control (question mark at upper right of map)
-function createHelpControl(map) {
+// creates button control 
+function createButtonControl(map, className, toolTip, urlToOpen) {
      
-    var helpControl = L.Control.extend({
+    var buttonControl = L.Control.extend({
         options: {
             position: 'topright' 
         },
 
         onAdd: function(map) {
-            var container     = L.DomUtil.create('div', 'button-custom help-icon cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-            container.title   = "Click for Help"
-            container.onclick = function() { window.open(CONST_HELP_PAGE) }   // webpage to open when clicked
+            var container     = L.DomUtil.create('div', className + " button-custom cursor-pointer leaflet-bar", L.DomUtil.get('map'));
+            container.title   = toolTip
+            container.onclick = function() { window.open(urlToOpen) }   // webpage to open when clicked
             return container;
         },
 
     });
-    var myControl = new helpControl();
+    var myControl = new buttonControl();
     map.addControl(myControl);
 }
 //////////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////////////////////////////
-// creates Citygram control
-function createCityGramControl(map) {
-     
-    var cityGramControl = L.Control.extend({
-        options: {
-            position: 'topright' 
-        },
-
-        onAdd: function(map) {
-            var container     = L.DomUtil.create('div', 'button-custom citygram-icon cursor-pointer leaflet-bar leaflet-control-custom', L.DomUtil.get('map'));
-            container.title   = "Citygram - Tulsa"
-            container.onclick = function() { window.open(CONST_CITYGRAM_PAGE) }   // webpage to open when clicked
-            return container;
-        },
-
-    });
-    var myControl = new cityGramControl();
-    map.addControl(myControl);
-}
-//////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
+///////'s///////////////////////////////////////////////////////////////
 // check if any of the url parameter 'filter' keywords are found in the incdent's 'Problem' text/description
-function foundInSearchText(txtProblem) {
+function foundInFilterText(txtProblem) {
 
-    var bReturn = false;
     if (gSearchText) {
-        for (var counter = 0; counter < gSearchText.length; counter++) {
+        for (vaapply, unter = 0; counter < gSearchText.length; counter++) {
             if (txtProblem.toLowerCase().indexOf(gSearchText[counter].toLowerCase()) > -1) {
-                bReturn = true
-                break;
+                return true;
             }
         }
     }
-    return bReturn;
+    return false;
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -315,13 +290,13 @@ function createRedMarker(incident) {
     buildVehicleHTMLString(vehicles, function(vehiclesString) {
         markerPopupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
                             incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-        
-        marker = new L.marker([incident.Latitude, incident.Longitude], {title: incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2], riseOnHover: true});
+
+        var toolTip = incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2]
+        marker      = new L.marker([incident.Latitude, incident.Longitude], {title: toolTip, riseOnHover: true});
         marker.bindPopup(markerPopupString);
 
     })
     marker.setIcon(CONST_MARKER_RED)
-
     return marker;
 }
 ////////////////////////////////////////////////////////////////////
@@ -358,8 +333,9 @@ function clearTextControls(map, textCustomControlArr, fnCallback) {
 function addControlsToMap(map) {
     L.control.layers(gbaseMaps).addTo(map)                     // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
-    createHelpControl(map);
-    createCityGramControl(map);
+
+    createButtonControl(map, "help-icon",     CONST_HELP_TOOL_TIP,     CONST_HELP_PAGE)
+    createButtonControl(map, "citygram-icon", CONST_CITYGRAM_TOOL_TIP, CONST_CITYGRAM_PAGE)
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -426,6 +402,7 @@ $(document).ready(function() {
         if (params !== {}) processParams(params)
     });
 
+
     // create map and define position, zoom and baselayer
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
@@ -460,11 +437,11 @@ $(document).ready(function() {
                         
                         allIncidentNumbersArr.push(incident.IncidentNumber)  // push new incident number onto array
 
-                        // check if given incident 'Problem' text meets filtering requirements
+                        // check if given incident's 'Problem' text meets filtering requirements
                         var bFound = false
-                        if (gSearchText) { bFound = foundInSearchText(incident.Problem) }  
+                        if (gSearchText) { bFound = foundInFilterText(incident.Problem) }  
 
-                        // if filter requirement is met OR there is no filter to applprocess the new incident
+                        // if filter requirement is met OR there is no filter to apply, process the new incident
                         if (bFound || gSearchText == null) { 
                             processNewIncident(map, incident, newestMarkersArr, recentMarkersArr, olderMarkersArr)
                             lastGoodIncident = incident
