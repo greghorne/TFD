@@ -330,8 +330,8 @@ function clearTextControls(map, textCustomControlArr, fnCallback) {
 
 
 ////////////////////////////////////////////////////////////////////
-function addControlsToMap(map) {
-    L.control.layers(gbaseMaps).addTo(map)                     // add all map layers to layer control
+function addControlsToMap(map, buildings) {
+    L.control.layers(gbaseMaps, {"3D-Buildings": buildings}).addTo(map)                     // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
 
     createButtonControl(map, "help-icon",     CONST_HELP_TOOL_TIP,     CONST_HELP_PAGE)
@@ -402,15 +402,17 @@ $(document).ready(function() {
         if (params !== {}) processParams(params)
     });
 
-
-    // create map and define position, zoom and baselayer
+       // create map and define position, zoom and baselayer
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_INITIAL_ZOOM,
         layers: [gmapLayers[gnBaseLayer]]
     });
 
-    addControlsToMap(map);
+    // add 3-D buildings
+    var osmb = new OSMBuildings().load('https://{s}.data.osmbuildings.org/0.3/anonymous/tile/{z}/{x}/{y}.json');
+    
+    addControlsToMap(map, osmb);
 
     //////////////////////////////////////////////////////////////////////
     function getTfdData() {
