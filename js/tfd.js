@@ -331,7 +331,7 @@ function clearTextControls(map, textCustomControlArr, fnCallback) {
 
 ////////////////////////////////////////////////////////////////////
 function addControlsToMap(map, buildings) {
-    L.control.layers(gbaseMaps, {"3D-Buildings": buildings}).addTo(map)                     // add all map layers to layer control
+    L.control.layers(gbaseMaps, {"3D-Buildings": buildings}).addTo(map)  // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
 
     createButtonControl(map, "help-icon",     CONST_HELP_TOOL_TIP,     CONST_HELP_PAGE)
@@ -410,7 +410,7 @@ $(document).ready(function() {
     });
 
     // add 3-D buildings
-    var osmb = new OSMBuildings().load('https://{s}.data.osmbuildings.org/0.3/anonymous/tile/{z}/{x}/{y}.json');
+    var osmb = new OSMBuildings().load(CONST_3D_BUILDINGS_URL);
     
     addControlsToMap(map, osmb);
 
