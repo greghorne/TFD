@@ -20,7 +20,10 @@ const CONST_MARKER_YELLOW             = new L.Icon({ iconUrl: CONST_MARKER_COLOR
 const CONST_MARKER_BLUE               = new L.Icon({ iconUrl: CONST_MARKER_COLOR_BLUE,   iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
 const CONST_HELP_PAGE                 = "https://github.com/greghorne/TFD"
+const CONST_HELP_TOOL_TIP             = "Click for Help"
+
 const CONST_CITYGRAM_PAGE             = "https://www.citygram.org/tulsa"
+const CONST_CITYGRAM_TOOL_TIP         = "Citygram - Tulsa"
 
 const CONST_OLDEST_RECENT_INCIDENT    = "oldest recent incident";
 const CONST_NEWEST_RECENT_INCIDENT    = "newest recent incident";
