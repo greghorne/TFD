@@ -14,9 +14,9 @@
 
 | Map Marker Incident | Icon          |
 |:-------------:|:-------------:|
-| Newest | ![Alt text](https://rawgit.com/greghorne/TFD/master/images/marker-icon-red.png "Current Incident") |
-| Recent | ![Alt text](https://rawgit.com/greghorne/TFD/master/images/marker-icon-yellow.png "Recent Incident") |
-| Older | ![Alt text](https://rawgit.com/greghorne/TFD/master/images/marker-icon-blue.png "Older Incident") |
+| Newest | ![Alt text](http://tfdincidents.s3-website-us-west-2.amazonaws.com/images/marker-icon-red.png "Current Incident") |
+| Recent | ![Alt text](http://tfdincidents.s3-website-us-west-2.amazonaws.com/images/marker-icon-yellow.png "Recent Incident") |
+| Older | ![Alt text](http://tfdincidents.s3-website-us-west-2.amazonaws.com/images/marker-icon-blue.png "Older Incident") |
 
 #
 **Deployment:** http://tfdincidents.s3-website-us-west-2.amazonaws.com/
@@ -27,17 +27,17 @@
 
 **1) recent=number** - change the number of recent incidents (yellow markers) displayed; valid values are 1 thru 20; default=10
 
-	https://rawgit.com/greghorne/TFD/master/index.html?recent=7
+	http://tfdincidents.s3-website-us-west-2.amazonaws.com/index.html?recent=7
 #
 **2) zoomTo=boolean** - when false, turns off automatic panning and zoom to a new incident; default=true
 
-	https://rawgit.com/greghorne/TFD/master/index.html?zoomTo=false
+	http://tfdincidents.s3-website-us-west-2.amazonaws.com/index.html?zoomTo=false
 #
 **3) filter=text** - comma delimited keywords/phrases to filter incidents; keywords are not case sensitive; do not add unnecessary spaces/blanks and no spaces/blanks next to commas
 
-	https://rawgit.com/greghorne/TFD/master/index.html?filter=Fire
+	http://tfdincidents.s3-website-us-west-2.amazonaws.com/index.html?filter=Fire
 
-	https://rawgit.com/greghorne/TFD/master/index.html?filter=fire,Odor,Motor%20Vehicle
+	http://tfdincidents.s3-website-us-west-2.amazonaws.com/index.html?filter=fire,Odor,Motor%20Vehicle
 
     For a phrase like 'Motor Vehicle' you will have to manually enter the equivalent of a space in the url string between 'Motor' and 'Vehicle.  A space is equal to %20
 #
@@ -49,12 +49,12 @@
                    3 = Basic OSM
                    4 = Esri World Imagery
                    
-	https://rawgit.com/greghorne/TFD/master/index.html?baseLayer=3
+	http://tfdincidents.s3-website-us-west-2.amazonaws.com/index.html?baseLayer=3
 #  
 **Other examples:**
 
-	https://rawgit.com/greghorne/TFD/master/index.html?recent=7&zoomTo=false&filter=Building
-	https://rawgit.com/greghorne/TFD/master/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2
+	http://tfdincidents.s3-website-us-west-2.amazonaws.com/index.html?recent=7&zoomTo=false&filter=Building
+	http://tfdincidents.s3-website-us-west-2.amazonaws.com/index.html?recent=20&filter=Motor%20Vehicle,MVA&baseLayer=2
 
 #
 
