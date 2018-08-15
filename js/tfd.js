@@ -231,7 +231,7 @@ function createButtonControl(map, className, toolTip, urlToOpen) {
 function foundInFilterText(txtProblem) {
 
     if (gSearchText) {
-        for (vaapply, unter = 0; counter < gSearchText.length; counter++) {
+        for (var counter = 0; counter < gSearchText.length; counter++) {
             if (txtProblem.toLowerCase().indexOf(gSearchText[counter].toLowerCase()) > -1) {
                 return true;
             }
