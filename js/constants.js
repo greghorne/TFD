@@ -1,17 +1,17 @@
 //////////////////////////////////////////////////////////////////////
-const CONST_MAP_DEFAULT_LONGITUDEX    = -95.891431
-const CONST_MAP_DEFAULT_LATITUDEY     =  36.096613
-const CONST_MAP_INITIAL_ZOOM          =  10
+const CONST_MAP_DEFAULT_LONGITUDEX    = -95.891431;
+const CONST_MAP_DEFAULT_LATITUDEY     =  36.096613;
+const CONST_MAP_INITIAL_ZOOM          =  10;
 
-const CONST_MAP_JSON_URL              = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn"
+const CONST_MAP_JSON_URL              = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn";
 const CONST_JSON_UPDATE_TIME          = 60000    // how often to poll for JSON data from server in ms
 
-const CONST_MAP_INCIDENT_ZOOM         = 15
-const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true
+const CONST_MAP_INCIDENT_ZOOM         = 15;
+const CONST_MAP_AUTOZOOM_TO_INCIDENT  = true;
 
 const CONST_MARKER_COLOR_RED          = "./images/marker-icon-red.png";
-const CONST_MARKER_COLOR_YELLOW       = "./images/marker-icon-yellow.png"
-const CONST_MARKER_COLOR_BLUE         = "./images/marker-icon-blue.png"
+const CONST_MARKER_COLOR_YELLOW       = "./images/marker-icon-yellow.png";
+const CONST_MARKER_COLOR_BLUE         = "./images/marker-icon-blue.png";
 
 const CONST_PIN_ANCHOR                = new L.Point(25/2, 41);
 
@@ -19,20 +19,20 @@ const CONST_MARKER_RED                = new L.Icon({ iconUrl: CONST_MARKER_COLOR
 const CONST_MARKER_YELLOW             = new L.Icon({ iconUrl: CONST_MARKER_COLOR_YELLOW, iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 const CONST_MARKER_BLUE               = new L.Icon({ iconUrl: CONST_MARKER_COLOR_BLUE,   iconsize: [25, 41], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-41] });
 
-const CONST_HELP_PAGE                 = "https://github.com/greghorne/TFD"
-const CONST_HELP_TOOL_TIP             = "Click for Help"
+const CONST_HELP_PAGE                 = "https://github.com/greghorne/TFD";
+const CONST_HELP_TOOL_TIP             = "Click for Help";
 
-const CONST_CITYGRAM_PAGE             = "https://www.citygram.org/tulsa"
-const CONST_CITYGRAM_TOOL_TIP         = "Citygram - Tulsa"
+const CONST_CITYGRAM_PAGE             = "https://www.citygram.org/tulsa";
+const CONST_CITYGRAM_TOOL_TIP         = "Citygram - Tulsa";
 
 const CONST_OLDEST_RECENT_INCIDENT    = "oldest recent incident";
 const CONST_NEWEST_RECENT_INCIDENT    = "newest recent incident";
-const CONST_VEHICLES_STRING           = "<table></br>Responding Vehicle(s):</br>"
+const CONST_VEHICLES_STRING           = "<table></br>Responding Vehicle(s):</br>";
 
-const CONST_RED_MARKER_MAX_COUNT      =  1     // leave as 1; code not implemented for other values
-const CONST_YELLOW_MARKER_MAX_COUNT   = 10     // default number of yellow markers to display
+const CONST_RED_MARKER_MAX_COUNT      =  1;     // leave as 1; code not implemented for other values
+const CONST_YELLOW_MARKER_MAX_COUNT   = 10;     // default number of yellow markers to display
 
-const CONST_3D_BUILDINGS_URL          = 'https://{s}.data.osmbuildings.org/0.3/anonymous/tile/{z}/{x}/{y}.json'
+const CONST_3D_BUILDINGS_URL          = 'https://{s}.data.osmbuildings.org/0.3/anonymous/tile/{z}/{x}/{y}.json';
 
 
 // definition of map layers; first layer is the default layer displayed
