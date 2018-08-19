@@ -62,7 +62,7 @@ function getVehicles(vehicles) {
 // build vehicle(s) html string
 function buildVehicleHTMLString(vehicles, fnCallback) {
     
-    var vehiclesArr = [];
+    var vehiclesArr    = [];
     var vehiclesString = CONST_VEHICLES_STRING
 
     if (vehicles.Division) {    
@@ -92,12 +92,13 @@ function getUrlParameterOptions(url, fnCallback) {
 
     try {
         var paramsArr = url.split("&")
-        var myObject = {}
+        var myObject  = {}
+        var params, myKey, myValue
 
         for (var counter = 0; counter < paramsArr.length; counter++) {
-            var params  = paramsArr[counter].split("=");
-            var myKey   = params[0]
-            var myValue = params[1];
+            params  = paramsArr[counter].split("=");
+            myKey   = params[0]
+            myValue = params[1];
 
             myObject[myKey]  = myValue;
         }
@@ -133,9 +134,6 @@ function processParams(params) {
 // this is a text control with info on a given incident
 function createIncidentTextControl(map, marker, bHighlight, title, textCustomControlArr) {
      
-    var latlng = marker._latlng
-    var info   = marker.options['title']
-
     var textCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
@@ -146,10 +144,10 @@ function createIncidentTextControl(map, marker, bHighlight, title, textCustomCon
 
             if (bHighlight) {
                 container = L.DomUtil.create('div', 'highlight-background custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-                container.innerHTML = "<center style='color: red'>" + info + "</center>"
+                container.innerHTML = "<center style='color: red'>" + marker.options['title'] + "</center>"
             } else {
                 container = L.DomUtil.create('div', 'normal-background custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-                container.innerHTML = "<center style='color: black'>" + info + "</center>"
+                container.innerHTML = "<center style='color: black'>" + marker.options['title'] + "</center>"
             }
            
             // tooltip
@@ -157,7 +155,7 @@ function createIncidentTextControl(map, marker, bHighlight, title, textCustomCon
 
             L.DomEvent.on(container, 'click', function(e) {
                 L.DomEvent.stopPropagation(e);
-                map.flyTo(latlng, CONST_MAP_INCIDENT_ZOOM)
+                map.flyTo(marker._latlng, CONST_MAP_INCIDENT_ZOOM)
                 setTimeout(function() { marker.openPopup(); }, 1000)  // delay opening marker popup
             })
 
@@ -288,11 +286,11 @@ function createRedMarker(incident) {
     var vehicles = incident.Vehicles.Vehicle
     
     buildVehicleHTMLString(vehicles, function(vehiclesString) {
-        markerPopupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
-                            incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-
         var toolTip = incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2]
         marker      = new L.marker([incident.Latitude, incident.Longitude], {title: toolTip, riseOnHover: true});
+
+        var markerPopupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
+                                incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
         marker.bindPopup(markerPopupString);
 
     })
@@ -312,6 +310,7 @@ function processNewIncident(map, incident, newestMarkersArr, recentMarkersArr, o
     // per Intert ==> this is a workaround; setting "blink" in the L.marker statement offsets the marker and popup
     function blink() { L.DomUtil.addClass(marker._icon, "blink"); }
     blink();    
+
     fifoMarkers(newestMarkersArr, recentMarkersArr, olderMarkersArr)
 }
 ///////////////////////////////////////////////////////////////////
@@ -331,6 +330,7 @@ function clearTextControls(map, textCustomControlArr, fnCallback) {
 
 ////////////////////////////////////////////////////////////////////
 function addControlsToMap(map, buildings) {
+
     L.control.layers(gbaseMaps, {"3D-Buildings": buildings}).addTo(map)  // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
 
@@ -388,13 +388,15 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 //////////////////////////////////////////////////////////////////////
 $(document).ready(function() {
 
-    var textCustomControlArr  = []
+    var textCustomControlArr  = [];
     var filterTextControl     = null;
 
-    var allIncidentNumbersArr = []
-    var newestMarkersArr      = []
-    var recentMarkersArr      = []
-    var olderMarkersArr       = []
+    var allIncidentNumbersArr = [];
+
+    var newestMarkersArr      = [];
+    var recentMarkersArr      = [];
+    var olderMarkersArr       = [];
+
     var lastGoodIncident      = null;
 
     // read in and process url parameters
