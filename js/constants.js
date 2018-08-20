@@ -4,7 +4,7 @@ const CONST_MAP_DEFAULT_LATITUDEY       =  36.096613;
 const CONST_MAP_INITIAL_ZOOM            =  10;
 
 const CONST_MAP_JSON_URL                = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn";
-const CONST_JSON_UPDATE_TIME            = 60000    // how often to poll for JSON data from server in ms
+const CONST_JSON_UPDATE_TIME            = 60000;    // how often to poll for JSON data from server in ms
 
 const CONST_MAP_INCIDENT_ZOOM           = 15;
 const CONST_MAP_AUTOZOOM_TO_INCIDENT    = true;
@@ -31,7 +31,7 @@ const CONST_VEHICLES_STRING             = "<table></br>Responding Vehicle(s):</b
 
 const CONST_RED_MARKER_MAX_COUNT        =  1;     // leave as 1; code not implemented for other values
 const CONST_YELLOW_MARKER_DEFAULT_COUNT = 10;     // default number of yellow markers to display
-const CONST_YELLOW_MARKER_MAX_COUNT     = 20      // max url param 'recent' value
+const CONST_YELLOW_MARKER_MAX_COUNT     = 20;      // max url param 'recent' value
 
 const CONST_3D_BUILDINGS_URL            = 'https://{s}.data.osmbuildings.org/0.3/anonymous/tile/{z}/{x}/{y}.json';
 
