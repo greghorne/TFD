@@ -114,8 +114,8 @@ function getUrlParameterOptions(url, fnCallback) {
 // read and set url parameters to variables
 function processParams(params) {
 
-    if (params['recent'] && params['recent'] > 0 && params['recent'] <= 20) { gnRecentMarkersToDisplay = params['recent'] } 
-    else { gnRecentMarkersToDisplay = CONST_YELLOW_MARKER_MAX_COUNT }
+    if (params['recent'] && params['recent'] > 0 && params['recent'] <= CONST_YELLOW_MARKER_MAX_COUNT) { gnRecentMarkersToDisplay = params['recent'] } 
+    else { gnRecentMarkersToDisplay = CONST_YELLOW_MARKER_DEFAULT_COUNT }
 
     if (params['zoomTo']) { gbZoomTo = eval(params['zoomTo']) } 
     else { gbZoomTo = CONST_MAP_AUTOZOOM_TO_INCIDENT }
@@ -123,7 +123,7 @@ function processParams(params) {
     if (params['filter']) { gSearchText = params['filter'].replace("%20", " ").split("&")[0].split(",") } 
     else { gSearchText = null }
 
-    if (params['baseLayer'] && params['baseLayer'] >=0 && params['baseLayer'] <= 4) { gnBaseLayer = params['baseLayer'].replace("%20", " ").split("&")[0].split(",") } 
+    if (params['baseLayer'] && params['baseLayer'] >=0 && params['baseLayer'] < CONST_MAP_LAYERS.length) { gnBaseLayer = params['baseLayer'].replace("%20", " ").split("&")[0].split(",") } 
     else { gnBaseLayer = 0 }
 }
 //////////////////////////////////////////////////////////////////////
@@ -374,11 +374,12 @@ var gnBaseLayer
 var gmapLayers  = [];
 var gbaseMaps   = {};
 
+
 for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     gmapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
         attribution: CONST_MAP_LAYERS[n].attribution, 
-        minZoon: CONST_MAP_LAYERS[n].minZoom, 
-        maxZoom: CONST_MAP_LAYERS[n].maxZoom 
+        minZoon:     CONST_MAP_LAYERS[n].minZoom, 
+        maxZoom:     CONST_MAP_LAYERS[n].maxZoom 
     })
     gbaseMaps[[CONST_MAP_LAYERS[n].name]] = gmapLayers[n];
 }
@@ -388,7 +389,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 //////////////////////////////////////////////////////////////////////
 $(document).ready(function() {
 
-    var textCustomControlArr  = [];
+    var textCustomControlArr  = []; 
     var filterTextControl     = null;
 
     var allIncidentNumbersArr = [];
