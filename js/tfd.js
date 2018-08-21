@@ -144,10 +144,10 @@ function createIncidentTextControl(map, marker, bHighlight, title, textCustomCon
 
             if (bHighlight) {
                 container = L.DomUtil.create('div', 'highlight-background custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-                container.innerHTML = "<center style='color: white'>" + marker.options['title'] + "</center>"
+                container.innerHTML = "<center>" + marker.options['title'] + "</center>"
             } else {
                 container = L.DomUtil.create('div', 'normal-background custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-                container.innerHTML = "<center style='color: white'>" + marker.options['title'] + "</center>"
+                container.innerHTML = "<center>" + marker.options['title'] + "</center>"
             }
            
             // tooltip
@@ -289,7 +289,7 @@ function createRedMarker(incident) {
         var toolTip = incident.Problem + " - " + incident.Address + " - " + incident.ResponseDate.split(" ")[1] + incident.ResponseDate.split(" ")[2]
         marker      = new L.marker([incident.Latitude, incident.Longitude], {title: toolTip, riseOnHover: true});
 
-        var markerPopupString = "<center><p style='color:red;'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
+        var markerPopupString = "<center><p id='text_popup';'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
                                 incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
         marker.bindPopup(markerPopupString);
 
@@ -363,6 +363,8 @@ function createRecentControls(map, recentMarkersArr, bHighlight, textCustomContr
 //////////////////////////////////////////////////////////////////////
 function createOlderControl(map, olderMarkersArr) {
 
+    // pull-down that lists 'older' incidents (blue markers)
+    
     var olderPullDownControl = L.Control.extend({
         options: {
             position: 'bottomright' 
@@ -373,21 +375,20 @@ function createOlderControl(map, olderMarkersArr) {
             var container       = L.DomUtil.create('div', 'cursor-pointer older-control leaflet-bar select', L.DomUtil.get('map'));
 
             for (var counter = 0; counter < olderMarkersArr.length; counter ++) {
-                console.log(olderMarkersArr[counter])
                 container.innerHTML += "<option value=" + olderMarkersArr[counter]._latlng.lat + "_" + olderMarkersArr[counter]._latlng.lng + "_" + olderMarkersArr[counter]._leaflet_id + ">" + olderMarkersArr[counter].options['title'] + "</option>"
-
             }
-            container.innerHTML = "<center><select id='old_select' style='max-width:98%;text-align-last:center;'>" + "<option disabled selected value> -- Older Incidents -- </option>" + container.innerHTML + "</select></center>"
+            container.innerHTML = "<center><select id='old_select'>" + "<option disabled selected value> -- Older Incidents -- </option>" + container.innerHTML + "</select></center>"
 
             L.DomEvent.on(old_select, 'change', function(e) {
 
-                // $('#old_select').blur();
-                var strSplit = e.target.value.split("_")
-                map.flyTo([strSplit[0], strSplit[1]], CONST_MAP_INCIDENT_ZOOM)
+                var arrSplit = e.target.value.split("_")
+                map.flyTo([arrSplit[0], arrSplit[1]], CONST_MAP_INCIDENT_ZOOM)
 
                 setTimeout(function() { 
-                    myLayer = map._layers[strSplit[2]]; 
-                    myLayer.fireEvent('click',{ latlng: [strSplit[0], strSplit[1]]}) }, 1000)  // delay opening marker popup
+                    var myMarker = map._layers[arrSplit[2]];  // retrieve marker
+                    myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
+                    $("#old_select")[0][0].selected = true;   // set pull-down to index 0
+                }, 1000)  // delay opening marker popup
             })
             
             return container;
