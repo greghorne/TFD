@@ -361,6 +361,49 @@ function createRecentControls(map, recentMarkersArr, bHighlight, textCustomContr
 
 
 //////////////////////////////////////////////////////////////////////
+function createOlderControl(map, olderMarkersArr) {
+
+    var olderPullDownControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
+
+        onAdd: function(map) {
+            var container       = L.DomUtil.create('div', 'older-control leaflet-bar select', L.DomUtil.get('map'));
+
+            for (var counter = 0; counter < olderMarkersArr.length; counter ++) {
+                console.log(olderMarkersArr[counter])
+                container.innerHTML += "<option value=" + olderMarkersArr[counter]._latlng.lat + "_" + olderMarkersArr[counter]._latlng.lng + "_" + olderMarkersArr[counter]._leaflet_id + ">" + olderMarkersArr[counter].options['title'] + "</option>"
+
+            }
+            container.innerHTML = "<center><select id='old_select' style='max-width:98%;text-align-last:center;'>" + container.innerHTML + "</select></center>"
+
+            L.DomEvent.on(old_select, 'change', function(e) {
+                L.DomEvent.stopPropagation(e);
+                $('#old_select').blur();
+                var strSplit = e.target.value.split("_")
+                map.flyTo([strSplit[0], strSplit[1]], CONST_MAP_INCIDENT_ZOOM)
+                console.log(map)
+                setTimeout(function() { 
+                    myLayer = map._layers[strSplit[2]]; 
+                    myLayer.fireEvent('click',{latlng: [strSplit[0], strSplit[1]]}) 
+                }, 1000)  // delay opening marker popup
+            })
+            
+            return container;
+        },
+
+    });
+    var customControl = new olderPullDownControl();
+    map.addControl(customControl);
+
+    return customControl;
+
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
 // url param variables
 var gnRecentMarkersToDisplay
 var gbZoomTo
@@ -458,6 +501,7 @@ $(document).ready(function() {
                 //////////////////////////////////////////////////////////////////////
                 // update text controls at the lower right of the map
                 clearTextControls(map, textCustomControlArr, function() {
+                    createOlderControl(map, olderMarkersArr)
                     createRecentControls(map, recentMarkersArr, false, textCustomControlArr, function() {
 
                         if (lastGoodIncident) {             // create text conrtol for newestMarkersArr
