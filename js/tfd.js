@@ -364,7 +364,7 @@ function createRecentControls(map, recentMarkersArr, bHighlight, textCustomContr
 function createOlderControl(map, olderMarkersArr) {
 
     // pull-down that lists 'older' incidents (blue markers)
-    
+
     var olderPullDownControl = L.Control.extend({
         options: {
             position: 'bottomright' 
@@ -374,7 +374,7 @@ function createOlderControl(map, olderMarkersArr) {
 
             var container       = L.DomUtil.create('div', 'cursor-pointer older-control leaflet-bar select', L.DomUtil.get('map'));
 
-            for (var counter = 0; counter < olderMarkersArr.length; counter ++) {
+            for (var counter = olderMarkersArr.length - 1; counter > -1; counter --) {
                 container.innerHTML += "<option value=" + olderMarkersArr[counter]._latlng.lat + "_" + olderMarkersArr[counter]._latlng.lng + "_" + olderMarkersArr[counter]._leaflet_id + ">" + olderMarkersArr[counter].options['title'] + "</option>"
             }
             container.innerHTML = "<center><select id='old_select'>" + "<option disabled selected value> -- Older Incidents -- </option>" + container.innerHTML + "</select></center>"
