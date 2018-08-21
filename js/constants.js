@@ -1,4 +1,3 @@
-//////////////////////////////////////////////////////////////////////
 const CONST_MAP_DEFAULT_LONGITUDEX      = -95.891431;
 const CONST_MAP_DEFAULT_LATITUDEY       =  36.096613;
 const CONST_MAP_INITIAL_ZOOM            =  10;
@@ -76,4 +75,3 @@ const CONST_MAP_LAYERS = [
         maxZoom: 17
     }
 ];
-//////////////////////////////////////////////////////////////////////
