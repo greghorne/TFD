@@ -46,7 +46,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
 }
 
 .highlight-background {
-  background-color: #dbe7ea !important;
+  /* background-color: #dbe7ea !important; */
+  background-color: #BC1330 !important;
 }
 
 .normal-text {
@@ -54,7 +55,9 @@ html, body { height: 100%; width: 100%; margin: 0px }
 }
 
 .normal-background {
-  background-color: #f9f9eb !important;
+  /* background-color: #f9f9eb !important; */
+  color: white !important;
+  background-color: #C1B925 !important;
 }
 
  .cursor-pointer {
@@ -80,6 +83,11 @@ html, body { height: 100%; width: 100%; margin: 0px }
   z-index:  800;    
   font-size: 1.25em !important;
   font-family: 'Times New Roman', Times, serif;
+}
+
+#old_select {
+  color: white;
+  background-color: rgb(61, 104, 189) !important;
 }
 
 .select {

@@ -144,10 +144,10 @@ function createIncidentTextControl(map, marker, bHighlight, title, textCustomCon
 
             if (bHighlight) {
                 container = L.DomUtil.create('div', 'highlight-background custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-                container.innerHTML = "<center style='color: red'>" + marker.options['title'] + "</center>"
+                container.innerHTML = "<center style='color: white'>" + marker.options['title'] + "</center>"
             } else {
                 container = L.DomUtil.create('div', 'normal-background custom-control cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-                container.innerHTML = "<center style='color: black'>" + marker.options['title'] + "</center>"
+                container.innerHTML = "<center style='color: white'>" + marker.options['title'] + "</center>"
             }
            
             // tooltip
@@ -369,25 +369,25 @@ function createOlderControl(map, olderMarkersArr) {
         },
 
         onAdd: function(map) {
-            var container       = L.DomUtil.create('div', 'older-control leaflet-bar select', L.DomUtil.get('map'));
+
+            var container       = L.DomUtil.create('div', 'cursor-pointer older-control leaflet-bar select', L.DomUtil.get('map'));
 
             for (var counter = 0; counter < olderMarkersArr.length; counter ++) {
                 console.log(olderMarkersArr[counter])
                 container.innerHTML += "<option value=" + olderMarkersArr[counter]._latlng.lat + "_" + olderMarkersArr[counter]._latlng.lng + "_" + olderMarkersArr[counter]._leaflet_id + ">" + olderMarkersArr[counter].options['title'] + "</option>"
 
             }
-            container.innerHTML = "<center><select id='old_select' style='max-width:98%;text-align-last:center;'>" + container.innerHTML + "</select></center>"
+            container.innerHTML = "<center><select id='old_select' style='max-width:98%;text-align-last:center;'>" + "<option disabled selected value> -- Older Incidents -- </option>" + container.innerHTML + "</select></center>"
 
             L.DomEvent.on(old_select, 'change', function(e) {
-                L.DomEvent.stopPropagation(e);
-                $('#old_select').blur();
+
+                // $('#old_select').blur();
                 var strSplit = e.target.value.split("_")
                 map.flyTo([strSplit[0], strSplit[1]], CONST_MAP_INCIDENT_ZOOM)
-                console.log(map)
+
                 setTimeout(function() { 
                     myLayer = map._layers[strSplit[2]]; 
-                    myLayer.fireEvent('click',{latlng: [strSplit[0], strSplit[1]]}) 
-                }, 1000)  // delay opening marker popup
+                    myLayer.fireEvent('click',{ latlng: [strSplit[0], strSplit[1]]}) }, 1000)  // delay opening marker popup
             })
             
             return container;
@@ -434,6 +434,7 @@ $(document).ready(function() {
 
     var textCustomControlArr  = []; 
     var filterTextControl     = null;
+    var olderControl          = null;
 
     var allIncidentNumbersArr = [];
 
@@ -501,7 +502,9 @@ $(document).ready(function() {
                 //////////////////////////////////////////////////////////////////////
                 // update text controls at the lower right of the map
                 clearTextControls(map, textCustomControlArr, function() {
-                    createOlderControl(map, olderMarkersArr)
+                    if (olderControl) map.removeControl(olderControl);
+                    olderControl = createOlderControl(map, olderMarkersArr)
+
                     createRecentControls(map, recentMarkersArr, false, textCustomControlArr, function() {
 
                         if (lastGoodIncident) {             // create text conrtol for newestMarkersArr
