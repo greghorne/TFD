@@ -48,6 +48,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
 .highlight-background {
   /* background-color: #dbe7ea !important; */
   background-color: #BC1330 !important;
+  color: white
 }
 
 .normal-text {
@@ -56,8 +57,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
 
 .normal-background {
   /* background-color: #f9f9eb !important; */
-  color: white !important;
   background-color: #C1B925 !important;
+  color: white !important;
 }
 
  .cursor-pointer {
@@ -65,7 +66,9 @@ html, body { height: 100%; width: 100%; margin: 0px }
 }
 
 .filter-control {
-  background-color: #FFFFFF !important;
+  /* background-color: #FFFFFF !important; */
+  background-color: #E8E8E8 !important;
+  color: black;
   width: 360px;
   height: 24px;
   margin: 0 !important;
@@ -88,10 +91,17 @@ html, body { height: 100%; width: 100%; margin: 0px }
 #old_select {
   color: white;
   background-color: rgb(61, 104, 189) !important;
+  max-width:98%;
+  text-align-last:center;
+  cursor: pointer;
 }
 
 .select {
   width: 360px;
+}
+
+#text_popup {
+  color: red;
 }
 
 .button-custom {
