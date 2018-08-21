@@ -72,6 +72,20 @@ html, body { height: 100%; width: 100%; margin: 0px }
   content: attr("Keywords applied for filtering")
 }
 
+.older-control {
+  background-color: rgb(91, 148, 214) !important;
+  width: 360px;
+  height: 24px;
+  margin: 0 !important;
+  z-index:  800;    
+  font-size: 1.25em !important;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.select {
+  width: 360px;
+}
+
 .button-custom {
   background-color: #FFFFFF;
   width: 38px;
