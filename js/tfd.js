@@ -291,7 +291,7 @@ function createRedMarker(incident) {
 
         var markerPopupString = "<center><p id='text_popup';'>" + incident.Problem + "</p>Address: " + incident.Address + "</br></br>Response Date: " +            
                                 incident.ResponseDate + "</br></br>Incident Number: " + incident.IncidentNumber + "</br>" + vehiclesString + "</br></center>"
-        marker.bindPopup(markerPopupString);
+        marker.bindPopup(markerPopupString, {autoPan: false});
 
     })
     marker.setIcon(CONST_MARKER_RED)
@@ -381,6 +381,7 @@ function createOlderControl(map, olderMarkersArr) {
 
             L.DomEvent.on(old_select, 'change', function(e) {
 
+                L.DomEvent.stopPropagation(e);
                 var arrSplit = e.target.value.split("_")
                 map.flyTo([arrSplit[0], arrSplit[1]], CONST_MAP_INCIDENT_ZOOM)
 
