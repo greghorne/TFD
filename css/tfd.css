@@ -2,12 +2,15 @@ html, body { height: 100%; width: 100%; margin: 0px }
 #map { height: 100%; width: 100% }
 
 /* blinking map marker */
+  @-webkit-keyframes fade { 
+  from { opacity: 0; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; } 
+}
   @keyframes fade { 
-  from { opacity: 0; } 
+  from { opacity: 0; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; } 
 }
 
-.blink        { animation: fade 1.00s infinite alternate; }
-.blinkSlower  { animation: fade 1.50s infinite alternate; }
+.blink        { -webkit-animation: fade 1.00s infinite alternate; animation: fade 1.00s infinite alternate; }
+.blinkSlower  { -webkit-animation: fade 1.50s infinite alternate; animation: fade 1.50s infinite alternate; }
 
 /* leaflet css overrides */
 .leaflet-popup-content-wrapper {
@@ -94,7 +97,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
   color: white;
   background-color: rgb(61, 104, 189) !important;
   max-width:98%;
-  text-align-last:center;
+  -moz-text-align-last:center;
+       text-align-last:center;
   cursor: pointer;
 }
 
