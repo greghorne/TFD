@@ -405,6 +405,9 @@ function createOlderControl(map, olderMarkersArr) {
 //////////////////////////////////////////////////////////////////////
 
 
+
+
+
 //////////////////////////////////////////////////////////////////////
 // url param variables
 var gnRecentMarkersToDisplay
@@ -450,6 +453,9 @@ $(document).ready(function() {
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
         if (params !== {}) processParams(params)
     });
+    
+    // if mobile device then limit recent markers to 5
+    if (window.navigator.userAgent.toLowerCase().includes("mobi")) gnRecentMarkersToDisplay = 5
 
        // create map and define position, zoom and baselayer
     var map = L.map('map', {
