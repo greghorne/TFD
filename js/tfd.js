@@ -372,7 +372,7 @@ function createOlderControl(map, olderMarkersArr) {
 
         onAdd: function(map) {
 
-            var container       = L.DomUtil.create('div', 'cursor-pointer older-control leaflet-bar select', L.DomUtil.get('map'));
+            var container = L.DomUtil.create('div', 'cursor-pointer older-control leaflet-bar select', L.DomUtil.get('map'));
 
             for (var counter = olderMarkersArr.length - 1; counter > -1; counter --) {
                 container.innerHTML += "<option value=" + olderMarkersArr[counter]._latlng.lat + "_" + olderMarkersArr[counter]._latlng.lng + "_" + olderMarkersArr[counter]._leaflet_id + ">" + olderMarkersArr[counter].options['title'] + "</option>"
@@ -457,7 +457,7 @@ $(document).ready(function() {
     // if mobile device then limit recent markers to 5
     if (window.navigator.userAgent.toLowerCase().includes("mobi")) gnRecentMarkersToDisplay = 5
 
-       // create map and define position, zoom and baselayer
+    // create map and define position, zoom and baselayer
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_INITIAL_ZOOM,
