@@ -10,6 +10,7 @@
     * The map will center and zoom to the newest incident and display as a red map marker. 
     * The 10 previous incidents are displayed as yellow map markers.
     * All older incidents are displayed as blue map markers.
+    * The list of incidents found on the lower right of the map are clickable.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
 
 #
