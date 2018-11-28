@@ -278,24 +278,40 @@ function toggleHotSpotMap() {
 
             tx.oncomplete = function() {
                 // var heat = L.heatLayer([list], {radius: 25}).addTo(gMap)
-                console.log(items)
-                heat = L.heatLayer(items, {radius: 100, 
+                // console.log(items)
+                heat = L.heatLayer(items, {radius: 50,
+                                            minOpacity: .1,
+                                            maxZoom: 13, 
+                                            blur: 75,
                                             gradient: {
-                                                0.01: 'cyan', 
-                                                0.25: 'yellow',
-                                                0.50: 'orange', 
-                                                0.75: 'red',
+                                                // 0.01: 'blue', 
+                                                // 0.25: 'green',
+                                                // 0.50: 'yellow', 
+                                                // 0.75: 'red',
+
+                                                .01: '#FFEBCD',
+                                                .25: '#FFE4C4',
+                                                .45: '#FFDEAD',
+                                                .65: '#F5DEB3',
+                                                .85: '#DEB887',
+
+                                                
                                             }
                                         }).addTo(gMap);
 
             };
 
             getAll.onsuccess = function(event) {
-              var cursor = event.target.result;
-              if(!cursor) return;
-              items.push([cursor.value.lat, cursor.value.lng, Math.random().toFixed(2) ]);
-            //   console.log(items[items.length - 1])
-              cursor.continue();
+                var cursor = event.target.result;
+                if(!cursor) return;
+                // items.push([cursor.value.lat, cursor.value.lng, Math.random().toFixed(2) ]);
+                //   items.push([cursor.value.lat, cursor.value.lng, .5 ]);
+                // var tag = Math.random().toFixed(2)
+                var tag = .2
+                if (cursor.value.problem === "Motor Vehicle Accident") tag = .9
+                items.push([cursor.value.lat, cursor.value.lng, tag ]);
+                // console.log(items[items.length - 1])
+                cursor.continue();
             };
 
             
