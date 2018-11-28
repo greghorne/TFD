@@ -20,6 +20,7 @@ const CONST_MARKER_BLUE                 = new L.Icon({ iconUrl: CONST_MARKER_COL
 
 const CONST_HELP_PAGE                   = "https://github.com/greghorne/TFD";
 const CONST_HELP_TOOL_TIP               = "Click for Help";
+const CONST_HOTSPOT_TOOL_TIP            = "toggle hotspot map"
 
 const CONST_CITYGRAM_PAGE               = "https://www.citygram.org/tulsa";
 const CONST_CITYGRAM_TOOL_TIP           = "Citygram - Tulsa";
