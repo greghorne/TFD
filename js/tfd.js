@@ -224,6 +224,33 @@ function createButtonControl(map, className, toolTip, urlToOpen) {
 //////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////////////////////////////////////////////////
+// creates button control 
+function createHotSpotButtonControl(map, className, toolTip) {
+     
+    var buttonControl = L.Control.extend({
+        options: {
+            position: 'topright' 
+        },
+
+        onAdd: function(map) {
+            var container     = L.DomUtil.create('div', className + " button-custom cursor-pointer leaflet-bar", L.DomUtil.get('map'));
+            container.title   = toolTip
+            container.onclick = function() { toggleHotSpotMap(); }   // webpage to open when clicked
+            return container;
+        },
+
+    });
+    var myControl = new buttonControl();
+    map.addControl(myControl);
+}
+//////////////////////////////////////////////////////////////////////
+
+function toggleHotSpotMap() {
+    console.log("toggle hotspot...")
+}
+
+
 ///////'s///////////////////////////////////////////////////////////////
 // check if any of the url parameter 'filter' keywords are found in the incdent's 'Problem' text/description
 function foundInFilterText(txtProblem) {
@@ -334,7 +361,9 @@ function addControlsToMap(map, buildings) {
     L.control.layers(gbaseMaps, {"3D-Buildings": buildings}).addTo(map)  // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
 
-    createButtonControl(map, "help-icon",     CONST_HELP_TOOL_TIP,     CONST_HELP_PAGE)
+    createButtonControl(map, "help-icon", CONST_HELP_TOOL_TIP,     CONST_HELP_PAGE)
+    createHotSpotButtonControl(map, "hot-spot", CONST_HOTSPOT_TOOL_TIP)
+
     // createButtonControl(map, "citygram-icon", CONST_CITYGRAM_TOOL_TIP, CONST_CITYGRAM_PAGE)
 }
 //////////////////////////////////////////////////////////////////////
