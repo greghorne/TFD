@@ -278,13 +278,23 @@ function toggleHotSpotMap() {
 
             tx.oncomplete = function() {
                 // var heat = L.heatLayer([list], {radius: 25}).addTo(gMap)
-                heat = L.heatLayer(items, {radius: 50}).addTo(gMap);
+                console.log(items)
+                heat = L.heatLayer(items, {radius: 100, 
+                                            gradient: {
+                                                0.01: 'cyan', 
+                                                0.25: 'yellow',
+                                                0.50: 'orange', 
+                                                0.75: 'red',
+                                            }
+                                        }).addTo(gMap);
+
             };
 
             getAll.onsuccess = function(event) {
               var cursor = event.target.result;
               if(!cursor) return;
-              items.push([cursor.value.lat, cursor.value.lng]);
+              items.push([cursor.value.lat, cursor.value.lng, Math.random().toFixed(2) ]);
+            //   console.log(items[items.length - 1])
               cursor.continue();
             };
 
