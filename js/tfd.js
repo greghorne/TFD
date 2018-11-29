@@ -236,7 +236,7 @@ function createHotSpotButtonControl(map, className, toolTip) {
         onAdd: function(map) {
             var container     = L.DomUtil.create('div', className + " button-custom cursor-pointer leaflet-bar", L.DomUtil.get('map'));
             container.title   = toolTip
-            container.onclick = function() { toggleHotSpotMap("button"); }   // webpage to open when clicked
+            container.onclick = function() { toggleHotSpotMap("button"); }
             return container;
         },
 
@@ -284,13 +284,19 @@ function updateIncidentTypeList(fnCallback) {
 
 //////////////////////////////////////////////////////////////////////
 function toggleHotSpotMap(whoCalled) {
+
     console.log(whoCalled)
-    
-    if (gbHotSpotToggle) {
-        // remove hotspot
-        gMap.removeLayer(heat)
-    } else {
+    var checked = document.getElementById("hotspot").checked
+
+    if (whoCalled === "checkbox" && !checked) {
+        console.log("trace1...")
+        if (gbHotSpotCreated && gMap.hasLayer(heat)) gMap.removeLayer(heat)
+
+    } else if (whoCalled === "checkbox" && checked || whoCalled === "pulldown" && checked) {
         // add hotspot
+        console.log("trace2...")
+        if (gbHotSpotCreated && gMap.hasLayer(heat))gMap.removeLayer(heat)
+
         var hotspotArr = [];
         var db = indexedDB.open("TFD", 1)
         
@@ -303,11 +309,8 @@ function toggleHotSpotMap(whoCalled) {
             var getAll = list.openCursor();
             var items  = [];
 
-            var intensity = 0;
-
+            var intensity;
             var typeIncident = $("#incident_types option:selected").val();
-
-            console.log(typeIncident)
 
             tx.oncomplete = function() {
 
@@ -315,21 +318,24 @@ function toggleHotSpotMap(whoCalled) {
                                             gradient: { .01: '#FFEBCD', .25: '#FFE4C4', .45: '#FFDEAD', .65: '#F5DEB3', .85: '#DC143C' }
                                           }
                                   ).addTo(gMap);
-
+                gbHotSpotCreated = true;
             };
+            
 
             getAll.onsuccess = function(event) {
                 var cursor = event.target.result;
                 
                 if(!cursor) return;
-                intensity = .0
                 
-                if (cursor.value.problem === typeIncident) intensity = .9
-                items.push([cursor.value.lat, cursor.value.lng, intensity ]);
+                if (cursor.value.problem === typeIncident) { intensity = .9 }
+                else { intensity = .0 }
 
+                items.push([cursor.value.lat, cursor.value.lng, intensity ]);
                 cursor.continue();
             };
         }
+    } else {
+        if (gbHotSpotCreated && gMap.hasLayer(heat)) map.removeLayer(heat)
     }
     gbHotSpotToggle = !gbHotSpotToggle;
 
@@ -447,7 +453,7 @@ function addControlsToMap(map, buildings) {
     L.control.layers(gbaseMaps, {"3D-Buildings": buildings}).addTo(map)  // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
 
-    createHotSpotButtonControl(map, "hot-spot", CONST_HOTSPOT_TOOL_TIP)
+    // createHotSpotButtonControl(map, "hot-spot", CONST_HOTSPOT_TOOL_TIP)
 
     initSidebarButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
     gSidebar = initSlideOutSidebar(map)
@@ -620,6 +626,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 
 var gSidebar;
 var gSidebarHTML = CONST_SLIDEOUT_HTML;
+var gbHotSpotCreated = false;
 
 
 //////////////////////////////////////////////////////////////////////
