@@ -82,27 +82,7 @@ const CONST_SLIDEOUT_HTML =     "</br> \
                                 <h6 style='color: #5e9ca0; text-align: left;'>Hot Spot Map Settings</h2>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                     <center>Incident Type:&#32;&#32;\
-                                        <select id=incident_types name=incient_types onchange='minutesOnChange(this.value);'>\
-                                            <option value='1-2-3' selected=selected>Motor Vehicle Accident</option>\
-                                            <option value='1-3-5'>Business Alarm</option>\
-                                            <option value='3-5-8'>Residential Alarm</option>\
-                                            <option value='5-8-10'>Fluid Spill</option>\
-                                            <option value='10-15-20'>Inv-Smoke/Detector/Odor/Fire</option>\
-                                            <option value='10-15-20'>Business Alarm - School/THA</option>\
-                                            <option value='10-15-20'>Car Fire</option>\
-                                            <option value='10-15-20'>Natural Gas Leak</option>\
-                                            <option value='10-15-20'>House Fire</option>\
-                                            <option value='10-15-20'>Assist Other Agencies</option>\
-                                            <option value='10-15-20'>Open Burn</option>\
-                                            <option value='10-15-20'>Grass/Brush Fire</option>\
-                                            <option value='10-15-20'>MVA- Auto-Ped</option>\
-                                            <option value='10-15-20'>Business Alarm - Hosp/NH</option>\
-                                            <option value='10-15-20'>Carbon Monoxide - No sympt</option>\
-                                            <option value='10-15-20'>Apartment Fire</option>\
-                                            <option value='10-15-20'>MVA- Mult Veh/Patients</option>\
-                                            <option value='10-15-20'>Inc- Smoke Detector/Alarm</option>\
-                                            <option value='10-15-20'>Building Fire</option>\
-                                            <option value='10-15-20'>MVA- Motorcycle/Bicycle/ATV</option>\
+                                        <select id=incident_types name=incient_types onchange='toggleHotSpotMap(\"pulldown\");'>\
                                         </select>\
                                     </center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\

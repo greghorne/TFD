@@ -236,7 +236,7 @@ function createHotSpotButtonControl(map, className, toolTip) {
         onAdd: function(map) {
             var container     = L.DomUtil.create('div', className + " button-custom cursor-pointer leaflet-bar", L.DomUtil.get('map'));
             container.title   = toolTip
-            container.onclick = function() { toggleHotSpotMap(); }   // webpage to open when clicked
+            container.onclick = function() { toggleHotSpotMap("button"); }   // webpage to open when clicked
             return container;
         },
 
@@ -267,8 +267,6 @@ function updateIncidentTypeList(fnCallback) {
                 if (json[v]) { json[v] = json[v] + 1; } 
                 else { json[v] = 1; }
             })
-            console.log(json)
-            console.log('returning...')
             fnCallback(json);
         };
 
@@ -285,8 +283,9 @@ function updateIncidentTypeList(fnCallback) {
 
 
 //////////////////////////////////////////////////////////////////////
-function toggleHotSpotMap() {
-    console.log("toggle hotspot...")
+function toggleHotSpotMap(whoCalled) {
+    console.log(whoCalled)
+    
     if (gbHotSpotToggle) {
         // remove hotspot
         gMap.removeLayer(heat)
@@ -304,6 +303,12 @@ function toggleHotSpotMap() {
             var getAll = list.openCursor();
             var items  = [];
 
+            var intensity = 0;
+
+            var typeIncident = $("#incident_types option:selected").val();
+
+            console.log(typeIncident)
+
             tx.oncomplete = function() {
 
                 heat = L.heatLayer(items, { radius: 45, minOpacity: .1, maxZoom: 12, blur: 75,
@@ -315,20 +320,16 @@ function toggleHotSpotMap() {
 
             getAll.onsuccess = function(event) {
                 var cursor = event.target.result;
+                
                 if(!cursor) return;
-                // items.push([cursor.value.lat, cursor.value.lng, Math.random().toFixed(2) ]);
-                //   items.push([cursor.value.lat, cursor.value.lng, .5 ]);
-                // var tag = Math.random().toFixed(2)
-                var tag = .0
-                if (cursor.value.problem === "Motor Vehicle Accident") tag = .9
-                items.push([cursor.value.lat, cursor.value.lng, tag ]);
-                // console.log(items[items.length - 1])
+                intensity = .0
+                
+                if (cursor.value.problem === typeIncident) intensity = .9
+                items.push([cursor.value.lat, cursor.value.lng, intensity ]);
+
                 cursor.continue();
             };
-
-            
         }
-
     }
     gbHotSpotToggle = !gbHotSpotToggle;
 
@@ -531,7 +532,10 @@ function updateIncidentTypePullDown(json) {
     $(dropdown).empty();
 
     for (var key in json) {
-        console.log(key)
+        jQuery(document.createElement('option'))
+            .attr('value', key)
+            .text(key + " - " + json[key])
+            .appendTo(dropdown)
     }
 }
 //////////////////////////////////////////////////////////////////////
@@ -666,12 +670,12 @@ $(document).ready(function() {
             // check if we have seen this incident number before
             if (allIncidentNumbersArr.indexOf(response.Incidents.Incident[0].IncidentNumber) == -1) {      
 
-                updateIndexedDB(response);                             // json file has updated, update indexedDB
+                updateIndexedDB(response);                        // json file has updated, update indexedDB
                 
+                // update pull down menu based on incident types that have occurred
                 updateIncidentTypeList(function (json) {
-                    updateIncidentTypePullDown(json);  // return json of incidnet types and count
+                    updateIncidentTypePullDown(json);       
                 })
-                // updateIncidentTypePullDown(incidentTypeList);
 
                 var incidents      = response.Incidents          // all json incidents
                 var incidentsCount = incidents.Incident.length;  // number of json incidents
