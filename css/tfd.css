@@ -134,3 +134,11 @@ html, body { height: 100%; width: 100%; margin: 0px }
 .hot-spot {
   background-image: url("../images/heat.png");
 }
+
+.sidebar-icon { background-image: url("../images/settings-18-26.png"); }
+.leaflet-sidebar {
+  box-shadow: 5px 5px 5px #332c2c !important;
+}
+.leaflet-sidebar .leaflet-control .close {
+  background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc) !important
+}

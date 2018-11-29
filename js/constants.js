@@ -76,3 +76,43 @@ const CONST_MAP_LAYERS = [
         maxZoom: 17
     }
 ];
+
+const CONST_SLIDEOUT_DELAY_TIME = 500
+const CONST_SLIDEOUT_HTML =     "</br> \
+                                <h6 style='color: #5e9ca0; text-align: left;'>Hot Spot Map Settings</h2>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                    <center>Incident Type:&#32;&#32;\
+                                        <select id=minutes name=minutes onchange='minutesOnChange(this.value);'>\
+                                            <option value='1-2-3' selected=selected>Motor Vehicle Accident</option>\
+                                            <option value='1-3-5'>Business Alarm</option>\
+                                            <option value='3-5-8'>Residential Alarm</option>\
+                                            <option value='5-8-10'>Fluid Spill</option>\
+                                            <option value='10-15-20'>Inv-Smoke/Detector/Odor/Fire</option>\
+                                            <option value='10-15-20'>Business Alarm - School/THA</option>\
+                                            <option value='10-15-20'>Car Fire</option>\
+                                            <option value='10-15-20'>Natural Gas Leak</option>\
+                                            <option value='10-15-20'>House Fire</option>\
+                                            <option value='10-15-20'>Assist Other Agencies</option>\
+                                            <option value='10-15-20'>Open Burn</option>\
+                                            <option value='10-15-20'>Grass/Brush Fire</option>\
+                                            <option value='10-15-20'>MVA- Auto-Ped</option>\
+                                            <option value='10-15-20'>Business Alarm - Hosp/NH</option>\
+                                            <option value='10-15-20'>Carbon Monoxide - No sympt</option>\
+                                            <option value='10-15-20'>Apartment Fire</option>\
+                                            <option value='10-15-20'>MVA- Mult Veh/Patients</option>\
+                                            <option value='10-15-20'>Inc- Smoke Detector/Alarm</option>\
+                                            <option value='10-15-20'>Building Fire</option>\
+                                            <option value='10-15-20'>MVA- Motorcycle/Bicycle/ATV</option>\
+                                        </select>\
+                                    </center>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                    <center>Drive-time polygon providers:</center>\
+                                    <center><label><input type='radio' name='iso' value='here' checked>HERE API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='targomo'>Targomo API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='bing'>Bing Maps API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='mapbox'>Mapbox API</label></center>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                    <center><label><input type='checkbox' id='clickAutoZoom' checked='true' onchange='isChecked(id, this.checked);'> Auto-zoom on map click</label></center>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                    <center><label><input type='checkbox' id='clickCalculateDeographics' checked='true' onchange='isCalcDemoChecked(id, this.checked);'> Calculate Demographics</label></center>\
+                                <hr size='3' align='center' color='#5e9ca0'>";
