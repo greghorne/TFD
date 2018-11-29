@@ -82,7 +82,7 @@ const CONST_SLIDEOUT_HTML =     "</br> \
                                 <h6 style='color: #5e9ca0; text-align: left;'>Hot Spot Map Settings</h2>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                     <center>Incident Type:&#32;&#32;\
-                                        <select id=minutes name=minutes onchange='minutesOnChange(this.value);'>\
+                                        <select id=incident_types name=incient_types onchange='minutesOnChange(this.value);'>\
                                             <option value='1-2-3' selected=selected>Motor Vehicle Accident</option>\
                                             <option value='1-3-5'>Business Alarm</option>\
                                             <option value='3-5-8'>Residential Alarm</option>\
