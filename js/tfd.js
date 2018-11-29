@@ -248,8 +248,8 @@ function createHotSpotButtonControl(map, className, toolTip) {
 
 
 //////////////////////////////////////////////////////////////////////
-function updateIncidentTypeList() {
-    var hotspotArr = [];
+function updateIncidentTypeList(fnCallback) {
+
     var db = indexedDB.open("TFD", 1)
     
     // https://stackoverflow.com/questions/26920961/how-to-properly-retrieve-all-data-from-an-indexeddb-in-a-winjs-windows-8-app
@@ -260,27 +260,25 @@ function updateIncidentTypeList() {
         var list      = tx.objectStore('Incidents');
         var getAll    = list.openCursor();
         var items     = [];
-        var incidents = {};
+        var json      = {};
 
         tx.oncomplete = function() {
-
             items.forEach(function (v, i) {
-                if (incidents[v]) { incidents[v] = incidents[v] + 1; } 
-                else { incidents[v] = 1; }
+                if (json[v]) { json[v] = json[v] + 1; } 
+                else { json[v] = 1; }
             })
-            console.log(incidents)
-
-            return items;
+            console.log(json)
+            console.log('returning...')
+            fnCallback(json);
         };
 
         getAll.onsuccess = function(event) {
             var cursor = event.target.result;
+
             if(!cursor) return;
             items.push(cursor.value.problem);
             cursor.continue();
         };
-
-        
     }
 }
 //////////////////////////////////////////////////////////////////////
@@ -526,6 +524,19 @@ function createOlderControl(map, olderMarkersArr) {
 //////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////////////////////////////////////////////////
+function updateIncidentTypePullDown(json) {
+
+    var dropdown = document.getElementById("incident_types");
+    $(dropdown).empty();
+
+    for (var key in json) {
+        console.log(key)
+    }
+}
+//////////////////////////////////////////////////////////////////////
+
+
 ////////////////////////////////////////////////////////////
 function initSidebarButton(map, classString, toolTip, fn) {
     
@@ -605,7 +616,6 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 
 var gSidebar;
 var gSidebarHTML = CONST_SLIDEOUT_HTML;
-var gIncidentTypeList;
 
 
 //////////////////////////////////////////////////////////////////////
@@ -622,6 +632,8 @@ $(document).ready(function() {
     var olderMarkersArr       = [];
 
     var lastGoodIncident      = null;
+
+    var incidentTypeList      = null;
 
     // read in and process url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
@@ -654,8 +666,12 @@ $(document).ready(function() {
             // check if we have seen this incident number before
             if (allIncidentNumbersArr.indexOf(response.Incidents.Incident[0].IncidentNumber) == -1) {      
 
-                updateIndexedDB(response);                       // json file has updated, update indexedDB
-                gIncidentTypeList = updateIncidentTypeList();
+                updateIndexedDB(response);                             // json file has updated, update indexedDB
+                
+                updateIncidentTypeList(function (json) {
+                    updateIncidentTypePullDown(json);  // return json of incidnet types and count
+                })
+                // updateIncidentTypePullDown(incidentTypeList);
 
                 var incidents      = response.Incidents          // all json incidents
                 var incidentsCount = incidents.Incident.length;  // number of json incidents
