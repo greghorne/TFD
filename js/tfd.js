@@ -248,6 +248,45 @@ function createHotSpotButtonControl(map, className, toolTip) {
 
 
 //////////////////////////////////////////////////////////////////////
+function updateIncidentTypeList() {
+    var hotspotArr = [];
+    var db = indexedDB.open("TFD", 1)
+    
+    // https://stackoverflow.com/questions/26920961/how-to-properly-retrieve-all-data-from-an-indexeddb-in-a-winjs-windows-8-app
+    db.onsuccess = function(event) {
+
+        var db        = event.target.result;
+        var tx        = db.transaction('Incidents');
+        var list      = tx.objectStore('Incidents');
+        var getAll    = list.openCursor();
+        var items     = [];
+        var incidents = {};
+
+        tx.oncomplete = function() {
+
+            items.forEach(function (v, i) {
+                if (incidents[v]) { incidents[v] = incidents[v] + 1; } 
+                else { incidents[v] = 1; }
+            })
+            console.log(incidents)
+
+            return items;
+        };
+
+        getAll.onsuccess = function(event) {
+            var cursor = event.target.result;
+            if(!cursor) return;
+            items.push(cursor.value.problem);
+            cursor.continue();
+        };
+
+        
+    }
+}
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
 function toggleHotSpotMap() {
     console.log("toggle hotspot...")
     if (gbHotSpotToggle) {
@@ -566,6 +605,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 
 var gSidebar;
 var gSidebarHTML = CONST_SLIDEOUT_HTML;
+var gIncidentTypeList;
 
 
 //////////////////////////////////////////////////////////////////////
@@ -615,6 +655,7 @@ $(document).ready(function() {
             if (allIncidentNumbersArr.indexOf(response.Incidents.Incident[0].IncidentNumber) == -1) {      
 
                 updateIndexedDB(response);                       // json file has updated, update indexedDB
+                gIncidentTypeList = updateIncidentTypeList();
 
                 var incidents      = response.Incidents          // all json incidents
                 var incidentsCount = incidents.Incident.length;  // number of json incidents
