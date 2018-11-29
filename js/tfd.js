@@ -279,25 +279,18 @@ function toggleHotSpotMap() {
             tx.oncomplete = function() {
                 // var heat = L.heatLayer([list], {radius: 25}).addTo(gMap)
                 // console.log(items)
-                heat = L.heatLayer(items, {radius: 50,
+                heat = L.heatLayer(items, { radius: 45,
                                             minOpacity: .1,
-                                            maxZoom: 13, 
+                                            maxZoom: 12, 
                                             blur: 75,
                                             gradient: {
-                                                // 0.01: 'blue', 
-                                                // 0.25: 'green',
-                                                // 0.50: 'yellow', 
-                                                // 0.75: 'red',
-
-                                                .01: '#FFEBCD',
+                                                .00: '#FFEBCD',
                                                 .25: '#FFE4C4',
                                                 .45: '#FFDEAD',
                                                 .65: '#F5DEB3',
-                                                .85: '#DEB887',
-
-                                                
+                                                .85: '#DC143C'
                                             }
-                                        }).addTo(gMap);
+                                          }).addTo(gMap);
 
             };
 
