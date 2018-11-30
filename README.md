@@ -94,4 +94,3 @@
 
 **<p align="center">This is not a real-time map display.</p>**
 **<p align="center">This webapp is for demonstration purposes.</p>**
-t
