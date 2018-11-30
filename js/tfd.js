@@ -236,7 +236,7 @@ function createHotSpotButtonControl(map, className, toolTip) {
         onAdd: function(map) {
             var container     = L.DomUtil.create('div', className + " button-custom cursor-pointer leaflet-bar", L.DomUtil.get('map'));
             container.title   = toolTip
-            container.onclick = function() { toggleHotSpotMap("button"); }
+            container.onclick = function() { doHotSpotMap("button"); }
             return container;
         },
 
@@ -283,18 +283,13 @@ function updateIncidentTypeList(fnCallback) {
 
 
 //////////////////////////////////////////////////////////////////////
-function toggleHotSpotMap(whoCalled) {
+function doHotSpotMap(whoCalled) {
 
-    console.log(whoCalled)
     var checked = document.getElementById("hotspot").checked
 
     if (whoCalled === "checkbox" && !checked) {
-        console.log("trace1...")
         if (gbHotSpotCreated && gMap.hasLayer(heat)) gMap.removeLayer(heat)
-
     } else if (whoCalled === "checkbox" && checked || whoCalled === "pulldown" && checked) {
-        // add hotspot
-        console.log("trace2...")
         if (gbHotSpotCreated && gMap.hasLayer(heat))gMap.removeLayer(heat)
 
         var hotspotArr = [];
@@ -302,7 +297,6 @@ function toggleHotSpotMap(whoCalled) {
         
         // https://stackoverflow.com/questions/26920961/how-to-properly-retrieve-all-data-from-an-indexeddb-in-a-winjs-windows-8-app
         db.onsuccess = function(event) {
-
             var db     = event.target.result;
             var tx     = db.transaction('Incidents');
             var list   = tx.objectStore('Incidents');
@@ -313,7 +307,6 @@ function toggleHotSpotMap(whoCalled) {
             var typeIncident = $("#incident_types option:selected").val();
 
             tx.oncomplete = function() {
-
                 heat = L.heatLayer(items, { radius: 45, minOpacity: .1, maxZoom: 12, blur: 75,
                                             gradient: { .01: '#FFEBCD', .25: '#FFE4C4', .45: '#FFDEAD', .65: '#F5DEB3', .85: '#DC143C' }
                                           }
@@ -328,7 +321,7 @@ function toggleHotSpotMap(whoCalled) {
                 if(!cursor) return;
                 
                 if (cursor.value.problem === typeIncident) { intensity = .9 }
-                else { intensity = .0 }
+                else { intensity = 0 }
 
                 items.push([cursor.value.lat, cursor.value.lng, intensity ]);
                 cursor.continue();
@@ -337,7 +330,7 @@ function toggleHotSpotMap(whoCalled) {
     } else {
         if (gbHotSpotCreated && gMap.hasLayer(heat)) map.removeLayer(heat)
     }
-    gbHotSpotToggle = !gbHotSpotToggle;
+    // gbHotSpotToggle = !gbHotSpotToggle;
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -603,7 +596,7 @@ var gnRecentMarkersToDisplay
 var gbZoomTo
 var gSearchText = null
 var gnBaseLayer
-var gbHotSpotToggle = false;
+// var gbHotSpotToggle = false;
 //////////////////////////////////////////////////////////////////////
 
 
@@ -644,7 +637,6 @@ $(document).ready(function() {
 
     var lastGoodIncident      = null;
 
-    var incidentTypeList      = null;
 
     // read in and process url parameters
     var params = getUrlParameterOptions(window.location.search.slice(1), function(params) {
