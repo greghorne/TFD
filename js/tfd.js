@@ -267,7 +267,10 @@ function updateIncidentTypeList(fnCallback) {
                 if (json[v]) { json[v] = json[v] + 1; } 
                 else { json[v] = 1; }
             })
-            fnCallback(json);
+            var sorted = [json].sort()
+            console.log(sorted[0])
+
+            fnCallback(sorted[0]);
         };
 
         getAll.onsuccess = function(event) {
@@ -323,7 +326,7 @@ function doHotSpotMap(whoCalled) {
                 if (cursor.value.problem === typeIncident) { intensity = .9 }
                 else { intensity = 0 }
 
-                items.push([cursor.value.lat, cursor.value.lng, intensity ]);
+                items.push([cursor.value.lat, cursor.value.lng, intensity]);
                 cursor.continue();
             };
         }
@@ -533,7 +536,7 @@ function updateIncidentTypePullDown(json) {
     for (var key in json) {
         jQuery(document.createElement('option'))
             .attr('value', key)
-            .text(key + " - " + json[key])
+            .text(key + "  (" + json[key] + ")")
             .appendTo(dropdown)
     }
 }
