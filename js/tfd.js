@@ -162,11 +162,12 @@ function createIncidentTextControl(map, marker, bHighlight, title, textCustomCon
 
                 L.DomEvent.stopPropagation(e);
                 map.flyTo(marker._latlng, CONST_MAP_INCIDENT_ZOOM)
-                setTimeout(function() { marker.openPopup(); }, 1000)  // delay opening marker popup
+                // setTimeout(function() { marker.openPopup(); }, 1000)  // delay opening marker popup
                 
                 // turn back on hot spot map if applicable
                 map.on('moveend', function() {
-                    if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
+                    marker.openPopup();
+                    if (layerVisible) map.addLayer(heat);
                 })
             })
 
@@ -517,17 +518,21 @@ function createOlderControl(map, olderMarkersArr) {
                 var arrSplit = e.target.value.split("_")
                 map.flyTo([arrSplit[0], arrSplit[1]], CONST_MAP_INCIDENT_ZOOM)
 
-                setTimeout(function() { 
-                    var myMarker = map._layers[arrSplit[2]];  // retrieve marker
-                    myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
-                    $("#old_select")[0][0].selected = true;   // set pull-down to index 0
-                }, 1000)  // delay opening marker popup
+                // setTimeout(function() { 
+                //     var myMarker = map._layers[arrSplit[2]];  // retrieve marker
+                //     myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
+                //     $("#old_select")[0][0].selected = true;   // set pull-down to index 0
+                // }, 1000)  // delay opening marker popup
 
                 // turn back on hot spot map if applicable
                 // if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
                 // turn back on hot spot map if applicable
                 map.on('moveend', function() {
-                    if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
+                    var myMarker = map._layers[arrSplit[2]];  // retrieve marker
+                    myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
+                    $("#old_select")[0][0].selected = true;   // set pull-down to index 0
+                    
+                    if (layerVisible) map.addLayer(heat);
                 })
             })
             
@@ -744,7 +749,7 @@ $(document).ready(function() {
                             // turn back on hot spot map if applicable
                             // if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
                             map.on('moveend', function() {
-                                if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
+                                if (layerVisible) map.addLayer(heat);
                             })
                         }
                         
