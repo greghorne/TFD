@@ -154,9 +154,22 @@ function createIncidentTextControl(map, marker, bHighlight, title, textCustomCon
             if (title) container.title = title
 
             L.DomEvent.on(container, 'click', function(e) {
+        
+                // this is to turn off the hot spot (canvas) lyaer
+                var layerVisible = true;
+                if (gbHotSpotCreated && gMap.hasLayer(heat)) { 
+                    console.log(map.hasLayer(heat))
+                    map.removeLayer(heat)
+                } else {
+                    layerVisible = false;
+                }
+
                 L.DomEvent.stopPropagation(e);
                 map.flyTo(marker._latlng, CONST_MAP_INCIDENT_ZOOM)
                 setTimeout(function() { marker.openPopup(); }, 1000)  // delay opening marker popup
+                
+                // turn back on hot spot map if applicable
+                if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1000)
             })
 
             container.onmouseover = function() { L.DomUtil.addClass(map._container,   'cursor-pointer') }
@@ -503,6 +516,15 @@ function createOlderControl(map, olderMarkersArr) {
 
             L.DomEvent.on(old_select, 'change', function(e) {
 
+                // this is to turn off the hot spot (canvas) lyaer
+                var layerVisible = true;
+                if (gbHotSpotCreated && gMap.hasLayer(heat)) { 
+                    console.log(map.hasLayer(heat))
+                    map.removeLayer(heat)
+                } else {
+                    layerVisible = false;
+                }
+                
                 L.DomEvent.stopPropagation(e);
                 var arrSplit = e.target.value.split("_")
                 map.flyTo([arrSplit[0], arrSplit[1]], CONST_MAP_INCIDENT_ZOOM)
@@ -512,6 +534,9 @@ function createOlderControl(map, olderMarkersArr) {
                     myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
                     $("#old_select")[0][0].selected = true;   // set pull-down to index 0
                 }, 1000)  // delay opening marker popup
+
+                // turn back on hot spot map if applicable
+                if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1000)
             })
             
             return container;
@@ -717,7 +742,20 @@ $(document).ready(function() {
                         if (lastGoodIncident) {             // create text conrtol for newestMarkersArr
                             createIncidentTextControl(map, newestMarkersArr[newestMarkersArr.length - 1], true, "Current Incident", textCustomControlArr)
                             newestMarkersArr[newestMarkersArr.length - 1].openPopup()
+
+                            // this is to turn off the hot spot (canvas) lyaer
+                            var layerVisible = true;
+                            if (gbHotSpotCreated && gMap.hasLayer(heat)) { 
+                                console.log(map.hasLayer(heat))
+                                map.removeLayer(heat)
+                            } else {
+                                layerVisible = false;
+                            }
+
                             if (gbZoomTo) { map.flyTo(newestMarkersArr[newestMarkersArr.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
+                            
+                            // turn back on hot spot map if applicable
+                            if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1000)
                         }
                         
                         if (gSearchText !== null) {         // create text control for filter keyword(s) if applicable
