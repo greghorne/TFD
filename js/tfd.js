@@ -157,12 +157,8 @@ function createIncidentTextControl(map, marker, bHighlight, title, textCustomCon
         
                 // this is to turn off the hot spot (canvas) lyaer
                 var layerVisible = true;
-                if (gbHotSpotCreated && gMap.hasLayer(heat)) { 
-                    console.log(map.hasLayer(heat))
-                    map.removeLayer(heat)
-                } else {
-                    layerVisible = false;
-                }
+                if (gbHotSpotCreated && gMap.hasLayer(heat)) map.removeLayer(heat)
+                else layerVisible = false;
 
                 L.DomEvent.stopPropagation(e);
                 map.flyTo(marker._latlng, CONST_MAP_INCIDENT_ZOOM)
@@ -281,7 +277,6 @@ function updateIncidentTypeList(fnCallback) {
                 else { json[v] = 1; }
             })
             var sorted = [json].sort()
-            console.log(sorted[0])
 
             fnCallback(sorted[0]);
         };
@@ -343,10 +338,7 @@ function doHotSpotMap(whoCalled) {
                 cursor.continue();
             };
         }
-    } else {
-        if (gbHotSpotCreated && gMap.hasLayer(heat)) map.removeLayer(heat)
-    }
-    // gbHotSpotToggle = !gbHotSpotToggle;
+    } else if (gbHotSpotCreated && gMap.hasLayer(heat)) map.removeLayer(heat)
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -462,8 +454,6 @@ function addControlsToMap(map, buildings) {
     L.control.layers(gbaseMaps, {"3D-Buildings": buildings}).addTo(map)  // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
 
-    // createHotSpotButtonControl(map, "hot-spot", CONST_HOTSPOT_TOOL_TIP)
-
     initSidebarButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
     gSidebar = initSlideOutSidebar(map)
     gSidebar.setContent(gSidebarHTML);
@@ -518,13 +508,9 @@ function createOlderControl(map, olderMarkersArr) {
 
                 // this is to turn off the hot spot (canvas) lyaer
                 var layerVisible = true;
-                if (gbHotSpotCreated && gMap.hasLayer(heat)) { 
-                    console.log(map.hasLayer(heat))
-                    map.removeLayer(heat)
-                } else {
-                    layerVisible = false;
-                }
-                
+                if (gbHotSpotCreated && gMap.hasLayer(heat)) map.removeLayer(heat)
+                else layerVisible = false;
+
                 L.DomEvent.stopPropagation(e);
                 var arrSplit = e.target.value.split("_")
                 map.flyTo([arrSplit[0], arrSplit[1]], CONST_MAP_INCIDENT_ZOOM)
@@ -624,7 +610,6 @@ var gnRecentMarkersToDisplay
 var gbZoomTo
 var gSearchText = null
 var gnBaseLayer
-// var gbHotSpotToggle = false;
 //////////////////////////////////////////////////////////////////////
 
 
@@ -745,12 +730,8 @@ $(document).ready(function() {
 
                             // this is to turn off the hot spot (canvas) lyaer
                             var layerVisible = true;
-                            if (gbHotSpotCreated && gMap.hasLayer(heat)) { 
-                                console.log(map.hasLayer(heat))
-                                map.removeLayer(heat)
-                            } else {
-                                layerVisible = false;
-                            }
+                            if (gbHotSpotCreated && gMap.hasLayer(heat)) map.removeLayer(heat)
+                            else layerVisible = false;
 
                             if (gbZoomTo) { map.flyTo(newestMarkersArr[newestMarkersArr.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                             
@@ -765,10 +746,8 @@ $(document).ready(function() {
                     })
                 });
                 //////////////////////////////////////////////////////////////////////
-
             }
             //////////////////////////////////////////////////////////////////////
-
          })
         setTimeout(getTfdData, CONST_JSON_UPDATE_TIME);
     }
