@@ -166,8 +166,7 @@ function createIncidentTextControl(map, marker, bHighlight, title, textCustomCon
                 
                 // turn back on hot spot map if applicable
                 map.on('moveend', function() {
-                    // if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
-                    map.addLayer(heat);
+                    if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
                 })
             })
 
@@ -525,7 +524,11 @@ function createOlderControl(map, olderMarkersArr) {
                 }, 1000)  // delay opening marker popup
 
                 // turn back on hot spot map if applicable
-                if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
+                // if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
+                // turn back on hot spot map if applicable
+                map.on('moveend', function() {
+                    if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
+                })
             })
             
             return container;
@@ -739,7 +742,10 @@ $(document).ready(function() {
                             if (gbZoomTo) { map.flyTo(newestMarkersArr[newestMarkersArr.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                             
                             // turn back on hot spot map if applicable
-                            if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
+                            // if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
+                            map.on('moveend', function() {
+                                if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
+                            })
                         }
                         
                         if (gSearchText !== null) {         // create text control for filter keyword(s) if applicable
