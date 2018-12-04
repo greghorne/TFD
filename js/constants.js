@@ -79,19 +79,20 @@ const CONST_MAP_LAYERS = [
 
 const CONST_SLIDEOUT_DELAY_TIME = 500
 const CONST_SLIDEOUT_HTML =     "</br> \
-                                <h6 style='color: #5e9ca0; text-align: left;'>Hot Spot Map Settings</h2>\
+<hr size='3' align='center' color='#5e9ca0'>\
+                                <h6 style='color: #5e9ca0; text-align: center;'>Hot Spot Map Settings</h2>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
-                                    <center><input type='checkbox' id='hotspot' onclick='toggleHotSpotMap(\"checkbox\")'> Hotspot Map On/Off</center></br> \
+                                    <center><input type='checkbox' id='hotspot' onclick='doHotSpotMap(\"checkbox\")'> Hotspot Map On/Off</center></br> \
                                     <center>Incident Type:&#32;&#32;\
                                         <select id=incident_types name=incient_types onchange='doHotSpotMap(\"pulldown\");'>\
                                         </select>\
                                     </center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
-                                    <center>Drive-time polygon providers:</center>\
+                                </br>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                <h6 style='color: #5e9ca0; text-align: center;'>Drive Time Polygons</h2>\
+                                    <hr size='3' align='center' color='#5e9ca0'>\
+                                    <center>Drive-time polygon providers:</center></br>\
                                     <center><label><input type='radio' name='iso' value='here' checked> HERE API</label></center>\
                                     <center><label><input type='radio' name='iso' value='targomo'> Targomo API</label></center>\
-                                <hr size='3' align='center' color='#5e9ca0'>\
-                                    <center><label><input type='checkbox' id='clickAutoZoom' checked='true' onchange='isChecked(id, this.checked);'> Auto-zoom on map click</label></center>\
-                                <hr size='3' align='center' color='#5e9ca0'>\
-                                    <center><label><input type='checkbox' id='clickCalculateDeographics' checked='true' onchange='isCalcDemoChecked(id, this.checked);'> Calculate Demographics</label></center>\
-                                <hr size='3' align='center' color='#5e9ca0'>";
+                                <hr size='3' align='center' color='#5e9ca0'>"
