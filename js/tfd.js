@@ -531,7 +531,7 @@ function createOlderControl(map, olderMarkersArr) {
                     var myMarker = map._layers[arrSplit[2]];  // retrieve marker
                     myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
                     $("#old_select")[0][0].selected = true;   // set pull-down to index 0
-                    
+
                     if (layerVisible) map.addLayer(heat);
                 })
             })
