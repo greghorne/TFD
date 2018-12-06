@@ -303,7 +303,8 @@ function doHotSpotMap(whoCalled) {
 
     if (whoCalled === "checkbox" && !checked) {
         if (gbHotSpotCreated && gMap.hasLayer(heat)) gMap.removeLayer(heat)
-    } else if (whoCalled === "checkbox" && checked || whoCalled === "pulldown" && checked) {
+        // hot spot off
+    } else if (whoCalled === "checkbox" && checked || whoCalled === "pulldown" && checked || "update" && checked) {
         if (gbHotSpotCreated && gMap.hasLayer(heat))gMap.removeLayer(heat)
 
         var hotspotArr = [];
@@ -699,6 +700,8 @@ $(document).ready(function() {
                 updateIncidentTypeList(function (json) {
                     updateIncidentTypePullDown(json);       
                 })
+
+                doHotSpotMap("update")
 
                 var incidents      = response.Incidents          // all json incidents
                 var incidentsCount = incidents.Incident.length;  // number of json incidents
