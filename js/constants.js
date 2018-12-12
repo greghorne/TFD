@@ -90,9 +90,5 @@ const CONST_SLIDEOUT_HTML =     "</br> \
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                 </br>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
-                                <h6 style='color: #5e9ca0; text-align: center;'>Drive Time Polygons</h2>\
-                                    <hr size='3' align='center' color='#5e9ca0'>\
-                                    <center>Drive-time polygon providers:</center></br>\
-                                    <center><label><input type='radio' name='iso' value='here' checked> HERE API</label></center>\
-                                    <center><label><input type='radio' name='iso' value='targomo'> Targomo API</label></center>\
+                                <h6 style='color: #5e9ca0; text-align: center;'>Settings</h2>\
                                 <hr size='3' align='center' color='#5e9ca0'>"
