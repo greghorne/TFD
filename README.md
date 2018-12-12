@@ -22,7 +22,7 @@
 | Older | ![Alt text](http://tfdincidents.s3-website-us-west-2.amazonaws.com/images/marker-icon-blue.png "Older Incident") |
 
 #
-**Deployment:** http://tfdincidents.s3-website-us-west-2.amazonaws.com?baseLayer=1
+**Deployment:** http://tfdincidents.s3-website-us-west-2.amazonaws.com
 
 #
 
