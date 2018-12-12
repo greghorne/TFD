@@ -10,10 +10,8 @@
     * All older incidents are displayed as blue map markers.
     * The list of incidents found on the lower right of the map are clickable.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
-    
-    * Heat Map Creation is under development.
-
-    * For Heat Map functionality please use Chrome.  Other browsers are currently not being tested during development.
+    * <b>Heat Map Creation is under development.</b>
+    * <b>For Heat Map functionality please use Chrome.  Other browsers are currently not being tested during development.</b>
 
 #
 
