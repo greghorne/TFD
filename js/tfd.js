@@ -701,7 +701,8 @@ $(document).ready(function() {
                     updateIncidentTypePullDown(json);       
                 })
 
-                doHotSpotMap("update")
+                // doHotSpotMap("update")
+                if (document.getElementById("hotspot").checked) document.getElementById("hotspot").checked = false;
 
                 var incidents      = response.Incidents          // all json incidents
                 var incidentsCount = incidents.Incident.length;  // number of json incidents
