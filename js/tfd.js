@@ -458,7 +458,7 @@ function addControlsToMap(map, buildings) {
     L.control.layers(gbaseMaps, {"3D-Buildings": buildings}).addTo(map)  // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
 
-    initSidebarButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
+    initSidebarButton(map, "sidebar-icon", "Heat Map Settings", sidebarOpenClose);
     gSidebar = initSlideOutSidebar(map)
     gSidebar.setContent(gSidebarHTML);
 
