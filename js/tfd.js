@@ -516,18 +516,10 @@ function createOlderControl(map, olderMarkersArr) {
                 else layerVisible = false;
 
                 L.DomEvent.stopPropagation(e);
+
                 var arrSplit = e.target.value.split("_")
                 map.flyTo([arrSplit[0], arrSplit[1]], CONST_MAP_INCIDENT_ZOOM)
 
-                // setTimeout(function() { 
-                //     var myMarker = map._layers[arrSplit[2]];  // retrieve marker
-                //     myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
-                //     $("#old_select")[0][0].selected = true;   // set pull-down to index 0
-                // }, 1000)  // delay opening marker popup
-
-                // turn back on hot spot map if applicable
-                // if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
-                // turn back on hot spot map if applicable
                 map.on('moveend', function() {
                     var myMarker = map._layers[arrSplit[2]];  // retrieve marker
                     myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
@@ -694,15 +686,18 @@ $(document).ready(function() {
             // check if we have seen this incident number before
             if (allIncidentNumbersArr.indexOf(response.Incidents.Incident[0].IncidentNumber) == -1) {      
 
-                updateIndexedDB(response);                        // json file has updated, update indexedDB
+                updateIndexedDB(response);      // json file has updated, update indexedDB
                 
                 // update pull down menu based on incident types that have occurred
                 updateIncidentTypeList(function (json) {
                     updateIncidentTypePullDown(json);       
                 })
 
-                // doHotSpotMap("update")
-                if (document.getElementById("hotspot").checked) document.getElementById("hotspot").checked = false;
+                if (document.getElementById("hotspot").checked) {
+                    // turn hot spot off
+                    document.getElementById("hotspot").checked = false;
+                    doHotSpotMap("checkbox");
+                }
 
                 var incidents      = response.Incidents          // all json incidents
                 var incidentsCount = incidents.Incident.length;  // number of json incidents
@@ -750,8 +745,6 @@ $(document).ready(function() {
 
                             if (gbZoomTo) { map.flyTo(newestMarkersArr[newestMarkersArr.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
                             
-                            // turn back on hot spot map if applicable
-                            // if (layerVisible) setTimeout(function() { map.addLayer(heat); }, 1500)
                             map.on('moveend', function() {
                                 if (layerVisible) map.addLayer(heat);
                             })
