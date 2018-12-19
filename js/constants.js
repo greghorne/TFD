@@ -78,17 +78,14 @@ const CONST_MAP_LAYERS = [
 ];
 
 const CONST_SLIDEOUT_DELAY_TIME = 500
-const CONST_SLIDEOUT_HTML       =  "</br> \
-                                    <hr size='3' align='center' color='#5e9ca0'>\
-                                    <h6 style='color: #5e9ca0; text-align: center;'>Hot Spot Map Settings</h2>\
-                                    <hr size='3' align='center' color='#5e9ca0'>\
-                                        <center><input type='checkbox' id='hotspot' onclick='doHotSpotMap(\"checkbox\")'> Hotspot Map On/Off</center></br> \
+const CONST_SLIDEOUT_HTML       =  "<hr size='3' align='center' color='#5e9ca0'>\
+                                        <center><input type='checkbox' id='hotspot' onclick='doHotSpotMap(\"checkbox\")'> Heat Map On/Off</center></br> \
                                         <center>Incident Type:&#32;&#32;\
                                             <select id=incident_types name=incient_types onchange='doHotSpotMap(\"pulldown\");'>\
                                             </select>\
                                         </center>\
-                                    <hr size='3' align='center' color='#5e9ca0'>\
-                                    </br>"
+                                    <hr size='3' align='center' color='#5e9ca0'>"
+                                    // </br>"
                                     // <hr size='3' align='center' color='#5e9ca0'>\
                                     // <h6 style='color: #5e9ca0; text-align: center;'>Settings</h2>\
                                     // <hr size='3' align='center' color='#5e9ca0'>"

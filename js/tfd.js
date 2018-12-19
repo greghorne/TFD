@@ -458,9 +458,9 @@ function addControlsToMap(map, buildings) {
     L.control.layers(gbaseMaps, {"3D-Buildings": buildings}).addTo(map)  // add all map layers to layer control
     L.control.scale({imperial: true, metric: true}).addTo(map) // add scalebar
 
-    initSidebarButton(map, "sidebar-icon", "Heat Map Settings", sidebarOpenClose);
-    gSidebar = initSlideOutSidebar(map)
-    gSidebar.setContent(gSidebarHTML);
+    // initSidebarButton(map, "sidebar-icon", "Heat Map Settings", sidebarOpenClose);
+    // gSidebar = initSlideOutSidebar(map)
+    // gSidebar.setContent(gSidebarHTML);
 
     createButtonControl(map, "help-icon", CONST_HELP_TOOL_TIP, CONST_HELP_PAGE)
 
@@ -677,7 +677,8 @@ $(document).ready(function() {
     
     addControlsToMap(map, osmb);
 
-    $("#slider:visible").slideUp();
+    // $("#slider:visible").slideUp();
+    document.getElementById("slider").innerHTML = CONST_SLIDEOUT_HTML;
     $("#tab").click(function () {
         $("#slider").slideToggle("slow");
     });
