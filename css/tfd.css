@@ -156,6 +156,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
   /* opacity: .5; */
   z-index:  800;
   border-radius: 25px;  
+  font-size: 1.0em !important;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 #slider {
@@ -168,7 +170,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
   height: 150px;
   background-color: lightgray;
   z-index: 800; 
-  box-shadow: 5px 5px 5px #CBCBCB !important;
+  /* box-shadow: 5px 5px 5px #CBCBCB !important; */
+  box-shadow: 5px 5px 5px #888888 !important;
   font-size: 1.0em !important;
   font-family: 'Times New Roman', Times, serif;
 }
@@ -182,6 +185,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
   color: white;
   z-index:  800; 
   cursor: pointer;
-  box-shadow: 5px 5px 5px #CBCBCB !important;
+  /* box-shadow: 5px 5px 5px #CBCBCB !important; */
+  box-shadow: 5px 5px 5px #888888 !important;
 }
 
