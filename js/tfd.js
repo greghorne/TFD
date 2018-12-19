@@ -677,6 +677,11 @@ $(document).ready(function() {
     
     addControlsToMap(map, osmb);
 
+    $("#slider:visible").slideUp();
+    $("#tab").click(function () {
+        $("#slider").slideToggle("slow");
+    });
+
     //////////////////////////////////////////////////////////////////////
     function getTfdData() {
 

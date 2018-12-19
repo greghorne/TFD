@@ -143,3 +143,38 @@ html, body { height: 100%; width: 100%; margin: 0px }
 .leaflet-sidebar .leaflet-control .close {
   background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc) !important
 }
+
+#container {
+  /* right: 10px;
+  top: 10px; */
+  position: absolute;
+  right: 50%;
+  top: 10px;
+  width: 200px;
+  height: 200px;
+  /* background-color: white; */
+  /* opacity: .5; */
+  z-index:  800;
+}
+
+#slider {
+  position:relative;
+  /* left:100px;
+  top:100px; */
+  /* margin-left: 200px;
+  margin-top: 10px; */
+  width: 400px;
+  height: 200px;
+  background-color: lightgray;
+  z-index: 800; 
+}
+#tab {
+  position:relative;
+  left: 0px;
+  top: 0px;
+  width: 400px;
+  height: 20px;
+  background-color: gray;
+  color: yellow;
+  z-index:  800; 
+}
