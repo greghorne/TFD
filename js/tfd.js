@@ -303,6 +303,7 @@ function doHotSpotMap(whoCalled) {
 
     if (whoCalled === "checkbox" && !checked) {
         if (gbHotSpotCreated && gMap.hasLayer(heat)) gMap.removeLayer(heat)
+        document.getElementById("tab").innerHTML = "<center>Heat Map Settings</center>"
         // hot spot off
     } else if (whoCalled === "checkbox" && checked || whoCalled === "pulldown" && checked || "update" && checked) {
         if (gbHotSpotCreated && gMap.hasLayer(heat))gMap.removeLayer(heat)
@@ -320,6 +321,8 @@ function doHotSpotMap(whoCalled) {
 
             var intensity;
             var typeIncident = $("#incident_types option:selected").val();
+
+            document.getElementById("tab").innerHTML = "<center>Heat Map Settings - " + typeIncident + "</center>"
 
             tx.oncomplete = function() {
                 heat = L.heatLayer(items, { radius: 45, minOpacity: .1, maxZoom: 12, blur: 75,

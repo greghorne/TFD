@@ -155,7 +155,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
   /* background-color: white; */
   /* opacity: .5; */
   z-index:  800;
-  
+  border-radius: 25px;  
 }
 
 #slider {
@@ -169,6 +169,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
   background-color: lightgray;
   z-index: 800; 
   box-shadow: 5px 5px 5px #CBCBCB !important;
+  font-size: 1.0em !important;
+  font-family: 'Times New Roman', Times, serif;
 }
 #tab {
   position:relative;
