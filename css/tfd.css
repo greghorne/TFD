@@ -168,7 +168,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
   height: 150px;
   background-color: lightgray;
   z-index: 800; 
-  box-shadow: 5px 5px 5px #888888 !important;
+  box-shadow: 5px 5px 5px #CBCBCB !important;
 }
 #tab {
   position:relative;
@@ -177,8 +177,9 @@ html, body { height: 100%; width: 100%; margin: 0px }
   width: 400px;
   height: 20px;
   background-color:#9E9E9E;
-  color: yellow;
+  color: white;
   z-index:  800; 
   cursor: pointer;
-  box-shadow: 5px 5px 5px #888888 !important;
+  box-shadow: 5px 5px 5px #CBCBCB !important;
 }
+
