@@ -162,13 +162,13 @@ function createIncidentTextControl(map, marker, bHighlight, title, textCustomCon
 
                 L.DomEvent.stopPropagation(e);
                 map.flyTo(marker._latlng, CONST_MAP_INCIDENT_ZOOM)
-                // setTimeout(function() { marker.openPopup(); }, 1000)  // delay opening marker popup
-                
+                setTimeout(function() { marker.openPopup(); if (layerVisible) map.addLayer(heat);}, 2000)  // delay opening marker popup
+
                 // turn back on hot spot map if applicable
-                map.on('moveend', function() {
-                    marker.openPopup();
-                    if (layerVisible) map.addLayer(heat);
-                })
+                // map.on('moveend', function() {
+                //     marker.openPopup();
+                //     if (layerVisible) map.addLayer(heat);
+                // })
             })
 
             container.onmouseover = function() { L.DomUtil.addClass(map._container,   'cursor-pointer') }
@@ -524,7 +524,7 @@ function createOlderControl(map, olderMarkersArr) {
                 map.flyTo([arrSplit[0], arrSplit[1]], CONST_MAP_INCIDENT_ZOOM)
 
                 map.on('moveend', function() {
-                    console.log("trace1...")
+                    console.log("fireEvent...")
                     var myMarker = map._layers[arrSplit[2]];  // retrieve marker
                     myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
                     $("#old_select")[0][0].selected = true;   // set pull-down to index 0
