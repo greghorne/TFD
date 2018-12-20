@@ -308,7 +308,7 @@ function doHotSpotMap(whoCalled) {
     } else if (whoCalled === "checkbox" && checked || whoCalled === "pulldown" && checked || "update" && checked) {
         if (gbHotSpotCreated && gMap.hasLayer(heat))gMap.removeLayer(heat)
 
-        var hotspotArr = [];
+        var hotspotArr = []; 
         var db = indexedDB.open("TFD", 1)
         
         // https://stackoverflow.com/questions/26920961/how-to-properly-retrieve-all-data-from-an-indexeddb-in-a-winjs-windows-8-app
@@ -524,6 +524,7 @@ function createOlderControl(map, olderMarkersArr) {
                 map.flyTo([arrSplit[0], arrSplit[1]], CONST_MAP_INCIDENT_ZOOM)
 
                 map.on('moveend', function() {
+                    console.log("trace1...")
                     var myMarker = map._layers[arrSplit[2]];  // retrieve marker
                     myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
                     $("#old_select")[0][0].selected = true;   // set pull-down to index 0
@@ -698,12 +699,10 @@ $(document).ready(function() {
                 updateIndexedDB(response);      // json file has updated, update indexedDB
                 
                 // update pull down menu based on incident types that have occurred
-                updateIncidentTypeList(function (json) {
-                    updateIncidentTypePullDown(json);       
-                })
+                updateIncidentTypeList(function (json) { updateIncidentTypePullDown(json); })
 
+                // turn hot spot off
                 if (document.getElementById("hotspot").checked) {
-                    // turn hot spot off
                     document.getElementById("hotspot").checked = false;
                     doHotSpotMap("checkbox");
                 }
