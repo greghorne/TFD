@@ -523,14 +523,22 @@ function createOlderControl(map, olderMarkersArr) {
                 var arrSplit = e.target.value.split("_")
                 map.flyTo([arrSplit[0], arrSplit[1]], CONST_MAP_INCIDENT_ZOOM)
 
-                map.on('moveend', function() {
+                setTimeout(function() { 
                     console.log("fireEvent...")
                     var myMarker = map._layers[arrSplit[2]];  // retrieve marker
                     myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
                     $("#old_select")[0][0].selected = true;   // set pull-down to index 0
-
                     if (layerVisible) map.addLayer(heat);
-                })
+                }, 2000)
+
+                // map.on('moveend', function() {
+                //     console.log("fireEvent...")
+                //     var myMarker = map._layers[arrSplit[2]];  // retrieve marker
+                //     myMarker.fireEvent('click',{ latlng: [arrSplit[0], arrSplit[1]]}) 
+                //     $("#old_select")[0][0].selected = true;   // set pull-down to index 0
+
+                //     if (layerVisible) map.addLayer(heat);
+                // })
             })
             
             return container;
@@ -752,10 +760,12 @@ $(document).ready(function() {
                             else layerVisible = false;
 
                             if (gbZoomTo) { map.flyTo(newestMarkersArr[newestMarkersArr.length - 1]._latlng, CONST_MAP_INCIDENT_ZOOM) }
-                            
-                            map.on('moveend', function() {
+                            setTimeout(function() {
                                 if (layerVisible) map.addLayer(heat);
-                            })
+                            }, 2000)
+                            // map.on('moveend', function() {
+                            //     if (layerVisible) map.addLayer(heat);
+                            // })
                         }
                         
                         if (gSearchText !== null) {         // create text control for filter keyword(s) if applicable
