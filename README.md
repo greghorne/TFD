@@ -82,7 +82,7 @@
 
 * Everything is executed client-side thus there is no web server.
 
-* As incidents become available, the data is added to IndexedDB.  Subsequently the creation of heat maps uses data available in IndexedDB.
+* As incidents become available, the data is added to IndexedDB.  Subsequently the creation of a heat map uses data available in IndexedDB.
 
 * I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme where it didn't update for over an hour.  Please keep this in mind when viewing incidents on the map.  
 
