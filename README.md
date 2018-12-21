@@ -86,7 +86,7 @@
 
 * I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme where it didn't update for over an hour.  Please keep this in mind when viewing incidents on the map.  
 
-**With Regards to the JSON Data:**
+**With regards to the JSON data:**
 
 * JSON Data - Incidents.Incident[x].Vehicles.Vehicle - if 1 vehicle it is an object of key, value pairs; if greater than 1 it is an array of key, value pairs
 
