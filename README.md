@@ -10,8 +10,7 @@
     * All older incidents are displayed as blue map markers.
     * The list of incidents found on the lower right of the map are clickable.
     * It is possible for a marker to end up directly on top of another marker when more than one incident has occurred at the same location.
-    * <b>Heat Map Creation is under development.</b>
-    * <b>For Heat Map functionality please use Chrome.  Other browsers are currently not being tested during development.</b>
+    * Heat Map functionality is available to highlight a specific type of incident.
 
 #
 
@@ -83,9 +82,9 @@
 
 * Everything is executed client-side thus there is no web server.
 
-* I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme where it didn't update for over an hour.  Please keep this in mind when viewing incidents on the map.  
-
 * As incidents become available, the data is added to IndexedDB.  Subsequently the creation of heat maps uses data available in IndexedDB.
+
+* I do not have information on how/when the json file is updated on the server.  I have seen the JSON file update a couple of times in a few minutes to the other extreme where it didn't update for over an hour.  Please keep this in mind when viewing incidents on the map.  
 
 * JSON Data - Incidents.Incident[x].Vehicles.Vehicle - if 1 vehicle it is an object of key, value pairs; if greater than 1 it is an array of key, value pairs
 
