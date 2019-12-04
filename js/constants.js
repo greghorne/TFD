@@ -1,6 +1,6 @@
 const CONST_MAP_DEFAULT_LONGITUDEX      = -95.891431;
 const CONST_MAP_DEFAULT_LATITUDEY       =  36.096613;
-const CONST_MAP_INITIAL_ZOOM            =  10;
+const CONST_MAP_INITIAL_ZOOM            =   6;
 
 const CONST_MAP_JSON_URL                = "https://www.cityoftulsa.org/apps/opendata/tfd_dispatch.jsn";
 const CONST_JSON_UPDATE_TIME            = 60000;    // how often to poll for JSON data from server in ms
