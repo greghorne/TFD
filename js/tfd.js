@@ -467,7 +467,7 @@ function addControlsToMap(map, buildings) {
 
     createButtonControl(map, "help-icon", CONST_HELP_TOOL_TIP, CONST_HELP_PAGE)
 
-    // createButtonControl(map, "citygram-icon", CONST_CITYGRAM_TOOL_TIP, CONST_CITYGRAM_PAGE)
+    createButtonControl(map, "citygram-icon", CONST_CITYGRAM_TOOL_TIP, CONST_CITYGRAM_PAGE)
 }
 //////////////////////////////////////////////////////////////////////
 
