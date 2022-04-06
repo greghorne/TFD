@@ -45,11 +45,9 @@
 #
 **4) baseLayer=number** - defines which base map to display on startup
 
-                   0 = Grayscale OSM (default)
-                   1 = Esri OSM
-                   2 = Hydda OSM
-                   3 = Basic OSM
-                   4 = Esri World Imagery
+                   0 = Esri OSM (default)
+                   1 = Basic OSM
+                   2 = Esri World Imagery
                    
 	http://tfdincidents.s3-website-us-west-2.amazonaws.com/index.html?baseLayer=3
 #  
